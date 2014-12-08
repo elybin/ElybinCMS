@@ -4,30 +4,6 @@ Elybin CMS (www.elybin.com) - Open Source Content Management System
 @author    => Khakim Assidiqi <hamas182@gmail.com>
 
 
-
-SYARAT DAN KETENTUAN - http://docs.elybin.com/syarat-dan-ketentuan.html
-=========================================
-Ada beberapa syarat dan ketentuan yang anda harus ketahui selama anda menggunakan produk ini.
-
-Diperbolehkan untuk digunakan oleh siapa saja baik itu perorangan maupun kelompok, memperbanyak atau mendistribusikan kepada orang lain, ataupun mendesain ulang/mengubah/menulis ulang script/kode dalam CMS ini. Dengan catatan masih menyertakan link dan tanda pengenal dari pihak pengembang yaitu Elybin CMS. Kami rasa itu tidak terlalu menyulitkan, mengingat link/identitas kami tidak memakan banyak ruang, tidak seberapa memang, namun suatu kebanggaan dan penghargaan bagi kami jika nama kami turut disertakan.
-
-    "Kebebasan adalah hal yang utama dalam menggunakan produk Open Source, kami mungkin tidak mendapat apapun, itu tidak masalah. Nama kami terpampang dengan baik dan benar sebagai bukti kerja keras, itu saja sudah cukup. (Tim Elybin)"
-
-Kami tidak bisa memberikan garansi atas segala kerusakan/error atau merasa merugi saat menggunakan produk kami. Namun, anda dapat meminta bantuan/support dari kami ketika anda menemui kesulitan/error dengan menghubungi tim support kami. Sangat di sarankan pula untuk memberikan masukan/kritik/saran jika anda menemukan sebuah kelemahan pada produk kami ataupun anda bisa meminta fitur baru kepada kami, karena kami menyadari bahawa produk kami masih membutuhkan masukan dari anda.
-
-Dalam menggunakan produk ini, anda tidak diperlukan untuk membayar kepada kami, karena produk ini bersifat gratis dan open source. Kecuali beberapa plugin dan tema yang memang dikembangkan oleh beberapa developer, namun perlu ditegaskan bahwa kami tidak menetapkan sistem membayar melaikan sistem donasi untuk beberapa kegiatan sosial, seperti yang ada pada misi kami. Perlu anda ketahui juga bahwa sistem donasi berbeda dengan sistem bayar, karena pada sistem donasi, anda akan terus mendapat update/pembaharuan seumur hidup selama produk kami terus digunakan dan dikembangkan.
-
-Saat pertama kali kami memulai Elybin CMS kami memiliki misi yang cukup sederhana dan kami sangat antusias untuk mewujudkan misi tersebut bersama anda. Atas dasar tersebut kami sadar bahwa anda bukanlah sebuah produk ataupun konsumen, tapi anda adalah mitra satu tim dengan kami. Karena itu kami mengundang anda untuk turut mengembangkan bersama termasuk dalam bentuk menggunakan dengan baik produk kami ataupun sebagai tim developer.
-
-Dengan penggunaan produk ini anda menyetujui Syarat dan Ketentuan dari Elybin CMS.
-Terimakasih telah menggunakan produk kami, bantu kami mewujudkan misi kami, tetap cintai produk asli Indonesia ini.
-
-Salam Hangat
-Tim Elybin
-
-
-
-
 PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
 =========================================
 1. Pastikan anda sudah mendownload Elybin CMS yang memiliki ekstensi akhir (.zip). Ekstrak file tersebut ke hosting atau local server anda. 
