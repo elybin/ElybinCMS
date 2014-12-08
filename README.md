@@ -3,6 +3,11 @@ Elybin CMS (www.elybin.com) - Open Source Content Management System
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
 @author    => Khakim Assidiqi <hamas182@gmail.com>
 
+ELYBIN CMS - http://docs.elybin.com/about.html
+=========================================
+Elybin CMS adalah sebuah sistem menejemen konten gratis (open source) yang berfokus kepada kegunaan, kecepatan dan kemudahan. Didukung dengan berbagai Komponen & Tema untuk keperluan anda, yang akan memudahkan anda dalam berekspresi dan berbagi informasi.
+
+Diintegerasikan dengan teknologi web terbaru, menjadikan Elybin CMS lah yang anda butuhkan untuk membuat website profesional untuk personal, bisnis ataupun komunitas. 
 
 PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
 =========================================
