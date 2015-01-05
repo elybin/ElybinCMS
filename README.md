@@ -35,6 +35,17 @@ http://docs.elybin.com/installation.html
 
 CHANGE LOG (PERUBAHAAN) - http://docs.elybin.com/changelog.html
 =========================================
+Versi 1.1.0 (Gasing) - 5 Januari 2015
+-----------------------
+- Peningkatan performa muat halaman dengan mengoptimalkan CDN
+- Kompresi halaman & aset, hingga 80%
+- Perbaikan bug blocking content
+- Perbaikan pada fitur instalasi
+- Pembaharuan modul & plugin javascript
+- Perbaikan "failed to decode json" pada panel notifikasi
+- Perbaikan preview tema
+- tampilan baru dan penambahan footer untuk tema "young-free"
+
 Versi 1.0.12 (Beta) - 24 November 2014
 -----------------------
 - Perbaikan pada "Site Url" saat proses instalasi yang menyebabkan kegagalan total instalasi
