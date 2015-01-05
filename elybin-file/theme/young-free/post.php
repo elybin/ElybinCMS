@@ -23,14 +23,9 @@
   include_once 'menu.php';
 ?>
 
-
-    <!-- Page Header -->
-    <header class="intro-header intro-hide">
-    </header>
-
     <!-- Main Content -->
     <div class="container">
-    	<div class="clearfix form-group-margin" style="margin-top: 40px;"></div><!-- margin -->
+    	<div class="clearfix form-group-margin" style="margin-top: 90px;"></div><!-- margin -->
         <div class="row">
 			<div class="col-md-9">
 				<?php
@@ -75,6 +70,7 @@
 						<span class="slash"></span> 
 						<span class="month"><?php echo $date[1]?></span>
 						<span class="month-prefix"><?php echo $monthpfx?></span>
+						<span class="fa fa-calendar"></span>
 					</div>
 				</div>
 				<div class="col-md-10">
@@ -82,7 +78,7 @@
 						<h2 class="post-title">
 							<?php echo $post->title?>
 						</h2>
-						<p class="post-meta">Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($post->date.$post->time)?></span></p>
+						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($post->date.$post->time)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
 						<?php
 							if($post->image !== ''){
 						?>

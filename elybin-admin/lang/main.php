@@ -357,7 +357,8 @@ $lg_newuseraddedby = "Pengguna baru berhasil ditambahkan oleh";
 $lg_newuseradded = "Pengguna baru berhasil ditambahkan";
 $lg_lastestnotification = "Notifikasi terakhir";
 $lg_notificationhint = "Ini adalah notifiakasi dari website anda, anda bisa melihat daftar perubahan, informasi, update dari website anda";
-$lg_successresettheirpassword = "berhasil mengatur ulang kata sandi";
+$lg_successresettheirpassword = "Berhasil mengatur ulang kata sandi";
+$lg_successresetpassword = "Berhasil mengatur ulang kata sandi";
 $lg_someonefailedtologin = "Sesorang gagal melakukan login dengan ";
 $lg_failedloginattempt = "Gagal login terdeteksi";
 $lg_newmessagefrom = "Satu pesan baru dari";
@@ -419,6 +420,7 @@ $lg_invalidcode = "Kode tidak benar";
 // installer
 $lg_step = "Tahap";
 $lg_install = "Instalasi";
+$lg_upgrade = "Pembaharuan";
 $lg_quickinstall = "Instalasi Singkat";
 $lg_databaseconfig = "Konfigurasi Basisdata";
 $lg_siteinformation = "Informasi Situs";
@@ -430,16 +432,33 @@ $lg_databaseuser = "User Database";
 $lg_databasepassword = "Sandi Database";
 $lg_databasename = "Nama Database";
 
+$lg_welcome = "Selamat Datang";
+$lg_areyouready = "Apakah anda sudah siap";
+$lg_installstarthint = "Selamat datang di proses awal instalasi Elybin CMS, kami akan memandu anda cara penginstalan perangkat lunak ini. Tahap ini mungkin hanya memerlukan beberapa menit saja. Anda siap";
+$lg_startinstallation = "Mulai Proses Instalasi";
+$lg_pleasereadandagree = "Mohon membaca dan menyetujui <b>Syarat dan Ketentuan</b>";
+
+$lg_startupgrade = "Mulai Upgrade";
+
+$lg_installationlockedtemporary = "Instalasi sementara dikunci";
+$lg_installlockedhint = "Kami mencegah beberapa orang meretas situs anda saat sendang melakukan instalasi, sejatinya proses instalasi hanya berlaku selama 24 jam saja, setelah itu akan dikunci. <br/><br/>Jika anda pemilik situs ini dan melihat halaman ini, buka kunci ini dengan menghapus file <code>install_date.txt</code> pada folder <code>elybin-install</code>, dan lanjutkan proses installasi";
+
+
 $lg_finish = "Selesai";
 $lg_correct = "Benar";
 $lg_everythingisready = "Semuanya sudah siap";
 $lg_installfinishhint = "Tidak perlu waktu lama untuk menginstall Elybin bukan? kini anda siap memulai cara baru berbagi informasi";
+$lg_upgradefinishhint = "Oke, sekarang situs anda sudah menggunakan sistem terbaru kami, rasakan kecepatan dan kemudahan di website anda. ";
 $lg_startnow = "Mulai Sekarang";
 
 $lg_siteurl = "URL Situs";
 $lg_sitename = "Nama Situs";
 
-$lg_cannotconnecttodatabasepleasecheck = "Tidak bisa terhubung ke Basisdata, Mohon cek kembali";
+$lg_failedwritingconfigfile = "Gagal menciptakan file konfigurasi, periksa hak akeses folder/file";
+$lg_failedwritinghtaccessfile = "Gagal menciptakan file htaccess, periksa hak akeses folder/file";
+$lg_cannotconnecttodatabasehostpleasecheck = "Tidak bisa terhubung ke Host Basisdata, Mohon cek kembali";
+$lg_cannotconnecttodatabasepleasecheck = "Tidak bisa menemukan nama Basisdata anda, Mohon cek kembali nama database anda";
 $lg_systeminformationsaved = "Informasi Sistem Tersimpan";
+$lg_fewqueryfailedtoexecutedbutok = "Beberapa kueri gagal dieksekusi, tapi itu tidak masalah.";
 
 ?>

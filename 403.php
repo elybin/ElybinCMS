@@ -1,1 +1,1 @@
-Ooops! 403
+403 Access Denied

@@ -4,11 +4,12 @@
  * Copyright 2014 Start Bootstrap
  * Licensed under Apache 2.0 (https://github.com/IronSummitMedia/startbootstrap/blob/gh-pages/LICENSE)
  */
-$(".container").hide();
-$(".loading-screen").show();
-$(window).bind("load",function(){
-  $(".loading-screen").fadeOut();
-  $(".container").fadeIn(1000);
+$(function() {
+	$("#gototop").click(function(){
+		$('html, body').animate({
+			scrollTop: 0
+		},700, 'easeOutExpo');
+	});
 });
 // Contact
 $(function() {
@@ -150,6 +151,16 @@ $(function() {
 	});
 });
 
+// Intro 
+$(function() {
+	var isiheading = $(".site-heading .heading").html();
+	var isisubheading = $(".site-heading .subheading").html();
+	
+	if(isiheading == '' && isisubheading == ''){
+		$(".site-heading hr").hide();
+	}
+});
+
 // Navigation Scripts to Show Header on Scroll-Up
 jQuery(document).ready(function($) {
     var MQL = 1170;
@@ -161,7 +172,14 @@ jQuery(document).ready(function($) {
                 previousTop: 0
             },
             function() {
+
                 var currentTop = $(window).scrollTop();
+				// easing gototop
+				if(currentTop > 200){
+					$("#gototop").addClass("show");
+				}else{
+					$("#gototop").removeClass("show");
+				}
                 //check if user is scrolling up
                 if (currentTop < this.previousTop) {
                     //if scrolling up...
@@ -182,31 +200,4 @@ jQuery(document).ready(function($) {
                 this.previousTop = currentTop;
             });
     }
-});
-$(function() {
-	parallax();
-	function parallax(){
-		if (navigator.appVersion.indexOf("Win") >= 0) {
-			if (navigator.userAgent.indexOf("Chrome") >= 0) {
-				// Load SmoothScroll
-				(function() {
-					var sstag = document.createElement('script'); sstag.type = 'text/javascript'; sstag.async = true;
-					sstag.src = 'http://cdn.inst.ag/assets/scripts/SmoothScroll.js';
-					var s = document.getElementsByTagName('script')[0];
-					s.parentNode.insertBefore(sstag, s);
-				})();
-			}
-		}
-	  var scrolled = $(window).scrollTop(); 
-	  if(scrolled < $(".intro-header").height() && scrolled > 0){
-		$(".intro-header").css("background-position", "0% " + (50-(scrolled * 0.40)) + "%");
-	  
-		//$(".intro-header").css("margin-bottom", "-" + (scrolled*2) + "px");
-		//$(".intro-header h1, .intro-header span, .intro-header hr").css("opacity", (1-(scrolled/$(".intro-header").height() * 1.7)) + "");
-	  }
-	}
-	
-	$(window).scroll(function(e){
-		parallax();
-	});
 });

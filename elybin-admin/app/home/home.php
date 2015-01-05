@@ -125,17 +125,6 @@ if(!isset($_SESSION['login'])){
 						<!-- / Delete Modal -->
 
 		</div><!-- /.row -->
-
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck, #tooltip-foto').tooltip();	
-});
-ElybinView();
-ElybinEditModal();
-</script>
-<!-- / Javascript -->	
-
 <?php
 }
 ?>

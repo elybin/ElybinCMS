@@ -1,0 +1,622 @@
+
+.theme-white{
+    background:#fff
+}
+.theme-white .page-header{
+    background:0 0;
+    border-color:#e8e8e8
+}
+.theme-white .bordered,.theme-white .panel,.theme-white .table,.theme-white hr{
+    border-color:#e5e5e5
+}
+.theme-white .bordered[class*=bg-],.theme-white [class*=bg-] .border-t{
+    border-color:#fff;
+    border-color:rgba(0,0,0,.2)
+}
+.theme-white .panel.panel-transparent>.panel-heading{
+    border-bottom-color:#e5e5e5!important
+}
+.theme-white .breadcrumb-page{
+    background:0 0;
+    border-bottom:1px solid #e8e8e8;
+    padding-bottom:6px;
+    padding-top:6px
+}
+.theme-white #main-navbar .navbar-header a{
+    color:#777
+}
+.theme-white #main-navbar .navbar-collapse,.theme-white #main-navbar .navbar-header{
+    background:#eee;
+    -webkit-box-shadow:none;
+    box-shadow:none
+}
+.theme-white #main-navbar .navbar-collapse{
+    border-top:1px solid #e1e1e1
+}
+.theme-white #main-navbar .dropdown-menu>li>a,.theme-white #main-navbar .dropdown>a,.theme-white #main-navbar .nav>li>a,.theme-white #main-navbar .navbar-toggle{
+    color:#777
+}
+.theme-white #main-navbar #main-menu-toggle{
+    background:#eee;
+    color:#777
+}
+.theme-white #main-navbar #main-menu-toggle .fa:before{
+    color:#777
+}
+.theme-white #main-navbar .nav+.nav,.theme-white #main-navbar .nav+.right,.theme-white #main-navbar li+li{
+    border-top:1px solid #e1e1e1
+}
+.theme-white #main-navbar .dropdown.open>a{
+    border-top:1px solid #cfcfcf;
+    border-bottom:1px solid #dadada;
+    margin-top:-1px;
+    background:#e1e1e1
+}
+.theme-white #main-navbar form.navbar-form{
+    -webkit-box-shadow:none;
+    box-shadow:none
+}
+.theme-white #main-navbar form.navbar-form .form-control{
+    background:#fff;
+    border-color:#eee;
+    border-radius:999999px
+}@media (min-width:768px){
+    .theme-white #main-navbar .nav+.nav,.theme-white #main-navbar .nav+.right,.theme-white #main-navbar .navbar-collapse,.theme-white #main-navbar li+li{
+        border-top:none
+    }
+    .theme-white #main-navbar .nav>li>a:hover{
+        background:#e6e6e6
+    }
+    .theme-white #main-navbar .dropdown.open>a{
+        border-top:none;
+        border-bottom:none;
+        margin-top:0;
+        background:#e6e6e6
+    }
+    .theme-white #main-navbar .dropdown-menu{
+        border-radius:2px;
+        margin-top:3px;
+        padding:5px 0
+    }
+    .theme-white #main-navbar .dropdown-menu>li>a{
+        color:#555
+    }
+    .theme-white #main-navbar .dropdown-menu>li>a:hover{
+        background:#f6f6f6
+    }
+}
+.theme-white #main-menu-bg,.theme-white .mmc-dropdown-open-ul{
+    background:#fff
+}
+.theme-white #main-menu #main-menu-inner{
+    padding-top:10px
+}
+.theme-white #main-menu .mmc-dropdown-open-ul li a,.theme-white #main-menu .navigation li a{
+    color:#8b9298;
+    -webkit-transition:all .2s;
+    transition:all .2s
+}
+.theme-white #main-menu .mmc-dropdown-open-ul li a:hover,.theme-white #main-menu .navigation li a:hover{
+    color:#414549
+}
+.theme-white #main-menu .mmc-dropdown-open-ul li.active>a,.theme-white #main-menu .navigation li.active>a{
+    color:#414549;
+    background:#f6f6f6
+}
+.theme-white #main-menu .mm-dropdown.active>a{
+    background:none!important
+}
+.theme-white #main-menu .mmc-dropdown-open>a{
+    color:#414549!important
+}
+.theme-white #main-menu .mmc-title{
+    color:#414549;
+    background:#fff
+}
+.theme-white #main-menu .mmc-dropdown-open-ul{
+    border:1px solid #e8e8e8;
+    margin-top:-1px
+}
+.theme-white #main-menu .menu-content{
+    border-color:#e8e8e8
+}
+.theme-white #main-menu .menu-content .btn-outline{
+    border-color:#e8e8e8;
+    color:#8b9298
+}
+.theme-white #main-menu .menu-content .btn-outline:active,.theme-white #main-menu .menu-content .btn-outline:hover{
+    border-color:transparent;
+    color:#fff
+}
+.theme-white #main-menu .menu-content.top{
+    margin-top:-10px
+}
+.theme-white .mmc-dropdown-open .mm-dropdown.open>a,.theme-white.mme #main-menu .mm-dropdown.open>a{
+    color:#414549!important
+}@media (min-width:768px){
+    .theme-white #main-menu .mm-dropdown.open>a{
+        color:#414549
+    }
+    .theme-white.mmc #main-menu .navigation>.mm-dropdown.open>a{
+        color:#8b9298
+    }
+}
+.theme-white #main-menu .navigation li.active>a,.theme-white #main-menu-bg,.theme-white.right-to-left.main-menu-right #main-menu .navigation li.active>a,.theme-white.right-to-left.main-menu-right #main-menu-bg{
+    border-left:none;
+    border-right:1px solid #e8e8e8
+}
+.theme-white #main-menu .mmc-dropdown-open-ul,.theme-white.right-to-left.main-menu-right #main-menu .mmc-dropdown-open-ul{
+    margin-left:-1px!important;
+    margin-right:0!important
+}
+.theme-white.main-menu-right #main-menu .navigation li.active>a,.theme-white.main-menu-right #main-menu-bg,.theme-white.right-to-left #main-menu .navigation li.active>a,.theme-white.right-to-left #main-menu-bg{
+    border-left:1px solid #e8e8e8;
+    border-right:none
+}
+.theme-white.main-menu-right #main-menu .mmc-dropdown-open-ul,.theme-white.right-to-left #main-menu .mmc-dropdown-open-ul{
+    margin-left:0!important;
+    margin-right:-1px!important
+}
+.theme-white .demo-logo{
+    background:#4ab6d5
+}
+.theme-white #main-navbar .navbar-brand div{
+    background:#52b9d7
+}
+.theme-white #main-navbar .navbar-header a{
+    font-size:14px
+}
+.theme-white.page-signin .signin-info,.theme-white.page-signup .signup-header{
+    background:#4ab6d5;
+    background:rgba(74,182,213,.8)
+}
+.theme-white .timeline:after,.theme-white .timeline:before,.theme-white .tl-header,.theme-white .tl-icon{
+    background:#e6e6e6
+}
+.theme-white .tl-header,.theme-white .tl-icon{
+    box-shadow:0 0 0 4px #fff
+}
+.theme-white .tl-entry:before{
+    background:#4ab6d5;
+    box-shadow:0 0 0 3px #fff
+}
+.theme-white .tl-body:before{
+    border-color:transparent #e5e5e5 transparent transparent
+}@media (min-width:768px){
+    .theme-white .timeline.centered .tl-entry.left .tl-body:before{
+        border-color:transparent transparent transparent #e5e5e5
+    }
+    .theme-white.right-to-left .timeline.centered .tl-entry.left .tl-body:before{
+        border-color:transparent #e5e5e5 transparent transparent
+    }
+}
+.theme-white.right-to-left .tl-body:before{
+    border-color:transparent transparent transparent #e5e5e5
+}
+.theme-white.page-mail .mail-nav,.theme-white.page-mail .mail-nav:before{
+    background:#fff
+}
+.theme-white.page-mail .mail-nav .sections li.active .badge,.theme-white.page-mail .mail-nav .sections li.active .label{
+    background:#4ab6d5
+}
+.theme-white.page-mail .mail-nav,.theme-white.page-mail .mail-nav .compose-btn,.theme-white.page-mail .mail-nav .sections li.active,.theme-white.page-mail .mail-nav:before{
+    border-color:#e5e5e5
+}
+.theme-white.page-mail .mail-nav .navigation.open .sections li.active{
+    background:#f5f5f5
+}
+.theme-white.page-mail .mail-nav li.divider{
+    background:#e5e5e5
+}
+.theme-white.page-mail .mail-nav .sections li.active a{
+    color:#4d4d4d
+}
+.theme-white.page-mail .mail-nav .sections li.active:after{
+    color:#b3b3b3
+}
+.theme-white.page-mail .mail-nav .sections a{
+    color:#737373
+}
+.theme-white.page-mail .mail-nav .add-more a,.theme-white.page-mail .mail-nav-header{
+    color:#b3b3b3
+}@media (min-width:992px){
+    .theme-white.page-mail .mail-nav .navigation .sections li.active{
+        background:#f5f5f5
+    }
+    .theme-white.page-mail .mail-nav .sections a:hover{
+        color:#4d4d4d
+    }
+}
+.theme-white .nav-icon-btn.nav-icon-btn-primary .label{
+    background:#4ab6d5
+}
+.theme-white .btn-primary{
+    color:#fff
+}
+.theme-white .btn-primary,.theme-white .btn-primary:focus{
+    border-color:#35aed0;
+    border-bottom-color:#2b9bbb;
+    background:#4ab6d5;
+    background-image:-webkit-linear-gradient(top,#4eb8d6 0,#35aed0 100%);
+    background-image:linear-gradient(to bottom,#4eb8d6 0,#35aed0 100%);
+    background-repeat:repeat-x
+}
+.theme-white .btn-primary:hover{
+    color:#fff;
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e;
+    background:#35aed0!important;
+    background-image:-webkit-linear-gradient(top,#42b3d3 0,#2ea6c8 100%)!important;
+    background-image:linear-gradient(to bottom,#42b3d3 0,#2ea6c8 100%)!important;
+    background-repeat:repeat-x
+}
+.open .theme-white .btn-primary.dropdown-toggle,.theme-white .btn-primary.active,.theme-white .btn-primary:active{
+    background:0 0;
+    background:#39afd1!important;
+    border-color:#2991af;
+    border-bottom-color:#2991af!important;
+    color:#fff;
+    -webkit-box-shadow:0 0 12px rgba(0,0,0,.1)inset;
+    box-shadow:0 0 12px rgba(0,0,0,.1)inset
+}
+.theme-white .btn-primary.btn-flat{
+    background:#3eb1d2
+}
+.open .theme-white .btn-primary.btn-flat.dropdown-toggle,.theme-white .btn-primary.btn-flat.active,.theme-white .btn-primary.btn-flat:active,.theme-white .btn-primary.btn-flat:hover{
+    background:#3eb1d2!important;
+    color:#fff
+}
+.theme-white .btn-primary.btn-outline.btn-flat:hover,.theme-white .btn-primary.btn-outline:hover{
+    color:#fff;
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e
+}
+.theme-white .btn-primary.btn-outline.btn-flat:active,.theme-white .btn-primary.btn-outline:active{
+    border-color:#2991af
+}
+.btn-group .theme-white .btn-primary,.btn-group .theme-white .btn-primary:focus,.input-group-btn .theme-white .btn-primary,.input-group-btn .theme-white .btn-primary:focus{
+    border-left-color:#2ea6c8;
+    border-right-color:#2ea6c8
+}
+.btn-group .theme-white .btn-primary:hover,.btn-group.open .theme-white .btn-primary.dropdown-toggle,.input-group-btn .theme-white .btn-primary:hover,.input-group-btn.open .theme-white .btn-primary.dropdown-toggle{
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e
+}
+.btn-group .theme-white .btn-primary.active,.btn-group .theme-white .btn-primary:active,.input-group-btn .theme-white .btn-primary.active,.input-group-btn .theme-white .btn-primary:active{
+    border-left-color:#2991af;
+    border-right-color:#2991af
+}
+.theme-white .open .btn.btn-primary.dropdown-toggle{
+    color:#fff;
+    border-bottom-color:#2991af!important;
+    background:0 0;
+    background:#39afd1!important
+}
+.theme-white .progress-bar{
+    background:#4ab6d5;
+    border-color:#31accf
+}
+.theme-white .progress-striped .progress-bar{
+    background-color:#4ab6d5;
+    background-image:-webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255,255,255,.1)),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255,255,255,.1)),color-stop(0.75,rgba(255,255,255,.1)),color-stop(0.75,transparent),to(transparent));
+    background-image:-webkit-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:-moz-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-size:10px 10px
+}
+.theme-white .label.label-primary{
+    background:#4ab6d5
+}
+.theme-white .label.label-primary[href]:focus,.theme-white .label.label-primary[href]:hover{
+    background-color:#2c9fc0
+}
+.theme-white .label.label-primary.label-tag{
+    border:1px solid #4ab6d5
+}
+.theme-white .label.label-primary.label-tag:before{
+    border-color:transparent #4ab6d5 transparent transparent
+}
+.theme-white .label.label-primary.label-tag[href]:focus,.theme-white .label.label-primary.label-tag[href]:hover{
+    border-color:#2c9fc0
+}
+.theme-white .label.label-primary.label-tag[href]:focus:before,.theme-white .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent #2c9fc0 transparent transparent
+}
+.right-to-left .theme-white .label.label-primary.label-tag:before{
+    border-color:transparent transparent transparent #4ab6d5
+}
+.right-to-left .theme-white .label.label-primary.label-tag[href]:focus:before,.right-to-left .theme-white .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent transparent transparent #2c9fc0
+}
+.ie8 .right-to-left .theme-white .label.label-primary.label-tag:before,.ie9 .right-to-left .theme-white .label.label-primary.label-tag:before{
+    border-color:transparent #4ab6d5 transparent transparent
+}
+.ie8 .right-to-left .theme-white .label.label-primary.label-tag[href]:focus:before,.ie8 .right-to-left .theme-white .label.label-primary.label-tag[href]:hover:before,.ie9 .right-to-left .theme-white .label.label-primary.label-tag[href]:focus:before,.ie9 .right-to-left .theme-white .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent #2c9fc0 transparent transparent
+}
+.theme-white.right-to-left .label.label-primary.label-tag:before{
+    border-color:transparent transparent transparent #4ab6d5
+}
+.theme-white.right-to-left .label.label-primary.label-tag:focus:before,.theme-white.right-to-left .label.label-primary.label-tag:hover:before{
+    border-color:transparent transparent transparent #2c9fc0
+}
+.ie8 .theme-white.right-to-left .label.label-primary.label-tag:before,.ie9 .theme-white.right-to-left .label.label-primary.label-tag:before{
+    border-color:transparent #4ab6d5 transparent transparent
+}
+.ie8 .theme-white.right-to-left .label.label-primary.label-tag:focus:before,.ie8 .theme-white.right-to-left .label.label-primary.label-tag:hover:before,.ie9 .theme-white.right-to-left .label.label-primary.label-tag:focus:before,.ie9 .theme-white.right-to-left .label.label-primary.label-tag:hover:before{
+    border-color:transparent #2c9fc0 transparent transparent
+}
+.theme-white .badge.badge-primary{
+    background:#4ab6d5;
+    border:1px solid #4ab6d5
+}
+.theme-white .badge.badge-primary[href]:focus,.theme-white .badge.badge-primary[href]:hover{
+    background-color:#2c9fc0;
+    border-color:#2c9fc0
+}
+.theme-white .table-primary table{
+    border-top-color:#3b8fa6!important
+}
+.theme-white .table-primary .table-header,.theme-white .table-primary thead,.theme-white .table-primary thead th,.theme-white .table-primary thead tr{
+    border-color:#3b8fa6!important;
+    color:#fff
+}
+.theme-white .table-primary thead th,.theme-white .table-primary thead tr{
+    background:#3ba6c5
+}
+.theme-white .table-primary .table-header{
+    background:#4ab6d5
+}
+.theme-white .nav-tabs>li.active>a,.theme-white .nav-tabs>li.active>a:focus,.theme-white .nav-tabs>li.active>a:hover{
+    background:#4ab6d5;
+    border-bottom:2px solid #35aed0
+}
+.theme-white .nav-tabs .nav-tabs.nav-justified>.active>a{
+    border-bottom-color:#35aed0
+}
+.theme-white .dropdown-menu>li.active>a,.theme-white .dropdown-menu>li>a:hover,.theme-white .nav-pills>li.active>a,.theme-white .nav-pills>li.active>a:focus,.theme-white .nav-pills>li.active>a:hover{
+    background:#4ab6d5
+}
+.theme-white .dropdown-menu>li>a:hover{
+    color:#fff
+}
+.theme-white .btn-group .btn-primary,.theme-white .btn-group .btn-primary:focus,.theme-white .input-group-btn .btn-primary,.theme-white .input-group-btn .btn-primary:focus{
+    border-left-color:#2ea6c8;
+    border-right-color:#2ea6c8
+}
+.theme-white .btn-group .btn-primary:hover,.theme-white .btn-group.open .btn-primary.dropdown-toggle,.theme-white .input-group-btn .btn-primary:hover,.theme-white .input-group-btn.open .btn-primary.dropdown-toggle{
+    border-color:#2991af
+}
+.theme-white .btn-group .btn-primary.active,.theme-white .btn-group .btn-primary:active,.theme-white .input-group-btn .btn-primary.active,.theme-white .input-group-btn .btn-primary:active{
+    border-left-color:#2991af;
+    border-right-color:#2991af
+}
+.theme-white .pagination>li>a:hover{
+    border-color:#4ab6d5
+}
+.theme-white .pagination>li.active>a,.theme-white .pagination>li.active>a:focus,.theme-white .pagination>li.active>a:hover,.theme-white .pagination>li.active>span{
+    background:#4ab6d5;
+    border-color:#4ab6d5
+}
+.theme-white .pager li>a:hover{
+    border-color:#4ab6d5
+}
+.theme-white a.list-group-item.active{
+    background:#4ab6d5;
+    border-color:#4ab6d5
+}
+.theme-white a.list-group-item.active .list-group-item-text{
+    color:#f0f9fb
+}
+.theme-white .form-control.focus,.theme-white .form-control:focus{
+    border-color:#4ab6d5;
+    outline:0;
+    -webkit-box-shadow:none;
+    box-shadow:none
+}
+.gt-ie8 .theme-white input.px+.lbl:hover:before,.gt-ie8 .theme-white input.px:focus+.lbl:before{
+    border-color:#4ab6d5
+}
+.gt-ie8 .theme-white input[type=checkbox].px+.lbl:after{
+    color:#4ab6d5
+}
+.gt-ie8 .theme-white input[type=radio].px+.lbl:after{
+    background:#4ab6d5
+}
+.theme-white .text-primary,.theme-white .text-primary a,.theme-white .text-primary a:focus,.theme-white .text-primary:active,.theme-white .text-primary:focus,.theme-white .text-primary:hover{
+    color:#4ab6d5
+}
+.theme-white .text-primary a:active,.theme-white .text-primary a:hover{
+    color:#288eab
+}
+.theme-white .bg-primary{
+    background:#4ab6d5!important
+}
+.theme-white .bg-primary.darken,.theme-white .bg-primary[href]:hover{
+    background:#45adcb!important
+}
+.theme-white .bg-primary.darken[href]:hover,.theme-white .bg-primary.darker{
+    background:#39a8c8!important
+}
+.theme-white .bg-primary.darker[href]:hover{
+    background:#359ebc!important
+}
+.theme-white .bg-primary,.theme-white .bg-primary a,.theme-white .bg-primary a:focus,.theme-white .bg-primary:active,.theme-white .bg-primary:focus,.theme-white .bg-primary:hover{
+    color:#fff
+}
+.theme-white .bg-primary a:active,.theme-white .bg-primary a:hover{
+    color:#d9d9d9
+}
+.theme-white .bg-primary [href]:hover,.theme-white .bg-primary[href]:hover{
+    color:#fff
+}
+.theme-white .bg-primary *{
+    border-color:#67c2dc
+}
+.theme-white .ui-autocomplete>li>a:hover,.theme-white .ui-autocompletev>li.active>a,.theme-white .ui-slider-handle.ui-state-active:before,.theme-white .ui-slider-range{
+    background:#4ab6d5
+}
+.theme-white .ui-autocomplete>li>a:hover{
+    color:#fff
+}
+.theme-white .ui-autocomplete .ui-state-focus{
+    background:#4ab6d5;
+    color:#fff
+}
+.theme-white .ui-menu .ui-menu-item a.ui-state-active,.theme-white .ui-menu .ui-menu-item a.ui-state-focus,.theme-white .ui-menu .ui-menu-item a:hover{
+    background:#4ab6d5
+}
+.theme-white .ui-progressbar-value{
+    background:#4ab6d5;
+    border-color:#31accf;
+    background-color:#4ab6d5;
+    background-image:-webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255,255,255,.1)),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255,255,255,.1)),color-stop(0.75,rgba(255,255,255,.1)),color-stop(0.75,transparent),to(transparent));
+    background-image:-webkit-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:-moz-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-size:10px 10px
+}
+.theme-white .ui-tabs-nav>.ui-tabs-active>a,.theme-white .ui-tabs-nav>.ui-tabs-active>a:focus,.theme-white .ui-tabs-nav>.ui-tabs-active>a:hover{
+    color:#fff;
+    background:#4ab6d5;
+    border-bottom:2px solid #35aed0
+}
+.theme-white .ui-datepicker .ui-state-active{
+    background:#4ab6d5!important
+}
+.theme-white .ui-datepicker-title{
+    background:#4ab6d5
+}
+.theme-white .ui-datepicker th{
+    background:#4ea0b7
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary{
+    color:#fff
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary:focus{
+    border-color:#35aed0;
+    border-bottom-color:#2b9bbb;
+    background:#4ab6d5;
+    background-image:-webkit-linear-gradient(top,#4eb8d6 0,#35aed0 100%);
+    background-image:linear-gradient(to bottom,#4eb8d6 0,#35aed0 100%);
+    background-repeat:repeat-x
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary:hover{
+    color:#fff;
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e;
+    background:#35aed0!important;
+    background-image:-webkit-linear-gradient(top,#42b3d3 0,#2ea6c8 100%)!important;
+    background-image:linear-gradient(to bottom,#42b3d3 0,#2ea6c8 100%)!important;
+    background-repeat:repeat-x
+}
+.open .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.active,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary:active{
+    background:0 0;
+    background:#39afd1!important;
+    border-color:#2991af;
+    border-bottom-color:#2991af!important;
+    color:#fff;
+    -webkit-box-shadow:0 0 12px rgba(0,0,0,.1)inset;
+    box-shadow:0 0 12px rgba(0,0,0,.1)inset
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat{
+    background:#3eb1d2
+}
+.open .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat.dropdown-toggle,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat.active,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat:active,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat:hover{
+    background:#3eb1d2!important;
+    color:#fff
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline.btn-flat:hover,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline:hover{
+    color:#fff;
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e
+}
+.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline.btn-flat:active,.theme-white .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline:active{
+    border-color:#2991af
+}
+.btn-group .theme-white .ui-datepicker-buttonpane button.ui-priority-primary,.btn-group .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:focus,.input-group-btn .theme-white .ui-datepicker-buttonpane button.ui-priority-primary,.input-group-btn .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:focus{
+    border-left-color:#2ea6c8;
+    border-right-color:#2ea6c8
+}
+.btn-group .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:hover,.btn-group.open .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle,.input-group-btn .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:hover,.input-group-btn.open .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle{
+    border-color:#2ea6c8;
+    border-bottom-color:#25839e
+}
+.btn-group .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.active,.btn-group .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:active,.input-group-btn .theme-white .ui-datepicker-buttonpane button.ui-priority-primary.active,.input-group-btn .theme-white .ui-datepicker-buttonpane button.ui-priority-primary:active{
+    border-left-color:#2991af;
+    border-right-color:#2991af
+}
+.theme-white .select2-container-multi.select2-container-active .select2-choices,.theme-white .select2-container-multi.select2-dropdown-open .select2-choices,.theme-white .select2-drop-active{
+    border:1px solid #4ab6d5
+}
+.theme-white .select2-drop.select2-drop-above.select2-drop-active{
+    border-top:1px solid #4ab6d5
+}
+.theme-white .select2-container-active .select2-choice,.theme-white .select2-container-active .select2-choices{
+    border:1px solid #4ab6d5
+}
+.theme-white .select2-dropdown-open .select2-drop-above .select2-choice,.theme-white .select2-dropdown-open .select2-drop-above .select2-choices{
+    border:1px solid #4ab6d5;
+    border-top-color:#aaa
+}
+.theme-white .select2-primary .select2-container-multi .select2-choices .select2-search-choice,.theme-white .select2-results .select2-highlighted{
+    background:#4ab6d5
+}
+.theme-white .select2-primary .select2-container-multi .select2-choices .select2-search-choice-focus{
+    background:#2c9fc0
+}
+.theme-white .select2-primary .select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice,.theme-white .switcher-primary .switcher-state-on{
+    background:#4ab6d5!important
+}
+.theme-white .pixel-file-input:hover{
+    border-color:#4ab6d5
+}
+.theme-white .datepicker table tr td span.active,.theme-white .datepicker table tr td span.active.disabled,.theme-white .datepicker table tr td span.active.disabled:hover,.theme-white .datepicker table tr td span.active:hover,.theme-white .datepicker table tr td.active,.theme-white .datepicker table tr td.active.disabled,.theme-white .datepicker table tr td.active.disabled:hover,.theme-white .datepicker table tr td.active:hover,.theme-white .datepicker table tr td.selected,.theme-white .datepicker table tr td.selected.disabled,.theme-white .datepicker table tr td.selected.disabled:hover,.theme-white .datepicker table tr td.selected:hover{
+    background:#4ab6d5
+}
+.theme-white .datepicker thead tr{
+    background:#4ea0b7
+}
+.theme-white .datepicker thead tr:first-child{
+    background:#4ab6d5!important;
+    border-bottom-color:#4c8595!important
+}
+.theme-white .datepicker thead th.next,.theme-white .datepicker thead th.prev{
+    background:#4ab6d5
+}
+.theme-white .datepicker thead th.next,.theme-white .datepicker thead th.prev,.theme-white .datepicker>.datepicker-days thead tr:first-child th.cw+.prev,.theme-white .datepicker>.datepicker-days thead tr:last-child th.cw+th{
+    border-color:#4c8595
+}
+.theme-white .bootstrap-timepicker-widget table td a:hover{
+    background:#4ab6d5;
+    border-color:#4ab6d5
+}
+.theme-white .pagination a.dp-today,.theme-white .pagination a.dp-today:hover{
+    background:#73c7df;
+    border-color:#5fbeda
+}
+.theme-white .pagination a.dp-today:hover{
+    border-color:#4ab6d5!important
+}
+.theme-white .pagination a.dp-selected{
+    background:#4ab6d5!important;
+    border-color:#4ab6d5!important
+}
+.theme-white .tt-suggestion.tt-is-under-cursor{
+    background:#4ab6d5
+}
+.theme-white .table-primary .dataTables_wrapper .DT-per-page{
+    border-color:#3b8fa6!important
+}
+.theme-white .dropzone-box.dz-drag-hover{
+    border-color:#4ab6d5
+}
+.theme-white .dropzone-box:hover .fa.fa-cloud-upload{
+    background:#4ab6d5
+}
+.theme-white .md-editor.active{
+    border-color:#4ab6d5
+}
+.theme-white .widget-rating .active a{
+    color:#4ab6d5
+}

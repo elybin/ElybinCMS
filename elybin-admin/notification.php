@@ -86,17 +86,13 @@ if(!isset($_SESSION['login'])){
 												// decode value
 												if(json_decode($lns->value)){
 													$value = json_decode($lns->value);
-												}else{
-													exit('failed to decode json');
-												}
-												
-												//if more than one, group it
-												if($cnotif > 1){
-													$content = "$cnotif ".eval('return '.$value[0]->more.';');
-												}else{
-													
-													$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
-												}
+			
+													//if more than one, group it
+													if($cnotif > 1){
+														$content = "$cnotif ".eval('return '.$value[0]->more.';');
+													}else{
+														$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
+													}
 												
 										?>
 											<div class="notification" id="notif"<?php echo $status?>>
@@ -106,6 +102,7 @@ if(!isset($_SESSION['login'])){
 												<div class="notification-icon fa <?php echo $lns->icon?> bg-<?php echo $lns->type?>"></div>
 											</div> <!-- / .notification -->
 										<?php
+												}
 											}
 										}
 										?>

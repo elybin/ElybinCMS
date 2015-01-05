@@ -59,13 +59,9 @@ if(!isset($_SESSION['login'])){
 				<div class="row">
 					<div class="col-sm-12">
 						<!-- Javascript -->
-						<script>
+						<script><?php ob_start('minify_js'); // minify js ?>
 							init.push(function () {
-								var uploads_data = [
-									<?php
-										stat_graph();
-									?>
-								];
+								var uploads_data = [<?php stat_graph();?>];
 								Morris.Area({
 									element: 'hero-graph',
 									data: uploads_data,
@@ -82,14 +78,15 @@ if(!isset($_SESSION['login'])){
 									gridTextColor: '#fff',
 									labelColor: '#fff',
 									resize: true,
-									xLabels: "day",
+									xLabels: 'day',
 									xLabelFormat: function(day) {
-										return day.getDate() + " " + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov', 'Dec'][day.getMonth()]; 
+										return day.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov', 'Dec'][day.getMonth()]; 
 									}
 								});
 							});
-						</script>
+						<?php ob_end_flush(); // minify_js ?></script>
 						<!-- / Javascript -->
+						<style><?php include("assets/stylesheets/morris.css"); ?></style>
 						<div class="stat-panel">
 							<div class="stat-row">
 								<!-- Bordered, without right border, top aligned text -->

@@ -62,6 +62,7 @@ if($usergroup == 0){
 						<div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_parent?>*</label>
 					      <div class="col-sm-4">
+							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 							<select name="parent_id" id="multiselect-style">
 								<option value="0"><?php echo $lg_noparent?></option>
 					      	<?php
@@ -108,48 +109,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$("#multiselect-style").select2({
-		allowClear: false,
-		placeholder: "<?php echo $lg_category?>"
-	});
-	$('#tooltip a').tooltip();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=menumanager";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-				
-
-			}
-		})
-		return false;
-	});
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -236,6 +195,7 @@ init.push(function () {
 								<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo $lg_sortsubmenu?> - <?php echo $cmenu->menu_title?></span>
 							</div> <!-- / .panel-heading -->
 							<!-- Without vertical padding -->
+							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 							<div class="panel-body no-padding-vr" id="sortable-list">
 							<?php
 							   $tblm = new ElybinTable('elybin_menu');
@@ -302,79 +262,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$("#multiselect-style").select2({
-		allowClear: false,
-		placeholder: "<?php echo $lg_category?>"
-	});
-	$('#tooltip a').tooltip();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=menumanager";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-				
-
-			}
-		})
-		return false;
-	});
-
-	//shorable
-	$('#sortable-list').sortable({
-		update : function () {
-			var neworder = new Array();
-
-			$('#sortable-list .task span').each(function() {    	
-				//get the id
-				var id  = $(this).attr("id");
-				neworder.push(id);
-			});
-
-			$.ajax({
-				type: "POST",
-				url: "<?php echo $action?>",
-				data: "mod=menumanager&act=save&neworder=" + neworder,
-				success: function(data){
-					console.log(neworder);
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						//window.location.href="?mod=menumanager&act=edit&id=<?php echo $id?>";
-					}
-					else{
-						$.growl.warning({ title: '<?php echo $lg_error?>', message: data });
-					}
-				}
-			});
-		}
-	});
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -531,44 +418,7 @@ init.push(function () {
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
 				<!-- / Help modal -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck').tooltip();	
 
-
-	$('#sortable-list').sortable({
-		update : function () {
-			var neworder = new Array();
-
-			$('#sortable-list .task span').each(function() {    	
-				//get the id
-				var id  = $(this).attr("id");
-				neworder.push(id);
-			});
-
-			$.ajax({
-				type: "POST",
-				url: "<?php echo $action?>",
-				data: "mod=menumanager&act=save&neworder=" + neworder,
-				success: function(data){
-					console.log(data);
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						//window.location.href="?mod=menumanager";
-					}
-					else{
-						$.growl.warning({ title: '<?php echo $lg_error?>', message: data });
-					}
-				}
-			});
-		}
-	});
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 		}

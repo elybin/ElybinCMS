@@ -3,15 +3,9 @@
   include_once 'menu.php';
 ?>
 
-
-    <!-- Page Header -->
-    <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header intro-hide">
-    </header>
-
     <!-- Main Content -->
     <div class="container">
-		<div class="clearfix" style="margin-top:60px"></div>
+		<div class="clearfix" style="margin-top:90px"></div>
 		<!-- search bar -->
 		<div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center" id="contact-title">

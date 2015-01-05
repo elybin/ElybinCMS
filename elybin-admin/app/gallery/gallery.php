@@ -47,6 +47,7 @@ if($usergroup == 0){
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_album?>*</label>
 					      <div class="col-sm-4">
+							<style><?php include("assets/stylesheets/select2.css"); ?></style>
 					        <select name="album_id" id="select-style" required>
 					        <?php
 					      		$tbl = new ElybinTable('elybin_album');
@@ -58,7 +59,6 @@ if($usergroup == 0){
 					      	<?php
 					      		}
 					      	?>
-
 				            </select>
 						      </div>
 						  </div> <!-- / .form-group -->
@@ -96,43 +96,7 @@ if($usergroup == 0){
 		</div><!-- / .row -->
 <!-- Javascript -->
 <script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$("#select-style").select2();
-	$('#tooltip a').tooltip();	
 
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=gallery";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-});
 </script>
 <!-- / Javascript -->
 <?php
@@ -180,6 +144,7 @@ init.push(function () {
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_album?>*</label>
 					      <div class="col-sm-4">
+							<style><?php include("assets/stylesheets/select2.css"); ?></style>
 					        <select name="album_id" id="select-style">
 					        <?php
 					      		$tbl = new ElybinTable('elybin_album');
@@ -232,47 +197,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-	
-	init.push(function () {
-		$("#select-style").select2();
-		$('#tooltip a').tooltip();	
-		$('#date-pick').datepicker();
-		$("#date-input").mask("99/99/9999");
-
-		$().ajaxStart(function() {
-			$.growl({ title: "Loading", message: "Writing..." });
-			$('#form').hide();
-		}).ajaxStop(function() {
-			$.growl({ title: "Success", message: "Success" });
-		});
-
-		//ajax
-		$('#form').submit(function() {
-			$.ajax({
-				type: 'POST',
-				url: $(this).attr('action'),
-				data: $(this).serialize(),
-				success: function(data) {
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						window.location.href="?mod=gallery";
-					}
-					else if(data[0] == "error"){
-						$.growl.warning({ title: data[1], message: data[2] });
-					}
-					
-
-				}
-			})
-			return false;
-		});
-	});
-</script>
-<!-- / Javascript -->
 <?php
 		break;
 
@@ -515,19 +439,7 @@ init.push(function () {
 				</div> <!-- / .modal -->
 				<!-- / Help modal -->
 			</div><!-- / .col -->
-		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck, #tooltip-foto').tooltip();	
-});
-ElybinView();
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->		
+		</div><!-- / .row -->	
 <?php
 		break;
 		}

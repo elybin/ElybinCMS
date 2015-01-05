@@ -18,7 +18,7 @@ if(!isset($_SESSION['login'])){
 					<div class="col-sm-12">
 						<div class="panel widget-notifications" id="dashboard-notification">
 							<div class="panel-heading">
-								<span class="panel-title"><i class="panel-title-icon fa fa-fire"></i><?php echo $lg_notification?></span>
+								<span class="panel-title"><i class="panel-title-icon fa fa-bell"></i><?php echo $lg_notification?></span>
 							</div> <!-- / .panel-heading -->
 							<div class="panel-body padding-sm">
 								<div class="notifications-list">
@@ -28,7 +28,7 @@ if(!isset($_SESSION['login'])){
 										$no = 1;
 										foreach($notif as $lns){
 											// include custom lang if exist
-											//get current language
+											// get current language
 											$default_language = "en";
 											$tbo = new ElybinTable('elybin_options');
 											$clg = $tbo->SelectWhere('name','language','','')->current()->value;
@@ -53,10 +53,7 @@ if(!isset($_SESSION['login'])){
 											// decode value
 											if(json_decode($lns->value)){
 												$value = json_decode($lns->value);
-											}else{
-												exit('failed to decode json');
-											}
-											$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
+												$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
 									?>
 									<div class="notification">
 										<div class="notification-title text-danger"><?php echo strtoupper($lns->title)?></div>
@@ -66,6 +63,7 @@ if(!isset($_SESSION['login'])){
 									</div> <!-- / .notification -->
 									<?php
 										$no++;
+											}
 										}
 									?>
 								</div>

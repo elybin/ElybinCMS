@@ -65,7 +65,7 @@ if($usergroup == 0){
 										$notif_total = $tbns->GetRow('','');
 								?>
 
-								<span class="panel-title"><i class="panel-title-icon"></i>20 <?php echo $lg_of; ?> <?php echo $notif_total?> <?php echo $lg_lastestnotification?></span>
+								<span class="panel-title"><i class="panel-title-icon"></i><?php if($notif_total > 20){ echo "20"; }else{ echo $notif_total; } ?> <?php echo $lg_of; ?> <?php echo $notif_total?> <?php echo $lg_lastestnotification?></span>
 							</div> <!-- / .panel-heading -->
 							<div class="panel-body padding-sm">
 								<div class="notifications-list">
@@ -99,11 +99,7 @@ if($usergroup == 0){
 											// decode value
 											if(json_decode($lns->value)){
 												$value = json_decode($lns->value);
-											}else{
-												exit('failed to decode json');
-											}
-											
-											$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
+												$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
 									?>
 									<div class="notification"<?php echo $status?>>
 										<div class="notification-title text-danger"><?php echo strtoupper($lns->title)?></div>
@@ -112,6 +108,7 @@ if($usergroup == 0){
 										<div class="notification-icon fa <?php echo $lns->icon?> bg-<?php echo $lns->type?>"></div>
 									</div> <!-- / .notification -->
 									<?php
+											}
 										}
 									?>
 								</div>
@@ -153,49 +150,6 @@ if($usergroup == 0){
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
 				<!-- / Help modal -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck').tooltip();	
-
-
-	$('#sortable-list').sortable({
-		update : function () {
-			var neworder = new Array();
-
-			$('#sortable-list .task span').each(function() {    	
-				//get the id
-				var id  = $(this).attr("id");
-				neworder.push(id);
-			});
-
-			$.ajax({
-				type: "POST",
-				url: "<?php echo $action?>",
-				data: "mod=menumanager&act=save&neworder=" + neworder,
-				success: function(data){
-					console.log(data);
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						window.location.href="?mod=menumanager";
-					}
-					else{
-						$.growl.warning({ title: '<?php echo $lg_error?>', message: data });
-					}
-				}
-			});
-		}
-	});
-});
-
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 		}

@@ -8,11 +8,8 @@
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
 	header('location:../403.php');
 }else{
-//$modpath 	= "app/about/";
-//$action		= $modpath."proses.php";
 
 //internal info
 include_once('../elybin-core/elybin-version.php');
@@ -65,7 +62,7 @@ switch (@$_GET['act']) {
 							<?php if($usergroup > 0){  // if not have setting priv ?>
 							<p class="text-muted">v.<?php echo $ELYBIN_VERSION?>.<?php echo $ELYBIN_BUILD?> (<?php echo $ELYBIN_SIGNATURE?>) - <?php echo $ELYBIN_RELEASE?></p>
 							<?php }else{ ?>
-							<a href="http://elybin.com">www.elybin.com</a>
+							<a href="http://elybin.com" target="_blank">www.elybin.com</a>
 							<?php } ?>
 						</div>
 						<hr></hr>
@@ -73,8 +70,8 @@ switch (@$_GET['act']) {
 						<table class="table no-border">
 							<tbody>
 								<tr>
-									<td width="20%">CEO &amp; Founder</td>
-									<td>Khakim Assidiqi <a href="http://www.khakimassidiqi.com" target="_blank"> <i class="fa fa-external-link-square"></i></a></td>
+									<td width="20%">Founder</td>
+									<td>Khakim Assidiqi <a href="http://twitter.com/@11jt" target="_blank"> <i class="fa fa-external-link-square"></i></a></td>
 								</tr>
 								<tr>
 									<td width="20%">Started</td>
@@ -82,17 +79,17 @@ switch (@$_GET['act']) {
 								</tr>
 								<tr>
 									<td width="20%">Thanks</td>
-									<td>Allah SWT, Mom, Dad, Brother, Friends, Popoji, Formulasi, Corps Apps.</td>
+									<td>Allah SWT, Mom, Dad, Brother, Friends, Popoji, Formulasi, Corps Apps, Onsite, Klik Indonesia, Ict Host, You :).</td>
 								</tr>
 							</tbody>
 						</table>
 
-						<h5 class="text-light-gray text-semibold text-s" style="margin:20px 0 10px 0;">DEVELOPER</h5> 
+						<h5 class="text-light-gray text-semibold text-s" style="margin:20px 0 10px 0;">COMPONENT</h5> 
 						<table class="table no-border">
 							<tbody>
 								<tr>
-									<td>Layout &amp; Design</td>
-									<td>Bootstrap, Pixel Admin</td>
+									<td width="20%">Internal Component</td>
+									<td>Bootstrap, FontAwesome, jQuery UI, Morris.js, Summernote, Bs-Markdown, X-Editable, Minify, Google Maps API, Animate.css, pclzip.lib </td>
 								</tr>
 							</tbody>
 						</table>
@@ -100,17 +97,7 @@ switch (@$_GET['act']) {
 				</div><!-- / .panel -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck').tooltip();	
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->
+
 <?php
 		break;
 }

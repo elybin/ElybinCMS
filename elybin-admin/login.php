@@ -44,14 +44,14 @@ if(isset($_SESSION['login'])){
 				'user_account_forgetkey' => ''
 			);
 			$tbl->Update($d,'user_id',$cuser->user_id);
-
-			//$_SESSION['level'] = $cuser->level;
+			
+			// set session
 			$_SESSION['login'] = $rand;
 			$_SESSION['last_activity'] = time(); 
 			$_SESSION['loginfail'] = 0;
 			unset($_SESSION['loginfail']);
 
-			//url referer
+			// url referer
 			if(isset($_SESSION['ref'])){
 				$ref = urldecode($_SESSION['ref']);
 				header('location: '.$ref);

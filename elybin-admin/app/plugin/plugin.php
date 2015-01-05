@@ -48,7 +48,7 @@ if($usergroup == 0){
 					</div>
 					<div class="panel-body">
 					<?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
-					  <div class="note note-info"><?php echo $lg_getmorepluginhint?>&nbsp;<a href="http://plugin.elybin.com/" target="_blank">http://plugin.elybin.com/</a></div>
+					  <div class="note note-info"><?php echo $lg_getmorepluginhint?>&nbsp;<a href="http://store.elybin.com/" target="_blank">http://store.elybin.com/</a></div>
 					  <div class="form-group">
 					      <label class="col-sm-3 control-label"></label>
 					      <div class="col-sm-4">
@@ -83,46 +83,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=plugin&next=install&id="+data[3];
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 		case 'view':
@@ -240,44 +200,6 @@ init.push(function () {
 									</form>
 								</div>
 							</div>
-<!-- Javascript -->
-<script>
-init.push(function () {
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=plugin";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-});
-
-</script>
-<!-- / Javascript -->
 <?php
 	}
 			break;
@@ -441,25 +363,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();	
-});
-	
-ElybinView();
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-<?php
-	if($next == "install"){
-		echo '$(function() {$("#install").modal({remote: "?mod=plugin&act=install&id='.$id.'&clear=yes"});});';
-	}
-?>
-</script>
-<!-- / Javascript -->
-
 <?php
 
 		break;

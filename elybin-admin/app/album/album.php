@@ -55,6 +55,7 @@ if($usergroup == 0){
 					      <label class="col-sm-2 control-label"><?php echo $lg_date?>*</label>
 					      <div class="col-sm-4">
 					      	<div class="input-group date" id="date-pick">
+								<style><?php include("assets/stylesheets/datepicker.css"); ?></style>
 						      	<input type="text" name="date" class="form-control" placeholder="DD/MM/YYYY"  id="date-input" required/>
 						      	<span class="input-group-addon">
 									<i class="fa fa-calendar"></i>
@@ -87,45 +88,7 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-	init.push(function () {
-		$('#tooltip a').tooltip();	
-		$('#date-pick').datepicker();
-		$("#date-input").mask("99/99/9999");
 
-		$().ajaxStart(function() {
-			$.growl({ title: "Loading", message: "Writing..." });
-			$('#form').hide();
-		}).ajaxStop(function() {
-			$.growl({ title: "Success", message: "Success" });
-		});
-
-		//ajax
-		$('#form').submit(function() {
-			$.ajax({
-				type: 'POST',
-				url: $(this).attr('action'),
-				data: $(this).serialize(),
-				success: function(data) {
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						window.location.href="?mod=album";
-					}
-					else if(data[0] == "error"){
-						$.growl.warning({ title: data[1], message: data[2] });
-					}
-					
-
-				}
-			})
-			return false;
-		});
-	});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -168,6 +131,7 @@ if($usergroup == 0){
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_date?></label>
 					      <div class="col-sm-4">
+							<style><?php include("assets/stylesheets/datepicker.css"); ?></style>
 					      	<div class="input-group date" id="date-pick">
 					      		<?php
 					      			$date = $calbum->date; //yyyy-mm-dd
@@ -214,50 +178,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-	init.push(function () {
-		$('#tooltip a').tooltip();	
-		$('#date-pick').datepicker();
-		$("#date-input").mask("99/99/9999");
-		$('#switcher-style').switcher({
-			theme: 'square',
-			on_state_content: '<span class="fa fa-check"></span>',
-			off_state_content: '<span class="fa fa-times"></span>'
-		});
-
-		$().ajaxStart(function() {
-			$.growl({ title: "Loading", message: "Writing..." });
-			$('#form').hide();
-		}).ajaxStop(function() {
-			$.growl({ title: "Success", message: "Success" });
-		});
-
-		//ajax
-		$('#form').submit(function() {
-			$.ajax({
-				type: 'POST',
-				url: $(this).attr('action'),
-				data: $(this).serialize(),
-				success: function(data) {
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						window.location.href="?mod=album";
-					}
-					else if(data[0] == "error"){
-						$.growl.warning({ title: data[1], message: data[2] });
-					}
-					
-
-				}
-			})
-			return false;
-		});
-	});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -426,18 +346,7 @@ if($usergroup == 0){
 				</div> <!-- / .modal -->
 				<!-- / Help modal -->
 			</div><!-- / .col -->
-		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck, #tooltip-foto').tooltip();
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->		
+		</div><!-- / .row -->	
 <?php
 		break;
 		}	

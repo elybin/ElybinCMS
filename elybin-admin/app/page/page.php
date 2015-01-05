@@ -55,6 +55,19 @@ if($usergroup == 0){
 						<div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_content?></label>
 					      <div class="col-sm-10">
+<?php
+	// getting text_editor
+	$tblo = new ElybinTable('elybin_options');
+	$editor = $tblo->SelectWhere('name','text_editor','','')->current()->value;
+	if($editor=='summernote'){
+?>
+							<style><?php include("assets/stylesheets/summernote.css"); ?></style>
+<?php 
+	}
+	elseif($editor=='bs-markdown'){
+?>
+							<style><?php include("assets/stylesheets/markdown.css"); ?></style>
+<?php } ?>
 					      	<textarea name="content" cols="50" rows="5" class="form-control" id="text-editor" placeholder="<?php echo $lg_content?>"></textarea>
 					      </div>
 						</div> <!-- / .form-group -->
@@ -90,74 +103,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();
-
-	<?php
-		// getting text_editor
-		$tblo = new ElybinTable('elybin_options');
-		$editor_id = $tblo->SelectWhere('name','text_editor','','');
-		foreach ($editor_id as $op) {
-			$editor = $op->value;
-		}
-		if($editor=='summernote'){
-	?>
-	//summernote editor
-	if (! $('html').hasClass('ie8')) {
-		$('#text-editor').summernote({
-			height: 200,
-			tabsize: 2,
-			codemirror: {
-				theme: 'monokai'
-			}
-		});
-	}
-	<?php 
-		}
-		elseif($editor=='bs-markdown'){
-	?>
-	if (! $('html').hasClass('ie8')) {
-		$("#text-editor").markdown({ iconlibrary: 'fa' });
-	}
-	<?php } ?>
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=page";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -203,6 +148,19 @@ init.push(function () {
 						<div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_content?></label>
 					      <div class="col-sm-10">
+<?php
+	// getting text_editor
+	$tblo = new ElybinTable('elybin_options');
+	$editor = $tblo->SelectWhere('name','text_editor','','')->current()->value;
+	if($editor=='summernote'){
+?>
+							<style><?php include("assets/stylesheets/summernote.css"); ?></style>
+<?php 
+	}
+	elseif($editor=='bs-markdown'){
+?>
+							<style><?php include("assets/stylesheets/markdown.css"); ?></style>
+<?php } ?>
 					      	<textarea name="content" cols="50" rows="5" class="form-control" id="text-editor" placeholder="<?php echo $lg_content?>"><?php echo $content?></textarea>
 					      </div>
 						</div> <!-- / .form-group -->
@@ -254,78 +212,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#switcher-style2').switcher({
-		theme: 'square',
-		on_state_content: '<span class="fa fa-check"></span>',
-		off_state_content: '<span class="fa fa-times"></span>'
-	});
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();
-
-	<?php
-		// getting text_editor
-		$tblo = new ElybinTable('elybin_options');
-		$editor_id = $tblo->SelectWhere('name','text_editor','','');
-		foreach ($editor_id as $op) {
-			$editor = $op->value;
-		}
-		if($editor=='summernote'){
-	?>
-	//summernote editor
-	if (! $('html').hasClass('ie8')) {
-		$('#text-editor').summernote({
-			height: 200,
-			tabsize: 2,
-			codemirror: {
-				theme: 'monokai'
-			}
-		});
-	}
-	<?php 
-		}
-		elseif($editor=='bs-markdown'){
-	?>
-	if (! $('html').hasClass('ie8')) {
-		$("#text-editor").markdown({ iconlibrary: 'fa' });
-	}
-	<?php } ?>
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-		$('#form').hide();
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=page";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});});
-</script>
-<!-- / Javascript -->
-
 <?php
 			break;
 
@@ -497,17 +383,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();	
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->
 <?php
 		break;
 		}

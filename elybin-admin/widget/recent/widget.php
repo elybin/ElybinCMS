@@ -60,8 +60,13 @@ if(!isset($_SESSION['login'])){
 												if($cm->user_id > 0){
 													$tblu = new ElybinTable('elybin_users');
 													$getava = $tblu->SelectWhere('user_id', $cm->user_id, '', '');
-													$getava = $getava->current();
-													$avatar = $getava->avatar;
+													$avatar = $getava->current()->avatar;
+													if($avatar == "default/no-ava.png"){
+														$avatar = "default/medium-no-ava.png";
+													}else{
+														$avatar = "medium-$avatar";
+													}
+													
 												}else{
 													$avatar = "default/medium-no-ava.png";
 												}
@@ -83,15 +88,6 @@ if(!isset($_SESSION['login'])){
 													$purl = $getgallery->image; //
 													$ppart = "Foto"; //
 												}
-												elseif($cm->food_id > 0){
-													$tblp = new ElybinTable('elybin_foodmenu');
-													$getfood = $tblp->SelectWhere('food_id', $cm->food_id, '', '');
-													$getfood = $getfood->current();
-													$ptitle = $getfood->name; //
-													$purl = $getfood->image; //
-													$ppart = "Kuliner"; //
-												}
-
 												$content = html_entity_decode($cm->content);
 												$date = time_elapsed_string($cm->date." ".$cm->time);
 										?>
@@ -137,9 +133,13 @@ if(!isset($_SESSION['login'])){
 												//ambil avatar
 												$tblu = new ElybinTable('elybin_users');
 												$getava = $tblu->SelectWhere('user_id', $ps->author, '', '');
-												$getava = $getava->current();
-												$avatar = $getava->avatar;
-												$author = $getava->fullname;
+												$avatar = $getava->current()->avatar;
+												if($avatar == "default/no-ava.png"){
+													$avatar = "default/medium-no-ava.png";
+												}else{
+													$avatar = "medium-$avatar";
+												}
+												$author = $getava->current()->fullname;
 
 												//ambil category
 												$tblu = new ElybinTable('elybin_category');

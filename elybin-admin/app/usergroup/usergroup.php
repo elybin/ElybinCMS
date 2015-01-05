@@ -196,45 +196,6 @@ if($tbus->user_id != 1){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a').tooltip();
-	ElybinCheckAll();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-		$('#form').hide();
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=usergroup";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-				
-
-			}
-		})
-		return false;
-	});	
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -455,46 +416,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltipl').tooltip();
-	ElybinCheckAll();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-		$('#form').hide();
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=usergroup";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-				
-
-			}
-		})
-		return false;
-	});
-});
-</script>
-<!-- / Javascript -->
-
 <?php
 			break;
 
@@ -684,17 +605,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck, #tooltip-post').tooltip();
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- ./ Javascript -->
 <?php
 		break;
 		}

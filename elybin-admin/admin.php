@@ -30,7 +30,7 @@ $csession = $tbus->GetRow('session',$_SESSION['login']);
 if($csession == 0){
   session_destroy();
   unset($_SESSION['login']);
-  header('location:index.php');
+  header('location: index.php');
   exit;
 }
 
@@ -43,11 +43,14 @@ $tbop = new ElybinTable('elybin_options');
 $tbop = $tbop->SelectWhere('name','timezone','','')->current()->value;
 date_default_timezone_set($tbop);
 
+ob_start('minify_html');
 if(file_exists('./app/'.$mod.'/'.$mod.'.php')){
 	if(!isset($clear)){
+		   
 		theme_head();
 		include('./app/'.$mod.'/'.$mod.'.php');
 		theme_foot();
+		
 	}else{
 		include('./app/'.$mod.'/'.$mod.'.php');
 	}
@@ -56,5 +59,6 @@ if(file_exists('./app/'.$mod.'/'.$mod.'.php')){
 	include('./app/home/home.php');
 	theme_foot();
 }
+ob_end_flush(); // minify_html
 }
 ?>

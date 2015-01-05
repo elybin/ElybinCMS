@@ -172,7 +172,8 @@ if(empty($_SESSION['login'])){
 		$category = $v->sql($_POST['category_id']);
 		$content = htmlspecialchars($_POST['content'],ENT_QUOTES);
 		$seotitle =  seo_title($title);
-		$date = now();
+		$date = date("Y-m-d");
+		$time = date("H:i:s");
 
 		//get current user
 		$getu = new ElybinTable("elybin_users");

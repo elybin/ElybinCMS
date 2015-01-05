@@ -105,9 +105,15 @@ if(isset($subtitle)){
 
 ?>
 <!DOCTYPE html>
-<!--[if IE 8]>         <html class="ie8"> <![endif]-->
-<!--[if IE 9]>         <html class="ie9 gt-ie8"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="gt-ie8 gt-ie9 not-ie"> <!--<![endif]-->
+<!--[if IE 8]>         
+	<html class="ie8"> 
+<![endif]-->
+<!--[if IE 9]>         
+	<html class="ie9 gt-ie8"> 
+<![endif]-->
+<!--[if gt IE 9]>--> 
+	<html class="gt-ie8 gt-ie9 not-ie"> 
+<!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -115,38 +121,41 @@ if(isset($subtitle)){
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	
 	<!-- Favicons -->
-    <link rel="icon" href="assets/images/pixel-admin/main-navbar-logo.png" />
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" />
 	
 	<!-- Open Sans font from Google CDN -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> 
+	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->	
 
 	<!-- Pixel Admin's stylesheets -->
-	<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<!--<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+	
+	<link href="assets/stylesheets/primary.css" rel="stylesheet" type="text/css">-->
+	<!--
 	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/rtl.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/themes.min.css" rel="stylesheet" type="text/css">
-
+	<link href="assets/stylesheets/<?php echo $admin_theme?>.min.css" rel="stylesheet" type="text/css">-->
+	<link href="assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css">
+	<!--<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/ui.css" rel="stylesheet" type="text/css">-->
+	
+	<link href="min/?f=assets/stylesheets/bootstrap.min.css,assets/stylesheets/pixel-admin.min.css,assets/stylesheets/<?php echo $admin_theme?>.css,assets/stylesheets/primary.min.css,assets/stylesheets/widgets.min.css,assets/stylesheets/ui.css" rel="stylesheet" type="text/css">
+	
+	<!--<link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/rtl.min.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/themes.min.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/table.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/minicolors.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/datepicker.css" rel="stylesheet" type="text/css">-->
+	<!--<link href="assets/stylesheets/select2.css" rel="stylesheet" type="text/css">-->
+	
 	<!--[if lt IE 9]>
 		<script src="assets/javascripts/ie.min.js"></script>
 	<![endif]-->
 
 </head>
 <body class="theme-<?php echo $admin_theme; ?> main-menu-animated main-navbar-fixed">
-
-<script src="assets/javascripts/elybin-function.php"></script>
-<script src="assets/javascripts/jquery.min.js"></script>
-<script>
-var init = [];
-</script>
+<script>var init = [];</script>
 <div id="main-wrapper">
 
-
-<!-- 2. $MAIN_NAVIGATION ===========================================================================
-
-	Main navigation
--->
 	<div id="main-navbar" class="navbar navbar-inverse" role="navigation">
 		<!-- Main menu toggle -->
 		<button type="button" id="main-menu-toggle"><i class="navbar-icon fa fa-bars icon"></i><span class="hide-menu-text"><?php echo strtoupper($lg_hidemenu)?></span></button>
@@ -157,7 +166,7 @@ var init = [];
 
 				<!-- Logo -->
 				<a href="admin.php?mod=home" class="navbar-brand">
-					<div><img alt="Pixel Admin" src="assets/images/pixel-admin/main-navbar-logo.png"></div>
+					<div><img alt="Elybin CMS" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg=="></div>
 					Elybin<em><strong>CMS</strong></em>
 				</a>
 
@@ -214,19 +223,6 @@ var init = [];
 						<ul class="nav navbar-nav pull-right right-navbar-nav">
 
 
-<!-- 3. $NAVBAR_ICON_BUTTONS =======================================================================
-
-							Navbar Icon Buttons
-
-							NOTE: .nav-icon-btn triggers a dropdown menu on desktop screens only. On small screens .nav-icon-btn acts like a hyperlink.
-
-							Classes:
-							* 'nav-icon-btn-info'
-							* 'nav-icon-btn-success'
-							* 'nav-icon-btn-warning'
-							* 'nav-icon-btn-danger' 
--->	
-
 							<?php
 								// show if have privilage
 								if($privsetting == 1){
@@ -238,12 +234,16 @@ var init = [];
 									<?php
 										$avatar = $tblu->avatar;
 
-										if(file_exists("../elybin-file/avatar/medium-".$avatar)){
-											$avatar = "medium-".$avatar;
+										if($avatar == "default/no-ava.png"){
+											$avatar = "../elybin-file/avatar/default/medium-no-ava.png";
 										}else{
-											$avatar = $avatar;
+											if(file_exists("../elybin-file/avatar/medium-".$avatar)){
+												$avatar = "medium-".$avatar;
+											}else{
+												$avatar = $avatar;
+											}
+											$avatar = "../elybin-file/avatar/$avatar";
 										}
-										$avatar = "../elybin-file/avatar/".$avatar;
 									?><img src="<?php echo $avatar?>" alt="<?php echo $lg_thumbnail?>">
 									<span><?php echo $tblu->fullname?></span>
 								</a>
@@ -549,7 +549,7 @@ include('./lang/main.php');
 ?>
 		<hr class="no-grid-gutter-h"/>
 		<div class="text-right text-light-gray">
-			proccesed <?php echo round(((microtime()-START_EXEC)/60),5)?> seconds - <a href="http://www.elybin.com/" alt="Elybin Official">Elybin CMS</a> &copy; 2014
+			proccesed <?php echo round(((microtime()-START_EXEC)/60),5)?> seconds - <a href="http://www.elybin.com/" title="Elybin Official">Elybin CMS</a> &copy; 2014
 		</div>
 	</div> <!-- / #content-wrapper -->
 	<div id="main-menu-bg"></div>
@@ -557,7 +557,7 @@ include('./lang/main.php');
 
 	<!-- Logout Modal -->
 	<div id="logout-modal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-		<div class="modal-dialog modal-sm">
+		<div class="modal-dialog modal-sm animated bounceIn">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
@@ -572,42 +572,45 @@ include('./lang/main.php');
 		</div> <!-- / .modal-dialog -->
 	</div> <!-- / .modal -->
 	<!-- / Logout Modal -->
+<!-- FOR ONLINE HOSTING
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+-->
 
-<!-- Get jQuery from Google CDN -->
-<!--[if !IE]> -->
-	<script type="text/javascript"> window.jQuery || document.write('<script src="assets/javascripts/jquery.min.js">'+"<"+"/script>"); </script>
-<!-- <![endif]-->
-<!--[if lte IE 9]>
-	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">'+"<"+"/script>"); </script>
-<![endif]-->
-
-<script src="assets/javascripts/jquery.transit.js"></script>
-
-<!-- Pixel Admin's javascripts -->
+<!-- FOR LOCALHOST -->
+<!--<script src="assets/javascripts/jquery.min.js"></script>
 <script src="assets/javascripts/bootstrap.min.js"></script>
-<script src="assets/javascripts/pixel-admin.min.js"></script>
-<script type="text/javascript">
-	init.push(function () {
-		// Javascript code here
-		$("#notif .notification-description i").hide();
-		$('#notificon').click(function(){
-			$('#notificon a .label').html("");
-				$.ajax({
-					type: 'POST',
-					url: "app/notification/proses.php",
-					data: "mod=notification&act=read",
-					success: function(data) {
-						if(data=="ok"){
-							$("#notif").css("background","#efefef");
-						}
-					}
-				})
-		});
-	});
-	window.PixelAdmin.start(init);
+<script src="assets/javascripts/pixel-admin.min.js"></script>-->
+
+
+<!-- For Lower than IE 9 -->
+<!--[if lte IE 9]>
+ 	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">'+"<"+"/script>"); </script>
+<![endif]-->
+<!-- For all browser except IE -->
+<!--[if !IE]> -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">if (!window.jQuery) { document.write('<script src="min/?f=assets/javascripts/jquery.min.js"><\/script>'); }</script>
+	<script src="min/?b=assets/javascripts&amp;f=bootstrap.min.js,pixel-admin.min.js,elybin-function.min.js" type="text/javascript"></script>
+<!-- <![endif]-->
+
+
+<script>
+// load
+init.push(function () {
+	notif();
+});
+window.PixelAdmin.start(init);
 </script>
-
-
+<?php  
+// check if js.php exist
+$mod = @$_GET['mod'];
+if(file_exists('./app/'.$mod.'/js.php')){
+	include('./app/'.$mod.'/js.php');
+}else{
+	include('./app/home/js.php');
+}
+?>
 </body>
 </html>
 <?php } ?>

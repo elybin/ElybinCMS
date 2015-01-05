@@ -140,21 +140,15 @@ if(isset($_SESSION['login'])){
 				// done 
 				$tblu->Update($data, 'user_account_forgetkey', $forgotkey);
 				
-
-				//insert to notification
-				$tbln = new ElybinTable("elybin_notification");
-				$lnotif = $tbln->SelectWhere('title','user','notif_id','DESC');
-				$lnotif = $lnotif->current();
-				$data = array(
-					'notif_code'=>'user_password_reset',
-					'title'=>'user',
-					'value'=>"<strong>".$cuser->fullname."</strong> $lg_successresettheirpassword.",
-					'date'=>now(),
-					'time'=>date("H:i:s"),
-					'type'=>'success',
-					'icon'=>'fa-user'
+				// push notif
+				$dpn = array(
+					'code' => 'user_password_reset',
+					'title' => '$lg_user',
+					'icon' => 'fa-key',
+					'type' => 'success',
+					'content' => '[{"author":"Anonymous", "content":"'.$cuser->fullname.'", "single":"$lg_successresettheirpassword","more":"$lg_successresetpassword"}]'
 				);
-				$tbln->Insert($data);
+				pushnotif($dpn);
 
 				header('location:index.php?act=resetsuccess');
 				exit;
@@ -188,26 +182,33 @@ if(isset($_SESSION['login'])){
 		header('location:index.php?act=urlexpired');
 		exit;
 	}
+// minify html
+ob_start('minify_html');
 ?>
 <!DOCTYPE html>
-<!--[if IE 8]>         <html class="ie8"> <![endif]-->
-<!--[if IE 9]>         <html class="ie9 gt-ie8"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="gt-ie8 gt-ie9 not-ie"> <!--<![endif]-->
+<!--[if IE 8]>         
+	<html class="ie8"> 
+<![endif]-->
+<!--[if IE 9]>         
+	<html class="ie9 gt-ie8"> 
+<![endif]-->
+<!--[if gt IE 9]>--> 
+	<html class="gt-ie8 gt-ie9 not-ie"> 
+<!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>ElybinCMS - <?php echo $lg_resetpassword?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
-	<!-- Open Sans font from Google CDN -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	
+	<!-- Favicons -->
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" />
 
 	<!-- Pixel Admin's stylesheets -->
-	<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/rtl.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/themes.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css">
+	<link href="min/?b=assets/stylesheets&amp;f=bootstrap.min.css,pixel-admin.min.css,primary.min.css,pages.min.css,default.min.css" rel="stylesheet" type="text/css">
+
+	<meta name="robots" content="nofollow">
 
 	<!--[if lt IE 9]>
 		<script src="assets/javascripts/ie.min.js"></script>
@@ -215,28 +216,12 @@ if(isset($_SESSION['login'])){
 
 </head>
 
-
-<!-- 1. $BODY ======================================================================================
-	
-	Body
-
-	Classes:
-	* 'theme-{THEME NAME}'
-	* 'right-to-left'     - Sets text direction to right-to-left
--->
 <body class="theme-default page-signin-alt">
-<!-- Demo script --> <script src="assets/demo/demo.js"></script> <!-- / Demo script -->
 
 
-
-<!-- 2. $MAIN_NAVIGATION ===========================================================================
-
-	Main navigation
--->
 	<div class="signin-header">
-		<a href="" class="logo">
-			<div class="demo-logo bg-primary"><img src="assets/demo/logo-big.png" alt="" style="margin-top: -4px;"></div>&nbsp;
-			<strong>Elybin</strong>CMS
+		<a href="index.php" class="logo">
+			<div class="demo-logo bg-primary" style="background-color: rgba(0,0,0,0) !important"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" alt="" style="width: 30px"></div>&nbsp;<strong>Elybin</strong>CMS
 		</a> <!-- / .logo -->
 	</div> <!-- / .header -->
 	<div id="content-wrapper" style="padding-top: 19px !important;"></div>
@@ -270,24 +255,21 @@ if(isset($_SESSION['login'])){
 		<div class="header"><?php echo $lg_followus?></div>
 		<a href="http://facebook.com/elybincms" class="btn btn-lg btn-facebook rounded" target="_blank"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;
 		<a href="https://twitter.com/@elybincms" class="btn btn-lg btn-info rounded" target="_blank"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
-		<a href="https://google/+elybincms" class="btn btn-lg btn-danger rounded" target="_blank"><i class="fa fa-google-plus"></i></a>
+		<a href="https://plus.google.com/+Elybin" class="btn btn-lg btn-danger rounded" target="_blank"><i class="fa fa-google-plus"></i></a>
 	</div>
 
-<!-- Get jQuery from Google CDN -->
-<!--[if !IE]> -->
-<!--	<script type="text/javascript"> window.jQuery || document.write('<script src="../ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js">'+"<"+"/script>"); </script> -->
-<!-- <![endif]-->
+<!-- For Lower than IE 9 -->
 <!--[if lte IE 9]>
-	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">'+"<"+"/script>"); </script>
+ 	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">'+"<"+"/script>"); </script>
 <![endif]-->
+<!-- For all browser except IE -->
+<!--[if !IE]> -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">if (!window.jQuery) { document.write('<script src="min/?f=assets/javascripts/jquery.min.js"><\/script>'); }</script>
+	<script src="min/?b=assets/javascripts&amp;f=bootstrap.min.js,pixel-admin.min.js" type="text/javascript"></script>
+<!-- <![endif]-->
 
-
-<!-- Pixel Admin's javascripts -->
-<script src="assets/javascripts/jquery.min.js"></script>
-<script src="assets/javascripts/bootstrap.min.js"></script>
-<script src="assets/javascripts/pixel-admin.min.js"></script>
-
-<script>
+<script><?php ob_start('minify_js'); // minify js ?>
 $(document).ready(function() {  
 <?php
 	if(!empty($msg)){
@@ -301,11 +283,12 @@ $(document).ready(function() {
 	}, 800);
 <?php }?>
 	window.PixelAdmin.start();
-});
+});<?php ob_end_flush(); // minify_js ?>
 </script>
 </body>
 </html>
 <?php
+ob_end_flush(); // minify_html
 	}
 }
 ?>

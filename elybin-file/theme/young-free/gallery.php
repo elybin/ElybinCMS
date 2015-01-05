@@ -23,17 +23,10 @@ include_once 'menu.php';
  
 $callfoto = $tbgl->GetRow('', '');
 ?>
-
-
-    <!-- Page Header -->
-    <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header intro-hide">
-    </header>
-
     <!-- Main Content -->
     <div class="container">
 			
-		<div class="clearfix" style="margin-top:60px"></div>
+		<div class="clearfix" style="margin-top:90px"></div>
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">PHOTOS</h2>

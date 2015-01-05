@@ -77,46 +77,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();	
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=media";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 
@@ -291,17 +251,6 @@ init.push(function () {
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck').tooltip();
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- / Javascript -->
 <?php
 		break;
 		}

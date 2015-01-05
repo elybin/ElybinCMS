@@ -86,6 +86,7 @@
 						<span class="slash"></span> 
 						<span class="month"><?php echo $date[1]?></span>
 						<span class="month-prefix"><?php echo $monthpfx?></span>
+						<span class="fa fa-calendar"></span>
 					</div>
 				</div>
 				<div class="col-md-10">
@@ -95,7 +96,7 @@
 								<?php echo $p->title?>
 							</h2>
 						 </a>	
-						<p class="post-meta">Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date.$p->time)?></span></p>
+						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date.$p->time)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
 						<?php
 							if($p->image !== ''){
 						?>

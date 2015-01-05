@@ -8,7 +8,6 @@
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
 	header('location:../403.php');
 }else{
 $modpath 	= "app/category/";
@@ -414,17 +413,6 @@ if($usergroup == 0){
 				<!-- / Help modal -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#tooltip a, #tooltip-ck, #tooltip-post').tooltip();
-});
-ElybinPager();
-ElybinSearch();
-ElybinCheckAll();
-countDelData();
-</script>
-<!-- ./ Javascript -->
 <?php
 		break;
 

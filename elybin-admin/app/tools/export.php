@@ -45,7 +45,7 @@ if($tbus->user_id != 1){
 	//cycle through
 	foreach($tables as $table){
 		$result = mysql_query('SELECT * FROM '.$table);
-		$num_fields = mysql_num_fields($result);
+		$num_fields = @mysql_num_fields($result);
 		
 		$return.= 'DROP TABLE IF EXISTS '.'`'.$table.'`'.';';
 		$row2 = mysql_fetch_row(mysql_query('SHOW CREATE TABLE `'.$table.'`'));

@@ -83,7 +83,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $copost; ?></span>
+									<span class="text-slg"><?php echo $copost; ?></span>
 									<br><small><small><?php echo $lg_published ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -109,7 +109,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $comedia; ?></span>
+									<span class="text-slg"><?php echo $comedia; ?></span>
 									<br><small><small><?php echo $lg_stored ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -136,7 +136,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $cocomment; ?></span>
+									<span class="text-slg"><?php echo $cocomment; ?></span>
 									<br><small><small>Writed</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -164,7 +164,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $cocontact; ?></span>
+									<span class="text-slg"><?php echo $cocontact; ?></span>
 									<br><small><small>Saved</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -191,7 +191,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $coalbum; ?></span>
+									<span class="text-slg"><?php echo $coalbum; ?></span>
 									<br><small><small>Created</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -218,7 +218,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $couser; ?></span>
+									<span class="text-slg"><?php echo $couser; ?></span>
 									<br><small><small>Registred</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -245,7 +245,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $cocategory; ?></span>
+									<span class="text-slg"><?php echo $cocategory; ?></span>
 									<br><small><small>Saved</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -272,7 +272,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $cotag; ?></span>
+									<span class="text-slg"><?php echo $cotag; ?></span>
 									<br><small><small>Used</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -299,7 +299,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $cogallery; ?></span>
+									<span class="text-slg"><?php echo $cogallery; ?></span>
 									<br><small><small>Stored</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -326,7 +326,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $copage; ?></span>
+									<span class="text-slg"><?php echo $copage; ?></span>
 									<br><small><small>Writed</small></small>
 								</div>
 							</div> <!-- /.stat-row -->
@@ -351,7 +351,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg" id="post-count-panel"><?php echo $lg_yes; ?></span>
+									<span class="text-slg"><?php echo $lg_yes; ?></span>
 									<br><small><small><?php echo $lg_fullcontrol; ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->

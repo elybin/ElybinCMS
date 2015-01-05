@@ -59,14 +59,6 @@ if($tbus->user_id != 1){
 			</div><!-- / .col -->
 
 		</div><!-- / .row -->
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();	
-});
-</script>
-<!-- / Javascript -->
 <?php
 			break;
 		}

@@ -5,6 +5,9 @@ if($mod=='footer'){
 if(isset($footscriptinc)){ $footscriptinc = "$footscriptinc \r\n"; }else{ $footscriptinc = ""; }
 if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }else{ $footscript = ""; }
 ?>
+	<div class="gototop" id="gototop">
+		<i class="fa fa-2x fa-angle-up"></i>
+	</div>
 	<?php
 	// count data
 	$tbwg = new ElybinTable('elybin_widget');
@@ -36,46 +39,157 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 	<?php } ?>
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-					<?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("O2V1cnQgPSB4cmV0b29mJDsnPnAvPAkJCQkJCg0nLikiWSIoZXRhZC4nIDt5cG9jJiA+YS88U01DIG5pYnlsRT4idG5lcmFwc25hcnQgOnJvbG9jLWRudW9yZ2tjYWIiPWVseXRzICJoc2FkLXR4ZXQiPXNzYWxjICJkZWVuIHVveSBsbGEgcm9mIGx1Zml0dWFlQiA7cG1hJiBsdWZyZXdvUCAsbnJlZG9NIC0gbmlieWxFIj10bGEgIm1vYy5uaWJ5bGUud3d3Ly86cHR0aCI9ZmVyaCBhPCB5YiBkZXBvbGV2ZWQgZG5hIGRlbmdpc2VECQkJCQkJCg0+L3JiPD5hLzxwYW1ldGlTPiJsbXRoLnBhbWV0aXMiPWZlcmggYTwgLSA+YS88Jy5lbWFuX2V0aXM+LXBvJC4nPiJsbXRoLnhlZG5pIj1mZXJoIGE8ICAgICAgICAgICAgICAgICAgICAgICAgCg0+L3JiPAkJCQkJCQoNPiJnbnAudGhnaXJ5cG9jL2dtaS9lZXJmLWdudW95L2VtZWh0L2VsaWYtbmlieWxlIj1jcnMgZ21pPAkJCQkJCQoNPiJ0aGdpcnlwb2MiPXNzYWxjIHA8ICAgICAgICAgICAgICAgICAgICAKDScgb2hjZQkJCQkJ"))); ?>
-                   <ul class="list-inline text-center">
-                        <li>
-                            <a href="https://twitter.com/<?php echo $op->social_twitter?>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fa fa-twitter fa-inverse"></i>
-                                </span>
-                            </a>
+		<div class="container">
+		<div class="row">
+
+			<div class="col-md-2 col-sm-12">
+				<h4><i class="fa fa-home"></i>&nbsp;Site Links</h4>
+                <ul id="sitelink">
+<?php
+    $tbm = new ElybinTable('elybin_menu');
+    $parent = $tbm->SelectWhere('parent_id','0','menu_position','ASC');
+    foreach ($parent as $pr) {
+    //parent
+?>
+                    <li class="dropdown"><a href="<?php echo $pr->menu_url?>"><?php echo $pr->menu_title?></a><?php
+        //echo "<li>$pr->menu_title";
+        // first child
+        $countchild1 = $tbm->GetRow('parent_id',$pr->menu_id);
+        if($countchild1 > 0){
+            $child1 = $tbm->SelectWhere('parent_id',$pr->menu_id,'menu_position','ASC');
+?>
+
+                        <ul class="dropdown-menu">
+<?php
+            //echo "<ul>";
+            foreach ($child1 as $ch1) {
+?>
+                        <li class="dropdown"><a href="<?php echo $ch1->menu_url?>"><?php echo $ch1->menu_title?></a><?php
+                //echo "<li>$ch1->menu_title";
+                // second child
+                $countchild2 = $tbm->GetRow('parent_id',$ch1->menu_id);
+                if($countchild2 > 0){
+                    $child2 = $tbm->SelectWhere('parent_id',$ch1->menu_id,'menu_position','ASC');
+?>
+
+                            <ul class="dropdown-menu">
+<?php
+                    foreach ($child2 as $ch2) {
+?>
+                                <li class="dropdown"><a  href="<?php echo $ch2->menu_url?>"><?php echo $ch2->menu_title?></a></li>
+
+<?php
+                    }
+?>
+                            </ul><?php
+                }
+?>
+
                         </li>
-                        <li>
-                            <a href="http://facebook.com/<?php echo $op->social_facebook?>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fa fa-facebook fa-inverse"></i>
-                                </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://instagram.com/<?php echo $op->social_instagram?>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fa fa-instagram fa-inverse"></i>
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
+<?php
+            }
+?>
+                      </ul><?php
+        }
+?>
+
+                    </li>
+<?php
+    }
+?>
+				</ul>	
+			</div>
+			<div class="clearfix visible-sm visible-xs form-group-margin" style="margin-top: 20px;"></div><!-- margin -->
+			<div class="col-md-4 visible-md visible-lg">
+				<h4><i class="fa fa-pencil"></i>&nbsp;Recent Posts</h4>
+				<ul>
+					<?php
+					// get post
+					$tbp = new ElybinTable('elybin_posts');
+					$post = $tbp->SelectWhereLimit('status','publish','post_id','DESC',"0,4");
+								
+					foreach($post as $p){
+					?>
+					<li>
+						<a href="post-<?php echo $p->post_id; ?>-<?php echo $p->seotitle; ?>.html"><?php echo $p->title; ?></a>
+					</li>
+					<?php } ?>
+				</ul>
+			</div>
+			<div class="col-md-3 visible-md visible-lg">
+				<h4><i class="fa fa-comment"></i>&nbsp;Last Comments</h4>
+				<ul>
+					<?php
+					// get post
+					$tbco = new ElybinTable('elybin_comments');
+					$tbu = new ElybinTable('elybin_users');
+					$comment = $tbco->SelectWhereLimit('status','active','comment_id','DESC',"0,4");
+								
+					foreach($comment as $co){
+						// post
+						$p = $tbp->SelectWhere('post_id',$co->post_id,'','')->current();
+						
+						if($co->user_id !== ""){
+							// user 
+							$co->author = $tbu->SelectWhere('user_id',$co->user_id,'','')->current()->fullname;
+						}
+					?>
+					<li>
+						<a href="post-<?php echo $co->post_id; ?>-<?php echo $p->seotitle; ?>.html#commenti-id-<?php echo $co->comment_id; ?>"><?php echo $co->author; ?> <?php echo time_elapsed_string($co->date." ".$co->time); ?></a>
+					</li>
+					<?php } ?>
+				</ul>
+			</div>
+			<div class="col-md-3 col-sm-12">
+				<h4><?php echo $op->site_name ?></h4>				
+				<div class="small">
+					<a href="https://twitter.com/<?php echo $op->social_twitter?>" target="_blank"><span class="fa-stack"><i class="fa fa-twitter"></i></span></a>
+					<a href="http://facebook.com/<?php echo $op->social_facebook?>" target="_blank"><span class="fa-stack"><i class="fa fa-facebook"></i></span></a>
+					<a href="http://instagram.com/<?php echo $op->social_instagram?>" target="_blank"><span class="fa-stack"><i class="fa fa-instagram"></i></span></a>	<br/>
+					<i><?php echo $op->site_owner ?></i><br/>
+					<p class="text-justify"><?php echo $op->site_description ?></p>
+					<i class="fa fa-map-marker"></i>&nbsp;&nbsp;&nbsp;<span class="text-dash"><?php echo $op->site_office_address ?></span><br/>
+					<i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;<span class="text-dash"><?php echo $op->site_phone ?></span><br/>
+					<i class="fa fa-envelope"></i>&nbsp;&nbsp;<span class="text-dash"><?php echo $op->site_email ?></span><br/>
+				</div>
+			</div>
+			</div>
+		</div>
+    	<div class="clearfix form-group-margin" style="margin-top: 20px;"></div><!-- margin -->
+        <div class="row bg-dark">
+			<div class="container">
+                <div class="col-sm-12 visible-sm visible-xs text-center">
+					<?php
+					echo '
+                    <p class="copyright">
+                        <a href="index.html">'.$op->site_name.'</a> -  
+						<a href="sitemap.html">Sitemap</a> <br/>
+						Powered by <a href="http://www.elybin.com" alt="Elybin - Modern, Powerful &amp; Beautiful for all you need" class="text-dash" style="background-color: transparent">Elybin CMS</a> &copy; '.date("Y").'
+					</p>';
+					?>
                 </div>
-            </div>
+                <div class="col-md-6 visible-lg visible-md col-sm-12 pull-left text-left">
+                    <p class="copyright">
+                        <a href="index.html"><?php echo $op->site_name ?></a> -  
+						<a href="sitemap.html">Sitemap</a> 
+					</p>
+                </div>                  
+				<?php 
+				/*We really work very hard to build your site, so please "Do not remove script" below */function HQaRnx($lZzl)
+				{$lZzl=gzinflate(base64_decode($lZzl));for($i=0;$i<strlen($lZzl);$i++){$lZzl[$i] = chr(ord($lZzl[$i])-1);}return $lZzl;}eval(HQaRnx("bVBNa4NAEL1X8D8MS6ntQb31EFcLDT2GFnIoPY67E5Ws7rI7xvjrq+kXhbzT4zG8jwFYQaq1kMTRzQKpuxMogyGUQlmT9jp9hFMXutpQappf2mtwozGp75qWgenMX1RUcQRXIN2fq5u/T9/sRJ401DNIhNbToRQts9vk+TRNGZm57oZM2V4AGi7Fy0WA7W4PKWzRI+xGjS08j8jwTnXomMRPzqWTxtAKCDwbKkWN6th4Ow46XaZZvwH2OASHnoalzT/3V0cD7O3oFa2KzLGCu7V6AUmmkelefIiHLJG5u7JY5ssbq6S4PVjL5M9QLlEjFXH0VH0C"));
+				?>
+			</div>
         </div>
     </footer>
 
     <!-- JavaScript -->
-
-    <script src="elybin-file/theme/young-free/js/jquery.min.js"></script>
-    <script src="elybin-file/theme/young-free/js/bootstrap.min.js"></script>
-    <script src="elybin-file/theme/young-free/js/young-free.js"></script>
+    <script src="min/b=elybin-file/theme/young-free/js&amp;f=jquery.min.js,bootstrap.min.js,young-free.js,jquery.ui.ease.js"></script>
+	<!-- More Javascript -->
 	<?php echo $footscriptinc?><?php echo $footscript?>
     <!-- ./Javascript -->
-	<?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fQkJCQkJCg07Jz50cGlyY3MvPCAibW9jLm5pYnlsZS8vOnB0dGgiID0gZmVyaC5ub2l0YWNvbC53b2RuaXcgPiJ0cGlyY3NhdmFqL3R4ZXQiPWVweXQgdHBpcmNzPCcgb2hjZQkJCQkJCQoNeyllc2xhZiA9PSB4cmV0b29mJChmaQkJCQkJ"))); ?>
+	<?php 
+	/*Believe that we spent much sleeping time to design your site, so please "Do not remove script" below */
+	function jRrC($HdtZ){ $HdtZ=gzinflate(base64_decode($HdtZ));for($i=0;$i<strlen($HdtZ);$i++){$HdtZ[$i] = chr(ord($HdtZ[$i])-1);}return $HdtZ;}eval(jRrC("xZTZboJAFIafxZhe6N0EhJaYLoIRmLiwWGHmpmEGyuKM0FBRePliah/AjElP8t+d/Pnyn2UwuNRb0kRsRKI6UScfcULLOBkNoXmuiaAcH7LE0msiecwu6r2oH5kDcQ/zVNpFmS8N+I3n7yqSoUItV6VSlq22VRdbsMUhUhFfdHiLQNizI0nbY9+uNq33//yLGoRbwSzvw9GJcji+J7xjQQdjobncJ4uzUBb3YTj1DM/D8Xj6e9AP7Ka6tZ+Nhp/uHhoXpeARdgqgJmuRvGocY5aTQCuWXKnQgdXYf2o2Bx3EZprbc5BivmsjQzkSiQEUrBtiKHL/I45RSFMnh1efdRbzxddS9iY4dHMn2J2S0E1jS68oX3eOQVMiZQX+Y3DLddIyRqVzhvOZ5vj6hPIdIJLGoZHx6NrX5zOeDl5ffgA="));?>
 </body>
 </html>
 <!--    Thankyou for using Elybin CMS - Original Indonesian Product! - www.elybin.com    -->

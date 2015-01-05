@@ -1,0 +1,713 @@
+
+.theme-adminflare{
+    background:#f4f4f4 url(../images/themes/adminflare/body-bg.png)
+}
+.theme-adminflare .page-header{
+    background:#ececec;
+    background:rgba(0,0,0,.03);
+    -webkit-box-shadow:0 1px 0 rgba(255,255,255,.5);
+    box-shadow:0 1px 0 rgba(255,255,255,.5)
+}
+.theme-adminflare .bordered,.theme-adminflare .page-header,.theme-adminflare .panel,.theme-adminflare .table,.theme-adminflare hr{
+    border-color:#d6d6d6
+}
+.theme-adminflare .bordered[class*=bg-],.theme-adminflare [class*=bg-] .border-t{
+    border-color:#fff;
+    border-color:rgba(0,0,0,.2)
+}
+.theme-adminflare .panel.panel-transparent>.panel-heading{
+    border-bottom-color:#d6d6d6!important
+}
+.theme-adminflare .breadcrumb-page{
+    background:#ececec;
+    background:rgba(0,0,0,.03);
+    border-bottom:1px solid #d6d6d6;
+    padding-bottom:6px;
+    padding-top:6px;
+    -webkit-box-shadow:0 1px 0 rgba(255,255,255,.5);
+    box-shadow:0 1px 0 rgba(255,255,255,.5)
+}
+.gt-ie9 .theme-adminflare #main-navbar,.gt-ie9 .theme-adminflare #main-navbar .navbar-header{
+    background-image:-webkit-linear-gradient(top,#52aded 0,#418ce4 100%);
+    background-image:linear-gradient(to bottom,#52aded 0,#418ce4 100%);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff52aded', endColorstr='#ff418ce4', GradientType=0)
+}
+.ie8 .theme-adminflare #main-navbar,.ie8 .theme-adminflare #main-navbar .navbar-header,.ie9 .theme-adminflare #main-navbar,.ie9 .theme-adminflare #main-navbar .navbar-header{
+    background-image:url(../images/themes/adminflare/ie-navbar-bg.png)
+}
+.theme-adminflare #main-navbar{
+    border-bottom:1px solid #185aa7
+}
+.theme-adminflare #main-navbar,.theme-adminflare #main-navbar .navbar-header{
+    background:#418ce4;
+    -webkit-box-shadow:rgba(255,255,255,.25)0 1px 0 inset;
+    box-shadow:rgba(255,255,255,.25)0 1px 0 inset
+}
+.theme-adminflare #main-navbar .navbar-brand{
+    color:#fff
+}
+.theme-adminflare #main-navbar .dropdown-menu>li>a,.theme-adminflare #main-navbar .dropdown>a,.theme-adminflare #main-navbar .nav>li>a{
+    text-shadow:rgba(0,0,0,.2)0 -1px 0;
+    color:#fff
+}
+.theme-adminflare #main-navbar #main-menu-toggle,.theme-adminflare #main-navbar .navbar-toggle{
+    color:#fff
+}
+.theme-adminflare #main-navbar #main-menu-toggle{
+    border:0 solid;
+    border-color:#3470b6;
+    border-color:rgba(0,0,0,.2)
+}
+.theme-adminflare #main-navbar #main-menu-toggle .fa:before{
+    color:#fff
+}
+.theme-adminflare #main-navbar .main-navbar-collapse{
+    border-top:1px solid #185aa7;
+    background:#418ce4;
+    -webkit-box-shadow:rgba(255,255,255,.18)0 1px 0 inset;
+    box-shadow:rgba(255,255,255,.18)0 1px 0 inset
+}
+.theme-adminflare #main-navbar li{
+    border-bottom:1px solid #5697e4
+}
+.theme-adminflare #main-navbar .dropdown.open>a{
+    background:#377bca;
+    border-bottom:1px solid #2e6db7;
+    border-top:1px solid #306cb3;
+    margin-top:-1px
+}
+.theme-adminflare #main-navbar form.navbar-form{
+    -webkit-box-shadow:none;
+    box-shadow:none
+}
+.theme-adminflare #main-navbar form.navbar-form .form-control{
+    background:#fff;
+    background:rgba(255,255,255,.2);
+    border:none;
+    color:#fff;
+    border-radius:999999px;
+    -webkit-box-shadow:0 -1px 0 rgba(0,0,0,.2);
+    box-shadow:0 -1px 0 rgba(0,0,0,.2)
+}
+.theme-adminflare #main-navbar form.navbar-form .form-control:focus{
+    background:#fff;
+    color:#555
+}
+.theme-adminflare #main-navbar form.navbar-form .form-control::-moz-placeholder{
+    color:#2565af;
+    opacity:1
+}
+.theme-adminflare #main-navbar form.navbar-form .form-control:-ms-input-placeholder{
+    color:#2565af
+}
+.theme-adminflare #main-navbar form.navbar-form .form-control::-webkit-input-placeholder{
+    color:#2565af
+}@media (min-width:768px){
+    .theme-adminflare #main-navbar .main-navbar-collapse{
+        background:0 0;
+        border-top:none;
+        -webkit-box-shadow:none;
+        box-shadow:none
+    }
+    .theme-adminflare #main-navbar li{
+        border-bottom:none
+    }
+    .theme-adminflare #main-navbar .dropdown>a,.theme-adminflare #main-navbar .nav>li>a:hover{
+        color:rgba(255,255,255,.7)
+    }
+    .theme-adminflare #main-navbar .dropdown.open>a,.theme-adminflare #main-navbar .dropdown.open>a:hover{
+        background:rgba(0,0,0,.15);
+        border:none;
+        margin:0;
+        color:#fff
+    }
+    .theme-adminflare #main-navbar .dropdown-menu{
+        border-radius:2px;
+        margin-top:3px;
+        border-width:2px;
+        padding:5px 0
+    }
+    .theme-adminflare #main-navbar .dropdown-menu li>a{
+        color:#555;
+        text-shadow:none;
+        margin:0 -2px
+    }
+    .theme-adminflare #main-navbar .dropdown-menu li>a:hover{
+        background:#3690e6;
+        color:#fff
+    }
+    .theme-adminflare #main-navbar .nav-icon-btn>a>.badge,.theme-adminflare #main-navbar .nav-icon-btn>a>.label{
+        -webkit-box-shadow:0 1px 3px rgba(0,0,0,.1);
+        box-shadow:0 1px 3px rgba(0,0,0,.1)
+    }
+}
+.theme-adminflare #main-navbar #main-menu-toggle,.theme-adminflare.right-to-left.main-menu-right #main-navbar #main-menu-toggle{
+    border-right-width:1px;
+    -webkit-box-shadow:1px 0 0 rgba(255,255,255,.2);
+    box-shadow:1px 0 0 rgba(255,255,255,.2)
+}
+.theme-adminflare.main-menu-right #main-navbar #main-menu-toggle,.theme-adminflare.right-to-left #main-navbar #main-menu-toggle{
+    border-left-width:1px;
+    border-right-width:0;
+    -webkit-box-shadow:1px 0 0 rgba(255,255,255,.2)inset;
+    box-shadow:1px 0 0 rgba(255,255,255,.2)inset
+}
+.theme-adminflare #main-menu-bg,.theme-adminflare .mmc-dropdown-open-ul{
+    background:#2b2b2b url(../images/themes/adminflare/menu-bg.png)
+}
+.theme-adminflare #main-menu-bg,.theme-adminflare.right-to-left.main-menu-right #main-menu-bg{
+    border-left:none;
+    border-right:1px solid #1d1d1d
+}
+.theme-adminflare.main-menu-right #main-menu-bg,.theme-adminflare.right-to-left #main-menu-bg{
+    border-left:1px solid #1d1d1d;
+    border-right:none
+}
+.theme-adminflare #main-menu .navigation{
+    -webkit-box-shadow:0 1px 0 #313131;
+    box-shadow:0 1px 0 #313131
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul a,.theme-adminflare #main-menu .navigation a{
+    color:#aaa;
+    text-shadow:0 -1px 0 rgba(0,0,0,.6);
+    -webkit-transition:color .2s;
+    transition:color .2s
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul a:hover,.theme-adminflare #main-menu .navigation a:hover{
+    color:#fff!important
+}
+.theme-adminflare #main-menu li{
+    border-top:1px solid #313131;
+    border-bottom:1px solid #1f1f1f
+}
+.theme-adminflare #main-menu li.active{
+    border-top:none;
+    background:#242424;
+    background:rgba(0,0,0,.15);
+    -webkit-box-shadow:0 1px 6px inset rgba(0,0,0,.25)!important;
+    box-shadow:0 1px 6px inset rgba(0,0,0,.25)!important
+}
+.theme-adminflare #main-menu li.active>a,.theme-adminflare #main-menu li.active>a:hover{
+    color:#75c6f3!important
+}
+.theme-adminflare #main-menu .mm-dropdown.open{
+    border-bottom:none
+}
+.theme-adminflare #main-menu .mm-dropdown.open>a{
+    border-bottom:1px solid #1f1f1f
+}
+.theme-adminflare #main-menu .mmc-dropdown-open,.theme-adminflare #main-menu .navigation .mm-dropdown.active{
+    border-top:1px solid #313131;
+    background:0 0
+}
+.theme-adminflare #main-menu .mmc-dropdown-open>a,.theme-adminflare #main-menu .mmc-dropdown-open>a:hover,.theme-adminflare #main-menu .navigation .mm-dropdown.active>a,.theme-adminflare #main-menu .navigation .mm-dropdown.active>a:hover{
+    color:#fff!important
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul{
+    margin-top:-1px!important
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul>a{
+    color:#fff!important
+}
+.theme-adminflare #main-menu .mmc-title{
+    color:#fff;
+    border-bottom:1px solid #1f1f1f;
+    padding-top:1px;
+    padding-bottom:1px
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul.top{
+    margin-top:0!important;
+    margin-bottom:1px!important
+}
+.theme-adminflare #main-menu .mmc-dropdown-open-ul.top .mmc-title{
+    padding-top:0
+}
+.theme-adminflare #main-menu .menu-content{
+    border:none;
+    margin-top:-8px
+}
+.theme-adminflare #main-menu .menu-content .btn-outline{
+    border-color:#383838;
+    color:#aaa
+}
+.theme-adminflare #main-menu .menu-content .btn-outline:hover{
+    color:#fff
+}
+.theme-adminflare #main-menu .menu-content.top{
+    border-bottom:1px solid #1f1f1f;
+    margin-top:0
+}
+.theme-adminflare.right-to-left #main-menu-bg{
+    border-right:none;
+    border-left:1px solid #1d1d1d
+}
+.theme-adminflare .mmc-dropdown-open .mm-dropdown.open>a,.theme-adminflare.mme #main-menu .mm-dropdown.open>a{
+    color:#fff
+}@media (min-width:768px){
+    .theme-adminflare #main-menu .mm-dropdown.open>a{
+        color:#fff
+    }
+    .theme-adminflare.mmc #main-menu .navigation>.mm-dropdown.open>a{
+        color:#aaa
+    }
+}
+.theme-adminflare .demo-logo{
+    background:#3690e6
+}
+.theme-adminflare.page-signin .signin-info,.theme-adminflare.page-signup .signup-header{
+    background:#3690e6;
+    background:rgba(54,144,230,.8)
+}
+.theme-adminflare .timeline:after,.theme-adminflare .timeline:before,.theme-adminflare .tl-header,.theme-adminflare .tl-icon{
+    background:#dbdbdb
+}
+.theme-adminflare .tl-header,.theme-adminflare .tl-icon{
+    box-shadow:0 0 0 4px #f4f4f4
+}
+.theme-adminflare .tl-entry:before{
+    background:#3690e6;
+    box-shadow:0 0 0 3px #f4f4f4
+}
+.theme-adminflare .tl-body:before{
+    border-color:transparent #d6d6d6 transparent transparent
+}@media (min-width:768px){
+    .theme-adminflare .timeline.centered .tl-entry.left .tl-body:before{
+        border-color:transparent transparent transparent #d6d6d6
+    }
+    .theme-adminflare.right-to-left .timeline.centered .tl-entry.left .tl-body:before{
+        border-color:transparent #d6d6d6 transparent transparent
+    }
+}
+.theme-adminflare.right-to-left .tl-body:before{
+    border-color:transparent transparent transparent #d6d6d6
+}
+.theme-adminflare.page-mail .mail-nav,.theme-adminflare.page-mail .mail-nav:before{
+    background:#f4f4f4 url(../images/themes/adminflare/body-bg.png)
+}
+.theme-adminflare.page-mail .mail-nav .sections li.active .badge,.theme-adminflare.page-mail .mail-nav .sections li.active .label{
+    background:#3690e6
+}
+.theme-adminflare.page-mail .mail-nav,.theme-adminflare.page-mail .mail-nav .compose-btn,.theme-adminflare.page-mail .mail-nav .sections li.active,.theme-adminflare.page-mail .mail-nav:before{
+    border-color:#d6d6d6
+}
+.theme-adminflare.page-mail .mail-nav .navigation.open .sections li.active{
+    background:#eaeaea;
+    background:rgba(0,0,0,.04)
+}
+.theme-adminflare.page-mail .mail-nav li.divider{
+    background:#d6d6d6
+}
+.theme-adminflare.page-mail .mail-nav .sections li.active a{
+    color:#424242
+}
+.theme-adminflare.page-mail .mail-nav .sections li.active:after{
+    color:#a8a8a8
+}
+.theme-adminflare.page-mail .mail-nav .sections a{
+    color:#686868
+}
+.theme-adminflare.page-mail .mail-nav .add-more a,.theme-adminflare.page-mail .mail-nav-header{
+    color:#a8a8a8
+}@media (min-width:992px){
+    .theme-adminflare.page-mail .mail-nav .navigation .sections li.active{
+        background:#eaeaea;
+        background:rgba(0,0,0,.04)
+    }
+    .theme-adminflare.page-mail .mail-nav .sections a:hover{
+        color:#424242
+    }
+}
+.theme-adminflare .nav-icon-btn.nav-icon-btn-primary .label{
+    background:#3690e6
+}
+.theme-adminflare .btn-primary{
+    color:#fff
+}
+.theme-adminflare .btn-primary,.theme-adminflare .btn-primary:focus{
+    border-color:#1f83e3;
+    border-bottom-color:#1974cb;
+    background:#3690e6;
+    background-image:-webkit-linear-gradient(top,#3b93e7 0,#1f83e3 100%);
+    background-image:linear-gradient(to bottom,#3b93e7 0,#1f83e3 100%);
+    background-repeat:repeat-x
+}
+.theme-adminflare .btn-primary:hover{
+    color:#fff;
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab;
+    background:#1f83e3!important;
+    background-image:-webkit-linear-gradient(top,#2d8be5 0,#1b7cd8 100%)!important;
+    background-image:linear-gradient(to bottom,#2d8be5 0,#1b7cd8 100%)!important;
+    background-repeat:repeat-x
+}
+.open .theme-adminflare .btn-primary.dropdown-toggle,.theme-adminflare .btn-primary.active,.theme-adminflare .btn-primary:active{
+    background:0 0;
+    background:#2486e4!important;
+    border-color:#186cbd;
+    border-bottom-color:#186cbd!important;
+    color:#fff;
+    -webkit-box-shadow:0 0 12px rgba(0,0,0,.1)inset;
+    box-shadow:0 0 12px rgba(0,0,0,.1)inset
+}
+.theme-adminflare .btn-primary.btn-flat{
+    background:#2888e4
+}
+.open .theme-adminflare .btn-primary.btn-flat.dropdown-toggle,.theme-adminflare .btn-primary.btn-flat.active,.theme-adminflare .btn-primary.btn-flat:active,.theme-adminflare .btn-primary.btn-flat:hover{
+    background:#2888e4!important;
+    color:#fff
+}
+.theme-adminflare .btn-primary.btn-outline.btn-flat:hover,.theme-adminflare .btn-primary.btn-outline:hover{
+    color:#fff;
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab
+}
+.theme-adminflare .btn-primary.btn-outline.btn-flat:active,.theme-adminflare .btn-primary.btn-outline:active{
+    border-color:#186cbd
+}
+.btn-group .theme-adminflare .btn-primary,.btn-group .theme-adminflare .btn-primary:focus,.input-group-btn .theme-adminflare .btn-primary,.input-group-btn .theme-adminflare .btn-primary:focus{
+    border-left-color:#1b7cd8;
+    border-right-color:#1b7cd8
+}
+.btn-group .theme-adminflare .btn-primary:hover,.btn-group.open .theme-adminflare .btn-primary.dropdown-toggle,.input-group-btn .theme-adminflare .btn-primary:hover,.input-group-btn.open .theme-adminflare .btn-primary.dropdown-toggle{
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab
+}
+.btn-group .theme-adminflare .btn-primary.active,.btn-group .theme-adminflare .btn-primary:active,.input-group-btn .theme-adminflare .btn-primary.active,.input-group-btn .theme-adminflare .btn-primary:active{
+    border-left-color:#186cbd;
+    border-right-color:#186cbd
+}
+.theme-adminflare .open .btn.btn-primary.dropdown-toggle{
+    color:#fff;
+    border-bottom-color:#186cbd!important;
+    background:0 0;
+    background:#2486e4!important
+}
+.theme-adminflare .progress-bar{
+    background:#3690e6;
+    border-color:#1c81e1
+}
+.theme-adminflare .progress-striped .progress-bar{
+    background-color:#3690e6;
+    background-image:-webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255,255,255,.1)),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255,255,255,.1)),color-stop(0.75,rgba(255,255,255,.1)),color-stop(0.75,transparent),to(transparent));
+    background-image:-webkit-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:-moz-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-size:10px 10px
+}
+.theme-adminflare .label.label-primary{
+    background:#3690e6
+}
+.theme-adminflare .label.label-primary[href]:focus,.theme-adminflare .label.label-primary[href]:hover{
+    background-color:#1a77cf
+}
+.theme-adminflare .label.label-primary.label-tag{
+    border:1px solid #3690e6
+}
+.theme-adminflare .label.label-primary.label-tag:before{
+    border-color:transparent #3690e6 transparent transparent
+}
+.theme-adminflare .label.label-primary.label-tag[href]:focus,.theme-adminflare .label.label-primary.label-tag[href]:hover{
+    border-color:#1a77cf
+}
+.theme-adminflare .label.label-primary.label-tag[href]:focus:before,.theme-adminflare .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent #1a77cf transparent transparent
+}
+.right-to-left .theme-adminflare .label.label-primary.label-tag:before{
+    border-color:transparent transparent transparent #3690e6
+}
+.right-to-left .theme-adminflare .label.label-primary.label-tag[href]:focus:before,.right-to-left .theme-adminflare .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent transparent transparent #1a77cf
+}
+.ie8 .right-to-left .theme-adminflare .label.label-primary.label-tag:before,.ie9 .right-to-left .theme-adminflare .label.label-primary.label-tag:before{
+    border-color:transparent #3690e6 transparent transparent
+}
+.ie8 .right-to-left .theme-adminflare .label.label-primary.label-tag[href]:focus:before,.ie8 .right-to-left .theme-adminflare .label.label-primary.label-tag[href]:hover:before,.ie9 .right-to-left .theme-adminflare .label.label-primary.label-tag[href]:focus:before,.ie9 .right-to-left .theme-adminflare .label.label-primary.label-tag[href]:hover:before{
+    border-color:transparent #1a77cf transparent transparent
+}
+.theme-adminflare.right-to-left .label.label-primary.label-tag:before{
+    border-color:transparent transparent transparent #3690e6
+}
+.theme-adminflare.right-to-left .label.label-primary.label-tag:focus:before,.theme-adminflare.right-to-left .label.label-primary.label-tag:hover:before{
+    border-color:transparent transparent transparent #1a77cf
+}
+.ie8 .theme-adminflare.right-to-left .label.label-primary.label-tag:before,.ie9 .theme-adminflare.right-to-left .label.label-primary.label-tag:before{
+    border-color:transparent #3690e6 transparent transparent
+}
+.ie8 .theme-adminflare.right-to-left .label.label-primary.label-tag:focus:before,.ie8 .theme-adminflare.right-to-left .label.label-primary.label-tag:hover:before,.ie9 .theme-adminflare.right-to-left .label.label-primary.label-tag:focus:before,.ie9 .theme-adminflare.right-to-left .label.label-primary.label-tag:hover:before{
+    border-color:transparent #1a77cf transparent transparent
+}
+.theme-adminflare .badge.badge-primary{
+    background:#3690e6;
+    border:1px solid #3690e6
+}
+.theme-adminflare .badge.badge-primary[href]:focus,.theme-adminflare .badge.badge-primary[href]:hover{
+    background-color:#1a77cf;
+    border-color:#1a77cf
+}
+.theme-adminflare .table-primary table{
+    border-top-color:#2971b5!important
+}
+.theme-adminflare .table-primary .table-header,.theme-adminflare .table-primary thead,.theme-adminflare .table-primary thead th,.theme-adminflare .table-primary thead tr{
+    border-color:#2971b5!important;
+    color:#fff
+}
+.theme-adminflare .table-primary thead th,.theme-adminflare .table-primary thead tr{
+    background:#2681d7
+}
+.theme-adminflare .table-primary .table-header{
+    background:#3690e6
+}
+.theme-adminflare .nav-tabs>li.active>a,.theme-adminflare .nav-tabs>li.active>a:focus,.theme-adminflare .nav-tabs>li.active>a:hover{
+    background:#3690e6;
+    border-bottom:2px solid #1f83e3
+}
+.theme-adminflare .nav-tabs .nav-tabs.nav-justified>.active>a{
+    border-bottom-color:#1f83e3
+}
+.theme-adminflare .dropdown-menu>li.active>a,.theme-adminflare .dropdown-menu>li>a:hover,.theme-adminflare .nav-pills>li.active>a,.theme-adminflare .nav-pills>li.active>a:focus,.theme-adminflare .nav-pills>li.active>a:hover{
+    background:#3690e6
+}
+.theme-adminflare .dropdown-menu>li>a:hover{
+    color:#fff
+}
+.theme-adminflare .btn-group .btn-primary,.theme-adminflare .btn-group .btn-primary:focus,.theme-adminflare .input-group-btn .btn-primary,.theme-adminflare .input-group-btn .btn-primary:focus{
+    border-left-color:#1b7cd8;
+    border-right-color:#1b7cd8
+}
+.theme-adminflare .btn-group .btn-primary:hover,.theme-adminflare .btn-group.open .btn-primary.dropdown-toggle,.theme-adminflare .input-group-btn .btn-primary:hover,.theme-adminflare .input-group-btn.open .btn-primary.dropdown-toggle{
+    border-color:#186cbd
+}
+.theme-adminflare .btn-group .btn-primary.active,.theme-adminflare .btn-group .btn-primary:active,.theme-adminflare .input-group-btn .btn-primary.active,.theme-adminflare .input-group-btn .btn-primary:active{
+    border-left-color:#186cbd;
+    border-right-color:#186cbd
+}
+.theme-adminflare .pagination>li>a:hover{
+    border-color:#3690e6
+}
+.theme-adminflare .pagination>li.active>a,.theme-adminflare .pagination>li.active>a:focus,.theme-adminflare .pagination>li.active>a:hover,.theme-adminflare .pagination>li.active>span{
+    background:#3690e6;
+    border-color:#3690e6
+}
+.theme-adminflare .pager li>a:hover{
+    border-color:#3690e6
+}
+.theme-adminflare a.list-group-item.active{
+    background:#3690e6;
+    border-color:#3690e6
+}
+.theme-adminflare a.list-group-item.active .list-group-item-text{
+    color:#ebf4fd
+}
+.theme-adminflare .form-control.focus,.theme-adminflare .form-control:focus{
+    border-color:#3690e6;
+    outline:0;
+    -webkit-box-shadow:none;
+    box-shadow:none
+}
+.gt-ie8 .theme-adminflare input.px+.lbl:hover:before,.gt-ie8 .theme-adminflare input.px:focus+.lbl:before{
+    border-color:#3690e6
+}
+.gt-ie8 .theme-adminflare input[type=checkbox].px+.lbl:after{
+    color:#3690e6
+}
+.gt-ie8 .theme-adminflare input[type=radio].px+.lbl:after{
+    background:#3690e6
+}
+.theme-adminflare .text-primary,.theme-adminflare .text-primary a,.theme-adminflare .text-primary a:focus,.theme-adminflare .text-primary:active,.theme-adminflare .text-primary:focus,.theme-adminflare .text-primary:hover{
+    color:#3690e6
+}
+.theme-adminflare .text-primary a:active,.theme-adminflare .text-primary a:hover{
+    color:#176ab9
+}
+.theme-adminflare .bg-primary{
+    background:#3690e6!important
+}
+.theme-adminflare .bg-primary.darken,.theme-adminflare .bg-primary[href]:hover{
+    background:#3088dd!important
+}
+.theme-adminflare .bg-primary.darken[href]:hover,.theme-adminflare .bg-primary.darker{
+    background:#2481da!important
+}
+.theme-adminflare .bg-primary.darker[href]:hover{
+    background:#2179cd!important
+}
+.theme-adminflare .bg-primary,.theme-adminflare .bg-primary a,.theme-adminflare .bg-primary a:focus,.theme-adminflare .bg-primary:active,.theme-adminflare .bg-primary:focus,.theme-adminflare .bg-primary:hover{
+    color:#fff
+}
+.theme-adminflare .bg-primary a:active,.theme-adminflare .bg-primary a:hover{
+    color:#d9d9d9
+}
+.theme-adminflare .bg-primary [href]:hover,.theme-adminflare .bg-primary[href]:hover{
+    color:#fff
+}
+.theme-adminflare .bg-primary *{
+    border-color:#56a2ea
+}
+.theme-adminflare .ui-autocomplete>li>a:hover,.theme-adminflare .ui-autocompletev>li.active>a,.theme-adminflare .ui-slider-handle.ui-state-active:before,.theme-adminflare .ui-slider-range{
+    background:#3690e6
+}
+.theme-adminflare .ui-autocomplete>li>a:hover{
+    color:#fff
+}
+.theme-adminflare .ui-autocomplete .ui-state-focus{
+    background:#3690e6;
+    color:#fff
+}
+.theme-adminflare .ui-menu .ui-menu-item a.ui-state-active,.theme-adminflare .ui-menu .ui-menu-item a.ui-state-focus,.theme-adminflare .ui-menu .ui-menu-item a:hover{
+    background:#3690e6
+}
+.theme-adminflare .ui-progressbar-value{
+    background:#3690e6;
+    border-color:#1c81e1;
+    background-color:#3690e6;
+    background-image:-webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255,255,255,.1)),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255,255,255,.1)),color-stop(0.75,rgba(255,255,255,.1)),color-stop(0.75,transparent),to(transparent));
+    background-image:-webkit-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:-moz-linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-image:linear-gradient(45deg,rgba(255,255,255,.1)25%,transparent 25%,transparent 50%,rgba(255,255,255,.1)50%,rgba(255,255,255,.1)75%,transparent 75%,transparent);
+    background-size:10px 10px
+}
+.theme-adminflare .ui-tabs-nav>.ui-tabs-active>a,.theme-adminflare .ui-tabs-nav>.ui-tabs-active>a:focus,.theme-adminflare .ui-tabs-nav>.ui-tabs-active>a:hover{
+    color:#fff;
+    background:#3690e6;
+    border-bottom:2px solid #1f83e3
+}
+.theme-adminflare .ui-datepicker .ui-state-active{
+    background:#3690e6!important
+}
+.theme-adminflare .ui-datepicker-title{
+    background:#3690e6
+}
+.theme-adminflare .ui-datepicker th{
+    background:#3883ca
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary{
+    color:#fff
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:focus{
+    border-color:#1f83e3;
+    border-bottom-color:#1974cb;
+    background:#3690e6;
+    background-image:-webkit-linear-gradient(top,#3b93e7 0,#1f83e3 100%);
+    background-image:linear-gradient(to bottom,#3b93e7 0,#1f83e3 100%);
+    background-repeat:repeat-x
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:hover{
+    color:#fff;
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab;
+    background:#1f83e3!important;
+    background-image:-webkit-linear-gradient(top,#2d8be5 0,#1b7cd8 100%)!important;
+    background-image:linear-gradient(to bottom,#2d8be5 0,#1b7cd8 100%)!important;
+    background-repeat:repeat-x
+}
+.open .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.active,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:active{
+    background:0 0;
+    background:#2486e4!important;
+    border-color:#186cbd;
+    border-bottom-color:#186cbd!important;
+    color:#fff;
+    -webkit-box-shadow:0 0 12px rgba(0,0,0,.1)inset;
+    box-shadow:0 0 12px rgba(0,0,0,.1)inset
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat{
+    background:#2888e4
+}
+.open .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat.dropdown-toggle,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat.active,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat:active,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-flat:hover{
+    background:#2888e4!important;
+    color:#fff
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline.btn-flat:hover,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline:hover{
+    color:#fff;
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab
+}
+.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline.btn-flat:active,.theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.btn-outline:active{
+    border-color:#186cbd
+}
+.btn-group .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary,.btn-group .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:focus,.input-group-btn .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary,.input-group-btn .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:focus{
+    border-left-color:#1b7cd8;
+    border-right-color:#1b7cd8
+}
+.btn-group .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:hover,.btn-group.open .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle,.input-group-btn .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:hover,.input-group-btn.open .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.dropdown-toggle{
+    border-color:#1b7cd8;
+    border-bottom-color:#1562ab
+}
+.btn-group .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.active,.btn-group .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:active,.input-group-btn .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary.active,.input-group-btn .theme-adminflare .ui-datepicker-buttonpane button.ui-priority-primary:active{
+    border-left-color:#186cbd;
+    border-right-color:#186cbd
+}
+.theme-adminflare .select2-container-multi.select2-container-active .select2-choices,.theme-adminflare .select2-container-multi.select2-dropdown-open .select2-choices,.theme-adminflare .select2-drop-active{
+    border:1px solid #3690e6
+}
+.theme-adminflare .select2-drop.select2-drop-above.select2-drop-active{
+    border-top:1px solid #3690e6
+}
+.theme-adminflare .select2-container-active .select2-choice,.theme-adminflare .select2-container-active .select2-choices{
+    border:1px solid #3690e6
+}
+.theme-adminflare .select2-dropdown-open .select2-drop-above .select2-choice,.theme-adminflare .select2-dropdown-open .select2-drop-above .select2-choices{
+    border:1px solid #3690e6;
+    border-top-color:#aaa
+}
+.theme-adminflare .select2-primary .select2-container-multi .select2-choices .select2-search-choice,.theme-adminflare .select2-results .select2-highlighted{
+    background:#3690e6
+}
+.theme-adminflare .select2-primary .select2-container-multi .select2-choices .select2-search-choice-focus{
+    background:#1a77cf
+}
+.theme-adminflare .select2-primary .select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice,.theme-adminflare .switcher-primary .switcher-state-on{
+    background:#3690e6!important
+}
+.theme-adminflare .pixel-file-input:hover{
+    border-color:#3690e6
+}
+.theme-adminflare .datepicker table tr td span.active,.theme-adminflare .datepicker table tr td span.active.disabled,.theme-adminflare .datepicker table tr td span.active.disabled:hover,.theme-adminflare .datepicker table tr td span.active:hover,.theme-adminflare .datepicker table tr td.active,.theme-adminflare .datepicker table tr td.active.disabled,.theme-adminflare .datepicker table tr td.active.disabled:hover,.theme-adminflare .datepicker table tr td.active:hover,.theme-adminflare .datepicker table tr td.selected,.theme-adminflare .datepicker table tr td.selected.disabled,.theme-adminflare .datepicker table tr td.selected.disabled:hover,.theme-adminflare .datepicker table tr td.selected:hover{
+    background:#3690e6
+}
+.theme-adminflare .datepicker thead tr{
+    background:#3883ca
+}
+.theme-adminflare .datepicker thead tr:first-child{
+    background:#3690e6!important;
+    border-bottom-color:#3a71a5!important
+}
+.theme-adminflare .datepicker thead th.next,.theme-adminflare .datepicker thead th.prev{
+    background:#3690e6
+}
+.theme-adminflare .datepicker thead th.next,.theme-adminflare .datepicker thead th.prev,.theme-adminflare .datepicker>.datepicker-days thead tr:first-child th.cw+.prev,.theme-adminflare .datepicker>.datepicker-days thead tr:last-child th.cw+th{
+    border-color:#3a71a5
+}
+.theme-adminflare .bootstrap-timepicker-widget table td a:hover{
+    background:#3690e6;
+    border-color:#3690e6
+}
+.theme-adminflare .pagination a.dp-today,.theme-adminflare .pagination a.dp-today:hover{
+    background:#63a9ec;
+    border-color:#4d9de9
+}
+.theme-adminflare .pagination a.dp-today:hover{
+    border-color:#3690e6!important
+}
+.theme-adminflare .pagination a.dp-selected{
+    background:#3690e6!important;
+    border-color:#3690e6!important
+}
+.theme-adminflare .tt-suggestion.tt-is-under-cursor{
+    background:#3690e6
+}
+.theme-adminflare .table-primary .dataTables_wrapper .DT-per-page{
+    border-color:#2971b5!important
+}
+.theme-adminflare .dropzone-box.dz-drag-hover{
+    border-color:#3690e6
+}
+.theme-adminflare .dropzone-box:hover .fa.fa-cloud-upload{
+    background:#3690e6
+}
+.theme-adminflare .md-editor.active{
+    border-color:#3690e6
+}
+.theme-adminflare .widget-rating .active a{
+    color:#3690e6
+}

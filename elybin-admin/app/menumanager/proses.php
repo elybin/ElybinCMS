@@ -146,7 +146,7 @@ if($usergroup == 0){
 		$a = array(
 			'status' => 'ok',
 			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
+			'isi' => $lg_datainputsuccessful
 		);
 		json($a);		
 	}

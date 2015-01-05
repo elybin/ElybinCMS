@@ -20,7 +20,7 @@ if((empty($mod) OR $mod=='index') AND $p > 0){
 			<form action="search.html" method="POST">
 				<div class="input-group no-margin">
 				<input type="text" name="q" placeholder="<?php echo $lg_search?>..." class="form-control input-lg" style="border:none;box-shadow: none;background-color: transparent">
-				<span class="input-group-addon" style="border:none; background-color: rgba(0,0,0,0);" id="search-close"><i class="fa fa-2x fa-times"></i></span>
+				<span class="input-group-addon" style="border:none; background-color: rgba(0,0,0,0);" id="search-close"><i class="glyphicon glyphicon-3x glyphicon-remove"></i></span>
 				</div>
 			</form>
 		</div>
@@ -38,7 +38,7 @@ if((empty($mod) OR $mod=='index') AND $p > 0){
                     <span class="icon-bar"></span>
                 </button>
                 <button type="button" class="search-toggle" id="search-toggle">
-                    <span class="fa fa-search"></span>
+                    <span class="glyphicon glyphicon-search"></span>
                 </button>
                
 				<a href="<?php echo $op->site_url ?>" class="navbar-brand">
@@ -50,7 +50,7 @@ if((empty($mod) OR $mod=='index') AND $p > 0){
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <button type="button" class="search-toggle2 hidden-xs pull-right" id="search-toggle2">
-                    <span class="fa fa-search"></span>
+                    <span class="glyphicon glyphicon-search"></span>
                 </button>
                 <ul class="nav navbar-nav navbar-right">
 <?php

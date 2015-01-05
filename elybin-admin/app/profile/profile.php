@@ -114,54 +114,6 @@ switch (@$_GET['act']) {
 			</div><!-- / .col -->
 		</div><!-- / .row -->
 
-<!-- Javascript -->
-<script>
-init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$("#multiselect-style").select2({
-		allowClear: false,
-		placeholder: "<?php echo $lg_level?>"
-	});
-	$('#switcher-style').switcher({
-		theme: 'square',
-		on_state_content: '<span class="fa fa-check"></span>',
-		off_state_content: '<span class="fa fa-times"></span>'
-	});
-	$('#tooltip a, #tooltipl').tooltip();
-
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	$('#form').submit(function(e){
-	    $.ajax({
-	      url: $(this).attr('action'),
-	      type: 'POST',
-	      data: new FormData(this),
-	      processData: false,
-	      contentType: false,
-	      success: function(data) {
-	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=home";
-				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
-				}
-		   }
-	    });
-	    e.preventDefault();
-	    return false;
-  	});
-});
-</script>
-<!-- / Javascript -->
 <?php
 		break;
 }

