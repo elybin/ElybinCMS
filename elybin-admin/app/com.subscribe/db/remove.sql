@@ -1,1 +1,0 @@
-DROP TABLE `com.elybin_subscribe`
