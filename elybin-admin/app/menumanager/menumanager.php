@@ -3,29 +3,25 @@
  * [ Module: Setting - Menu manager
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(empty($_SESSION['login'])){
-	echo '403';
-	header('location:../403.php');
+	header('location: index.php');
 }else{
 $modpath 	= "app/menumanager/";
 $action		= $modpath."proses.php";
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 	// start here
 	$v 	= new ElybinValidasi();
@@ -33,38 +29,37 @@ if($usergroup == 0){
 		case 'add':
 ?>
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_setting?> / <?php echo $lg_menumanager?> / </span><?php echo $lg_addnew?></h1>
+			<h1><span class="text-light-gray"><?php echo lg('Setting')?> / <?php echo lg('Menu Manager')?> / </span><?php echo lg('Add New')?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
 		<div class="row">
 			<div class="col-sm-12">
 				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" id="form">
 					<div class="panel-heading" id="tooltip">
-						<span class="panel-title"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo $lg_addnewmenu?></span>
-						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+						<span class="panel-title"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo lg('Add new menu')?></span>
+						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_title?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
 					      <div class="col-sm-4">
-							<input type="text" name="title"  class="form-control" placeholder="<?php echo $lg_title?>" required/></td>
+							<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" required/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_address?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
 					      <div class="col-sm-4">
-							<input type="text" name="url"  class="form-control" placeholder="<?php echo $lg_address?>" required/></td>
+							<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" required/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
 						<div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_parent?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
 					      <div class="col-sm-4">
 							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
-							<select name="parent_id" id="multiselect-style">
-								<option value="0"><?php echo $lg_noparent?></option>
+							<select name="parent_id" id="multiselect-style" class="from-control">
+								<option value="0"><?php echo lg('No Parent')?></option>
 					      	<?php
 					      		$tblm = new ElybinTable('elybin_menu');
 					      		$menu = $tblm->Select('','');
@@ -79,16 +74,16 @@ if($usergroup == 0){
 						</div> <!-- / .form-group -->
 
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_class?></label>
+					      <label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
 					      <div class="col-sm-4">
-							<input type="text" name="class"  class="form-control" placeholder="<?php echo $lg_class?>"/></td>
+							<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
 					</div><!-- / .panel-body -->
 					  <div class="panel-footer">
-						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_savedata?></button>
-						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></a>
+						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save')?></button>
+						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
 						  <input type="hidden" name="act" value="add" />
 						  <input type="hidden" name="mod" value="menumanager" />
 					  </div> <!-- / .form-footer -->
@@ -100,7 +95,7 @@ if($usergroup == 0){
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help Title')?></h4>
 							</div>
 							<div class="modal-body">...</div>
 						</div> <!-- / .modal-content -->
@@ -120,7 +115,7 @@ if($usergroup == 0){
 		$tb 	= new ElybinTable('elybin_menu');
 		$comenu = $tb->GetRow('menu_id', $id);
 		if(empty($id) OR ($comenu == 0)){
-			er('<strong>'.$lg_ouch.'!</strong> '.$lg_notfound.' 404<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+			er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 			theme_foot();
 			exit;
 		}
@@ -130,37 +125,37 @@ if($usergroup == 0){
 		$cmenu	= $cmenu->current();
 ?>
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_setting?> / <?php echo $lg_menumanager?> / </span><?php echo $lg_menuedit?></h1>
+			<h1><span class="text-light-gray"><?php echo lg('Setting')?> / <?php echo lg('Menu Manager')?> / </span><?php echo lg('Menu edit')?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
 		<div class="row">
 			<div class="col-sm-12">
 				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="menu" id="form">
 					<div class="panel-heading" id="tooltip">
-						<span class="panel-title"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo $lg_editcurrentmenu?></span>
-						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+						<span class="panel-title"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo lg('Edit current menu')?></span>
+						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_title?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
 					      <div class="col-sm-4">
-							<input type="text" name="title"  class="form-control" placeholder="<?php echo $lg_title?>" value="<?php echo $cmenu->menu_title?>" required/></td>
+							<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" value="<?php echo $cmenu->menu_title?>" required/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_address?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
 					      <div class="col-sm-4">
-							<input type="text" name="url"  class="form-control" placeholder="<?php echo $lg_address?>" value="<?php echo $cmenu->menu_url?>" required/></td>
+							<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" value="<?php echo $cmenu->menu_url?>" required/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
 						<div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_parent?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
 					      <div class="col-sm-4">
-							<select name="parent_id" id="multiselect-style">
-								<option value="0"><?php echo $lg_noparent?></option>
+							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
+							<select name="parent_id" id="multiselect-style" class="form-control">
+								<option value="0"><?php echo lg('No Parent')?></option>
 					      	<?php
 								$countchild = $tb->GetRow('parent_id',$id);
 								if($countchild==0){
@@ -177,9 +172,9 @@ if($usergroup == 0){
 						</div> <!-- / .form-group -->
 
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_class?></label>
+					      <label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
 					      <div class="col-sm-4">
-							<input type="text" name="class"  class="form-control" placeholder="<?php echo $lg_class?>"/></td>
+							<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
 					      </div>
 					  </div> <!-- / .form-group -->
 
@@ -192,7 +187,7 @@ if($usergroup == 0){
 		     	  	  <div class="col-sm-12">
 						<div class="panel widget-tasks">
 							<div class="panel-heading">
-								<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo $lg_sortsubmenu?> - <?php echo $cmenu->menu_title?></span>
+								<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo lg('Sort Submenu')?> - <?php echo $cmenu->menu_title?></span>
 							</div> <!-- / .panel-heading -->
 							<!-- Without vertical padding -->
 							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
@@ -216,8 +211,8 @@ if($usergroup == 0){
 								<div class="task">
 									<div class="pull-right">
 										<div id="tooltip">
-											<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_edit?>"><i class="fa fa-pencil-square-o"></i></a>
-											<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;back=<?php echo $id?>&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo $lg_delete?>"><i class="fa fa-times"></i></a>
+											<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Edit')?>"><i class="fa fa-pencil-square-o"></i></a>
+											<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;back=<?php echo $id?>&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete')?>"><i class="fa fa-times"></i></a>
 										</div>
 									</div>
 									<div class="fa fa-arrows-v task-sort-icon"></div>
@@ -230,8 +225,8 @@ if($usergroup == 0){
 					<?php } ?>
 					</div><!-- / .panel-body -->
 					  <div class="panel-footer">
-						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_savechanges?></button>
-						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></a>
+						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Changes')?></button>
+						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
 						  <input type="hidden" name="id" value="<?php echo $cmenu->menu_id?>" />
 						  <input type="hidden" name="act" value="edit" />
 						  <input type="hidden" name="mod" value="menumanager" />
@@ -243,7 +238,7 @@ if($usergroup == 0){
 				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">
-							<?php echo $lg_loading?>...
+							<?php echo lg('Loading')?>...
 						</div> <!-- / .modal-content -->
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal --> <!-- / Delete modal -->
@@ -253,7 +248,7 @@ if($usergroup == 0){
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help Title')?></h4>
 							</div>
 							<div class="modal-body">...</div>
 						</div> <!-- / .modal-content -->
@@ -269,24 +264,24 @@ if($usergroup == 0){
 ?>
 							<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-							<h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_deletetitle?></h4>
+							<h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo lg('Delete Permanently')?></h4>
 							</div>
 							<div class="modal-body">
+								<?php echo lg('Are you sure you want delete permanently this item. This action cannot be undone.')?>
 								<?php
 					   				$tblm = new ElybinTable('elybin_menu');
 					   				$csubm = $tblm->GetRow('parent_id',$_GET['id']);
 					   				if($csubm>0){
-					   					$csubm = '<br/><br/><i class="text-danger">'.$lg_warningdeletesubmenu.'</i>';
+					   					$csubm = '<br/><br/><i class="text-danger">'.lg('Related sub menu will also deleted.').'</i>';
 					   				}else{
 					   					$csubm = "";
 					   				}
 								?>
-								<?php echo $lg_deletequestion?>
 								<?php echo $csubm?>
 								<hr></hr>
 								<form action="<?php echo $action?>" method="post">
-									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_yesdelete?></button>
-									<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_cancel?></a>
+									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Yes, Delete')?></button>
+									<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></a>
 									<input type="hidden" name="id" value="<?php echo $_GET['id']?>" />
 									<input type="hidden" name="back" value="<?php echo @$_GET['back']?>" />
 									<input type="hidden" name="act" value="del" />
@@ -302,15 +297,15 @@ if($usergroup == 0){
 		<div class="page-header">
 			<div class="row">
 				<h1 class="col-xs-12 col-sm-6 col-md-6 text-center text-left-sm">
-					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo $lg_menumanager?></span>
-					<span class="hidden-xs"><span class="text-light-gray"><?php echo $lg_setting?> / </span><?php echo $lg_menumanager?></span>
+					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-bars"></i>&nbsp;&nbsp;<?php echo lg('Menu Manager')?></span>
+					<span class="hidden-xs"><span class="text-light-gray"><?php echo lg('Setting')?> / </span><?php echo lg('Menu Manager')?></span>
 				</h1>
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
 						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
 							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
-							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo $lg_addnew?></a>
+							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('Add New')?></a>
 						</div>
 					</div>
 				</div>
@@ -323,19 +318,18 @@ if($usergroup == 0){
 				<div class="panel">
 					<!-- Panel Heading -->
 					<div class="panel-heading">
-						<span class="panel-title"><i class="fa fa-bars hidden-xs">&nbsp;&nbsp;</i><?php echo $lg_menumanager?></span>
+						<span class="panel-title"><i class="fa fa-bars hidden-xs">&nbsp;&nbsp;</i><?php echo lg('Menu Manager')?></span>
 						<div class="panel-heading-controls" id="tooltip">
-							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 						</div> <!-- / .panel-heading-controls -->
 					</div> 
 					<!-- ./Panel Heading -->
 					
 					<div class="panel-body">
-						<?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
 						<div class="col-sm-8">
 							<div class="panel widget-tasks panel-dark-gray">
 								<div class="panel-heading">
-									<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo $lg_sortmenu?></span>
+									<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo lg('Sort Menu')?></span>
 								</div> <!-- / .panel-heading -->
 								<!-- Without vertical padding -->
 								<div class="panel-body no-padding-vr" id="sortable-list">
@@ -370,8 +364,8 @@ if($usergroup == 0){
 									<div class="task">
 										<div class="pull-right">
 											<div id="tooltip">
-												<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_edit?>"><i class="fa fa-pencil-square-o"></i></a>
-												<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo $lg_delete?>"><i class="fa fa-times"></i></a>
+												<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Edit')?>"><i class="fa fa-pencil-square-o"></i></a>
+												<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete')?>"><i class="fa fa-times"></i></a>
 											</div>
 										</div>
 										<div class="fa fa-arrows-v task-sort-icon"></div>
@@ -386,7 +380,7 @@ if($usergroup == 0){
 						<div class="col-sm-4">
 							<div class="note note-info">
 								<h1 class="fa fa-5x fa-sort-amount-asc text-default"></h1>
-								<p><?php echo $lg_menumanagerhint?></p>
+								<p><?php echo lg('Menu Manager')?></p>
 							</div>
 						</div><!-- / . col-sm-4 -->
 						
@@ -399,7 +393,7 @@ if($usergroup == 0){
 				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">
-							<?php echo $lg_loading?>...
+							<?php echo lg('Loading')?>...
 						</div> <!-- / .modal-content -->
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal --> <!-- / Delete modal -->
@@ -409,7 +403,7 @@ if($usergroup == 0){
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help Title')?></h4>
 							</div>
 							<div class="modal-body">
 								...

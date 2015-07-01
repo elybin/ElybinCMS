@@ -5,9 +5,10 @@
   $v 	= new ElybinValidasi();
   $tbp = new ElybinTable('elybin_posts');
   
-  $query = htmlentities($v->xss($_POST['q']), ENT_QUOTES);
+  $query = "";
+  $query = htmlentities($v->xss($_GET['q']), ENT_QUOTES);
 
-  $cpost = $tbp->GetRowCustom("`title` LIKE '%$query%' OR `content` LIKE '%$query%' OR `title` LIKE '%$query%'");
+  $cpost = $tbp->GetRowCustom("(status = 'publish') AND ((`title` LIKE '%$query%') OR (`content` LIKE '%$query%'))");
   
   // show if result not zero
   
@@ -16,10 +17,10 @@
   if(!empty($p)){
   	$page = $p;
   	$postposition = ($page-1)*$op->posts_per_page;
-  	$post = $tbp->SelectWhereLimit('status','publish','post_id','DESC',"$postposition, $op->posts_per_page");
+	$post = $tbp->SelectCustom("SELECT * FROM","WHERE (status = 'publish') AND ((`title` LIKE '%$query%') OR (`content` LIKE '%$query%')) ORDER BY 'post_id' DESC LIMIT $postposition, $op->posts_per_page");
   }else{
   	$page = 1;
-    $post = $tbp->SelectWhereLimit('status','publish','post_id','DESC',"0, $op->posts_per_page");
+	$post = $tbp->SelectCustom("SELECT * FROM","WHERE (status = 'publish') AND ((`title` LIKE '%$query%') OR (`content` LIKE '%$query%')) ORDER BY 'post_id' DESC LIMIT 0, $op->posts_per_page");
   }
 ?>
 
@@ -60,15 +61,7 @@
 						$comment = $tbc->GetRow('post_id',$p->post_id,'','');
 
 						// tag
-						$tag = $p->tag;
-						if($tag !== ''){
-							$tag = explode(",", $tag);
-							$ctag = count($tag);
-							
-							if($ctag >= 3) $tag = array_slice($tag, 0, 3);
-						}else{
-							$ctag = 0;
-						}
+						$tag = json_decode($p->tag);
 
 						//content
 						$content = substr(strip_tags(html_entity_decode($p->content)),0,500);
@@ -76,17 +69,18 @@
 						$content = str_replace($query, textdash($query), $content);
 						
 						// date 
-						$date = explode("-", $p->date);
-						$monthpfx = date("M", mktime(0,0,0,$date[1],1,2000));
+						$date = explode(" ", $p->date);
+						$date2 = explode("-", $date[0]);
+						$monthpfx = date("M", mktime(0,0,0,$date2[1],1,2000));
 						
 				?>
 				<!-- post -->
 				<div class="col-md-2">
 					<div class="circle-date">
 					    <span class="day-prefix">Writed</span>
-						<span class="day"><?php echo $date[2]?></span>
+						<span class="day"><?php echo $date2[2]?></span>
 						<span class="slash"></span> 
-						<span class="month"><?php echo $date[1]?></span>
+						<span class="month"><?php echo $date2[1]?></span>
 						<span class="month-prefix"><?php echo $monthpfx?></span>
 						<span class="fa fa-calendar"></span>
 					</div>
@@ -98,7 +92,7 @@
 								<?php echo str_replace($query, textdash($query), $p->title); ?>
 							</h2>
 						 </a>	
-						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date.$p->time)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
+						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
 						<?php
 							if($p->image !== ''){
 						?>
@@ -109,7 +103,7 @@
 						</p>
 						
 						<?php
-						if($ctag > 0){
+						if(count($tag) > 0){
 						?>
 						<p class="post-meta">
 							<i class="fa fa-tag"></i>&nbsp;&nbsp;
@@ -122,7 +116,7 @@
 							<a href="tag-<?php echo $t?>-1-<?php echo $tags->seotitle?>.html" class="label bg-light"><?php echo $tags->name?></a> 
 							<?php
 								}
-							if($ctag >= 3){
+							if(count($tag) >= 3){
 							?>
 							<a class="label bg-light">...</a>
 							<?php } ?> 
@@ -161,12 +155,12 @@
     <hr>
 	<!-- Pager -->
 	<div class="pager">
-		<h3><?php echo strtoupper($lg_page)?></h3>
+		<h3><?php echo strtoupper(lg('Page'))?></h3>
 		<ul>
 			<?php
 				if($page > 1){
 			?>
-			<li><a href="postpage-<?php echo $page-1?>.html" alt="Next"><i class="fa fa-angle-left"></i></a></li>
+			<li><a href="search.html?q=<?php echo $query ?>&amp;p=<?php echo $page-1?>" alt="Next"><i class="fa fa-angle-left"></i></a></li>
 			<?php } ?>
 			<?php
 				for($i=1; $i<=$muchpage; $i++){
@@ -176,12 +170,12 @@
 						$ds = '';
 					}
 			?>
-			<li<?php echo $ds?>><a href="postpage-<?php echo $i?>.html" alt="<?php echo $i?>"><?php echo $i?></a></li>
+			<li<?php echo $ds?>><a href="search.html?q=<?php echo $query ?>&amp;p=<?php echo $i?>" alt="<?php echo $i?>"><?php echo $i?></a></li>
 			<?php } ?>
 			<?php
 				if($page < $muchpage){
 			?>
-			<li><a href="postpage-<?php echo $page+1?>.html" alt="Next"><i class="fa fa-angle-right"></i></a></li>
+			<li><a href="search.html?q=<?php echo $query ?>&amp;p=<?php echo $page+1?>" alt="Next"><i class="fa fa-angle-right"></i></a></li>
 			<?php } ?>
 		</ul>
 	</div>

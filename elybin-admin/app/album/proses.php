@@ -3,7 +3,7 @@
  * [ Module: Album Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
@@ -15,170 +15,127 @@ if(empty($_SESSION['login'])){
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
+	// string validation for security
+	$v 	= new ElybinValidasi();
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->album;
+	// get usergroup privilage/access from current user to this module
+	$usergroup = _ug()->album;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	header('location:../../../403.php');
 }else{
 	// start here
-	$v = new ElybinValidasi;
 	$mod = $_POST['mod'];
 	$act = $_POST['act'];
 
 	//ADD
 	if ($mod=='album' AND $act=='add'){
+		$aid = $v->sql(epm_decode($_POST['aid']));
 		$name = $v->xss($_POST['name']);
-		$date = $v->xss($_POST['date']);
+		$image = $_POST['image'];
 
 		//if field empty
-		if(empty($date)){
-			//fill importyant
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
-			);
-
-			json($a);
-			exit;
-		}
 		if(empty($name)){
-			$name = "($lg_untitled)";
+			$name = lg('Untitled');
 		}
-
-		$date = explode("/", $date); //mm-dd-yyyy
-		$date = $date['2']."-".$date['0']."-".$date[1]; //yyyy-mm-dd
-		$seotitle =  seo_title($name);
-
-		//get lastest album id
-		$tbalbum = new ElybinTable('elybin_album');
-		$album2 = $tbalbum->SelectLimit('album_id','DESC','0,1');
-		$album_id = 1;
-		foreach ($album2 as $al) {
-			$album_id = $al->album_id + 1;
-		}
-
-		$tbl = new ElybinTable('elybin_album');
-		$data = array(
-			'album_id' => $album_id,
-			'name' => $name,
-			'seotitle' => $seotitle,
-			'date' => $date,
-			'status' => 'active'	
+		
+		// basic info
+ 		$tbp = new ElybinTable('elybin_posts');
+		$d1 = array(
+			'title' => $name,
+			'seotitle' => seo_title($name),
+			'status' => 'published'
+			); 
+		$tbp->Update($d1,'post_id', $aid);
+		
+		// relate images to their album
+		$tbr = new ElybinTable('elybin_relation');
+		foreach($image as $iid){
+			$d2 = array(
+				'type' => 'album',
+				'target' => 'media',
+				'first_id' => $aid,
+				'second_id' => $v->sql(epm_decode($iid))
 			);
-		$tbl->Insert($data);
+			$tbr->Insert($d2);
+		}
 		
 		//Done
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Album created successfully'),
+			'callback' => 'edit',
+			'callback_hash' => epm_encode($aid),
+			'callback_msg' => 'saved'
 		);
-		json($a);
+		echo json_encode($a);
 	}
 	//EDIT
 	elseif($mod=='album' AND $act=='edit'){
-		$album_id = $v->sql($_POST['album_id']);
+		$aid = $v->sql(epm_decode($_POST['aid']));
 		$name = $v->xss($_POST['name']);
-		$date = $v->xss($_POST['date']);
-		$status = @$_POST['status'];
-		if($status == "on"){
-			$status = "active";
-		}else{
-			$status = "deactive";
-		}
-		
-		// check id exist or not
-		$tbl 	= new ElybinTable('elybin_album');
-		$coalbum = $tbl->GetRow('album_id', $album_id);
-		if(empty($album_id) OR ($coalbum == 0)){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
-			);
+		$image = $_POST['image'];
 
-			json($a);
-			exit;
-		}
-		
 		//if field empty
-		if(empty($date) || empty($album_id)){
-			//echo "{,$lg_pleasefillimportant}";
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
-			);
-
-			json($a);
-			exit;
-		}
-
 		if(empty($name)){
-			$name = "($lg_untitled)";
+			$name = lg('Untitled');
 		}
-
-		$date = explode("/", $date); //mm-dd-yyyy
-		$date = $date['2']."-".$date['0']."-".$date[1]; //yyyy-mm-dd
-		$seotitle =  seo_title($name);
-
-
-		$data = array(
-			'name' => $name,
-			'seotitle' => $seotitle,
-			'date' => $date,
-			'status' => $status	
+		
+		// basic info
+ 		$tbp = new ElybinTable('elybin_posts');
+		$d1 = array(
+			'title' => $name,
+			'seotitle' => seo_title($name)
+			); 
+		$tbp->Update($d1,'post_id', $aid);
+		
+		// relate images to their album
+		$tbr = new ElybinTable('elybin_relation');
+		// delete all related relation 
+		$tbr->DeleteAnd('type', 'album','first_id',$aid);
+		foreach($image as $iid){
+			$d2 = array(
+				'type' => 'album',
+				'target' => 'media',
+				'first_id' => $aid,
+				'second_id' => $v->sql(epm_decode($iid))
 			);
-		$tbl->Update($data,'album_id',$album_id);
-		//header('location:../../admin.php?mod='.$mod);
+			$tbr->Insert($d2);
+		}
 
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Changes saved'),
+			'callback' => 'edit',
+			'callback_hash' => epm_encode($aid),
+			'callback_msg' => 'updated'
 		);
-		json($a);
+		echo json_encode($a);
 	}
 
-	//DEL
+	//DEL 
+	// 1.1.3 - updated
 	elseif($mod=='album' AND $act=='del'){
-		$album_id = $v->sql($_POST['album_id']);
-		$tablegal = new ElybinTable('elybin_gallery'); //del foto
+		$aid = $v->sql(epm_decode($_POST['hash']));
 		
 		// check id exist or not
-		$tabledel = new ElybinTable('elybin_album');//del album
-		$coalbum = $tabledel->GetRow('album_id', $album_id);
-		if(empty($album_id) OR ($coalbum == 0)){
+		$tb 	= new ElybinTable('elybin_posts');
+		$cop= $tb->GetRowAnd('post_id', $aid,'type','album');
+		if($cop == 0){
 			header('location: ../../../404.html');
 			exit;
 		}
+		// delete album
+		$tb->DeleteAnd('post_id', $aid,'type','album');
 		
-		$cimg = $tablegal->SelectWhere('album_id',$album_id,'','');
-		foreach($cimg as $i){
-			$image = $i->image;
-			$fileimage = "../../../elybin-file/gallery/$image";
-				if (file_exists("$fileimage")){
-					unlink("../../../elybin-file/gallery/$image");
-					unlink("../../../elybin-file/gallery/medium-$image");
-				}
-			$tablegal->Delete('gallery_id', $gallery_id); //del foto
-		}
-
-		
-		$tabledel->Delete('album_id', $album_id); 
-
-		$tbgal= new ElybinTable('elybin_gallery');
-		$delgal = $tbgal->Delete('album_id',$album_id);
-		header('location:../../admin.php?mod='.$mod);
+		// delete relaiton
+		$tbr = new ElybinTable('elybin_relation');
+		$tbr->Delete('first_id',$aid);
+		header('location: ../../admin.php?mod=album&msg=deleted');
+		exit;
 	}
 	//MULTI DEL
 	elseif($mod=='album' AND $act=='multidel'){
@@ -221,7 +178,7 @@ if($usergroup == 0){
 	}	
 	//404
 	else{
-		header('location:../../../404.php');
+		header('location: ../../../404.php');
 	}
 }	
 }

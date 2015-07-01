@@ -185,11 +185,26 @@ class ElybinTable {
 			throw new Exception($error_msg);
 		}
 	}
+	
+	//OK
+	//DELETE AND
+	//Delete($field, $value, $field2, $value2)
+	function DeleteAnd($field, $value, $field2, $value2){
+		if(!empty($field) || !empty($value)){
+			$sql = "DELETE FROM ".$this->_tableName."";
+			$sql .= " WHERE ".$field." = '".$value."' && ".$field2." = '".$value2."'";
+			$result = mysql_query($sql, ElybinConnect::getConnection());
+		}
+		if(!$result){
+			$error_msg = "Gagal menghapus data dari table ".$this->_tableName.': '.mysql_error();
+			throw new Exception($error_msg);
+		}
+	}
 
 	//SELECT
 	// WITHOUT ORDER ==>  db_select('','')
 	// WITH ORDER 	 ==>  db_select('field_id','DESC/ASC')
-	function Select($field, $value){
+	function Select($field = "", $value = ""){
 		if (empty($field) || empty($value)){
 			$sql = "SELECT * FROM ".$this->_tableName."";
 			return new ElybinSelect($sql);		
@@ -203,6 +218,12 @@ class ElybinTable {
 	//SELECT Custom
 	function SelectCustom($value1, $value2){
 		$sql = "$value1 $this->_tableName $value2";
+		return new ElybinSelect($sql);
+	}
+	
+	//SELECT Custom Full
+	function SelectFullCustom($value1){
+		$sql = "$value1";
 		return new ElybinSelect($sql);
 	}
 
@@ -219,7 +240,7 @@ class ElybinTable {
 	// SELECT WHERE
 	// WITHOUT ORDER ==>  db_selectWhere('WHERE','value','','')
 	// WITH ORDER 	 ==>  db_selectWhere('WHERE','value','field_id','DESC/ASC')
-	function SelectWhere($field1, $value1, $field2, $value2){
+	function SelectWhere($field1, $value1, $field2 = "", $value2 = ""){
 		if (empty($field2) || empty($value2)){
 			$sql = "SELECT * FROM ".$this->_tableName."";
 			$sql .= " WHERE ".$field1."='".$value1."'";
@@ -239,7 +260,7 @@ class ElybinTable {
 		echo $sql;
 	}
 
-	function SelectWhereAnd($field, $value, $field2, $value2, $field3, $value3){
+	function SelectWhereAnd($field, $value, $field2, $value2, $field3 = "", $value3 = ""){
 		if (empty($field3) || empty($value3)){
 			$sql = "SELECT * FROM ".$this->_tableName."";
 			$sql .= " WHERE ".$field."='".$value."'";
@@ -311,10 +332,28 @@ class ElybinTable {
 		return new ElybinSelect($sql);
 	}
 
+	//LoginNew(f1, f2, v1, f3, v2, status, active)
+	function LoginNew($field1, $field2, $value1, $field3, $value2, $field4, $value3){
+		$sql = "SELECT * FROM ".$this->_tableName."";
+		$sql .= " WHERE (".$field1."='".$value1."'";
+		$sql .= " OR ".$field2."='".$value1."')";
+		$sql .= " AND ".$field3."='".$value2."'";
+		$sql .= " AND ".$field4."='".$value3."'";
+		return new ElybinSelect($sql);
+	}
+
+	//CheckLogin($username, $email)
+	function CLogin($value1){
+		$sql = "SELECT * FROM ".$this->_tableName."";
+		$sql .= " WHERE (`user_account_login`='$value1' || `user_account_email`='$value1')";
+		$sql .= " && `status` = 'active' LIMIT 0,1";
+		return new ElybinSelect($sql);
+	}
+
 	//OK
 	//JUMLAH ROW
 	//ambil jumlah row db_getrow('where','value')
-	function GetRow($field1, $value1){
+	function GetRow($field1 = '', $value1 = ''){
 		if (empty($field1) || empty($value1)){
 			$sql = "SELECT * FROM ".$this->_tableName."";
 			$result = mysql_query($sql, ElybinConnect::getConnection());
@@ -368,6 +407,16 @@ class ElybinTable {
 		return $result;
 	}
 	
+	//JUMLAH ROW CUSTOM
+	//ambil jumlah row 
+	function GetRowFullCustom($field1){
+		//$result = 0;
+		$sql = "$field1";
+		$result = mysql_query($sql, ElybinConnect::getConnection());
+		$result = mysql_num_rows($result);
+		return $result;
+	}
+	
 	//OK
 	//SUM DATA
 	//WITHOUT 		=>  db_sumdata('', '')
@@ -387,6 +436,8 @@ class ElybinTable {
 			return $result;
 		}
 
+
+	}
 	function FullQuery($value){
 		$sql = $value;
 		$result = mysql_query($sql, ElybinConnect::getConnection());
@@ -394,8 +445,6 @@ class ElybinTable {
 			$error_msg = "Gagal mengeksekusi query ".mysql_error();
 			throw new Exception($error_msg);
 		}
-	}
-
 	}
 }
 

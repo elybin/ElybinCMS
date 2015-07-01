@@ -3,7 +3,7 @@
  * [ Module: Usergroup Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
@@ -15,55 +15,42 @@ if(empty($_SESSION['login'])){
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','')->current();
-$level = $tbus->level; // getting level from curent user
+	// @since 1.1.3
+	// only root user can create ug
+	$u = _u(); 
 
 // give error if no have privilage
-if($tbus->user_id != 1){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+if($u->user_id != 1){
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	exit;
 }else{
 	// start here
 	$v = new ElybinValidasi;
 	$mod = $_POST['mod'];
 	$act = $_POST['act'];
-	$access_name = array("post","category","tag","comment","contact","media","gallery","album","page","user","setting");
+	$access_name = array("post","category","tag","comment","media","album","page","user","setting");
 
 	//ADD
 	if ($mod=='usergroup' AND $act=='add'){
 		$name = $v->xss($_POST['name']);
 		$alias = $v->xss($_POST['alias']);
 		
-		// olny root user can make new su/ad user
-		if($tbus->user_id != 1){
-			header('location: ../../../404.html');
-			exit;
-		}
-		
 		//if field empty
 		if(empty($name) || empty($alias)){
-			//echo "{,$lg_pleasefillimportant}";
+			//echo "{,lg('Please fill important field (*)')}";
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 
-		$tbusergroup = new ElybinTable('elybin_usergroup');
-		$usergroup2 = $tbusergroup->SelectLimit('usergroup_id','DESC','0,1');
-		$usergroup_id = 1;
-		foreach ($usergroup2 as $cat) {
-			$usergroup_id = $cat->usergroup_id + 1;
-		}
 
 		$tbl = new ElybinTable('elybin_usergroup');
 		$data = array(
-			'usergroup_id' => $usergroup_id,
 			'name' => $name,
 			'alias' => $alias	
 			);
@@ -107,10 +94,10 @@ if($tbus->user_id != 1){
 		// Done
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Usergroup created')
 		);
-		json($a);
+		echo json_encode($a);
 	}
 	//EDIT
 	elseif($mod=='usergroup' AND $act=='edit'){
@@ -119,7 +106,7 @@ if($tbus->user_id != 1){
 		$alias = $v->xss($_POST['alias']);
 
 		// olny root user can make new su/ad user
-		if($tbus->user_id != 1 OR $usergroup_id == 1){
+		if($u->user_id != 1 OR $usergroup_id == 1){
 			header('location: ../../../404.html');
 			exit;
 		}
@@ -130,24 +117,24 @@ if($tbus->user_id != 1){
 		if(empty($usergroup_id) OR ($cousergroup == 0)){
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
+				'title' => lg('Error'),
+				'isi' => lg('ID mismatch, please reload page')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 
 		//if field empty
 		if(empty($name) || empty($alias) || empty($usergroup_id)){
-			//echo "{,$lg_pleasefillimportant}";
+			//echo "{,lg('Please fill important field (*)')}";
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}	
 		// usergroup privilages
@@ -219,10 +206,10 @@ if($tbus->user_id != 1){
 		//Done 
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Changes saved')
 		);
-		json($a);
+		echo json_encode($a);
 	}
 
 	//DEL
@@ -324,7 +311,6 @@ if($tbus->user_id != 1){
 	}		
 	//404
 	else{
-		echo '404';
 		header('location:../../../404.php');
 	}
 }

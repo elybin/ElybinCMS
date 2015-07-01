@@ -22,7 +22,6 @@
   include_once 'header.php';
   include_once 'menu.php';
 ?>
-
     <!-- Main Content -->
     <div class="container">
     	<div class="clearfix form-group-margin" style="margin-top: 90px;"></div><!-- margin -->
@@ -42,20 +41,15 @@
 					$comment = $tbc->GetRow('post_id',$post->post_id,'','');
 
 					// tag
-					$tag = $post->tag;
-					if($tag !== ''){
-						$tag = explode(",", $tag);
-						$ctag = count($tag);
-					}else{
-						$ctag = 0;
-					}
+					$tag = json_decode($post->tag);
 
 					//content
 					$content = html_entity_decode($post->content);
 
 					// date 
-					$date = explode("-", $post->date);
-					$monthpfx = date("M", mktime(0,0,0,$date[1],1,2000));
+					$date = explode(" ", $post->date);
+					$date2 = explode("-", $date[0]);
+					$monthpfx = date("M", mktime(0,0,0,$date2[1],1,2000));
 
 					// Hits
 					$hits = $post->hits+1;
@@ -66,9 +60,9 @@
 				<div class="col-md-2">
 					<div class="circle-date">
 					    <span class="day-prefix">Writed</span>
-						<span class="day"><?php echo $date[2]?></span>
+						<span class="day"><?php echo $date2[2]?></span>
 						<span class="slash"></span> 
-						<span class="month"><?php echo $date[1]?></span>
+						<span class="month"><?php echo $date2[1]?></span>
 						<span class="month-prefix"><?php echo $monthpfx?></span>
 						<span class="fa fa-calendar"></span>
 					</div>
@@ -78,7 +72,7 @@
 						<h2 class="post-title">
 							<?php echo $post->title?>
 						</h2>
-						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($post->date.$post->time)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
+						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($post->date)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
 						<?php
 							if($post->image !== ''){
 						?>
@@ -88,9 +82,9 @@
 							<?php echo $content ?>
 						</div>
 						<p class="post-meta">
-							<i class="fa fa-star"></i>&nbsp;&nbsp;<?php echo $lg_category?>: <a href="category-<?php echo $category->category_id ?>-1-<?php echo $category->seotitle ?>.html"><?php echo $category->name?></a><br/>
+							<i class="fa fa-star"></i>&nbsp;&nbsp;<?php echo lg('Category:')?> <a href="category-<?php echo $category->category_id ?>-1-<?php echo $category->seotitle ?>.html"><?php echo $category->name?></a><br/>
 							<?php
-							if($ctag > 0){
+							if(count($tag) > 0){
 							?>
 							<i class="fa fa-tag"></i>&nbsp;&nbsp;
 							<?php
@@ -154,7 +148,7 @@
 							<div class="col-xs-9 col-sm-10 col-md-10">
 								<div class="hidden-sm hidden-xs" style="margin-top:10px"></div>
 								<p class="text-default"><strong><?php echo $fullname?></strong> <?php echo $c->content?></p>
-								<p class="text-sm text-light-gray"><?php echo time_elapsed_string($c->date.$c->time)?></p>
+								<p class="text-sm text-light-gray"><?php echo time_elapsed_string($c->date)?></p>
 							</div>
 						</div>
 						<?php } ?>		
@@ -177,7 +171,7 @@
 					// show if post allow commenting
 					if($post->comment=="deny"){
 					?>
-					<h4 class="text-center"><?php echo $lg_commentalreadydisabled?></h4>
+					<h4 class="text-center"><?php echo lg('Comment disabled')?></h4>
 					<?php 
 					}else{
 					?>
@@ -193,19 +187,19 @@
 							<div class="col-xs-9 col-sm-10 col-md-10">
 								<div style="height:10px"></div>
 								<h4><?php echo $u->fullname?></h4>
-								<p class="text-sm text-light-gray"><i><?php echo $lg_onlypublicinformationwillvisible?>.</i></p>
+								<p class="text-sm text-light-gray"><i><?php echo lg('Only used public information.')?></i></p>
 							</div>
 						</div>
 						<form id="comment-post" method="POST" action="elybin-main/comment/comment-post.php" style="margin-top: 10px;">
 							<div class="row control-group">
 								<div class="form-group col-xs-12 controls">
-									<textarea name="message" rows="5" class="form-control input-lg" placeholder="Your Message *" id="message" required data-validation-required-message="Please enter a message."></textarea>
+									<textarea name="message" rows="5" class="form-control input-lg" placeholder="<?php echo lg('Content') ?>*" id="message" required data-validation-required-message="Please enter a message."></textarea>
 									<p class="help-block text-danger"></p>
 								</div>
 							</div>
 							<div class="row control-group">
 								<div class="form-group col-xs-6 col-md-3 controls">
-									<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo $lg_insertcode?>*" id="code" required data-validation-required-message="Please enter code.">
+									<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo lg('Insert Code')?>*" id="code" required data-validation-required-message="Please enter code.">
 									<p class="help-block text-danger"></p>
 								</div>
 								<div class="form-group col-xs-6 col-md-3 controls">
@@ -214,9 +208,9 @@
 							</div>
 							<div class="row">
 								<div class="form-group col-xs-12">
-									<button type="submit" class="btn btn-default"><?php echo $lg_leavecomment?></button>
+									<button type="submit" class="btn btn-default"><?php echo lg('Post Comment')?></button>
 									<input type="hidden" name="post_id" value="<?php echo $id?>"/>
-									<span id="loading" style="display:none">&nbsp;&nbsp; <i class="fa fa-spin fa-repeat"></i>&nbsp;&nbsp;<?php echo $lg_sending?>...</span>
+									<span id="loading" style="display:none">&nbsp;&nbsp; <i class="fa fa-spin fa-repeat"></i>&nbsp;&nbsp;<?php echo lg('Sending')?>...</span>
 								</div>
 							</div>
 						</form>
@@ -242,7 +236,7 @@
 							</div>
 							<div class="row control-group">
 								<div class="form-group col-xs-6 col-md-3 controls">
-									<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo $lg_insertcode?>*" id="code" required data-validation-required-message="Please enter code.">
+									<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo lg('Enter Code')?>*" id="code" required data-validation-required-message="Please enter code.">
 									<p class="help-block text-danger"></p>
 								</div>
 								<div class="form-group col-xs-6 col-md-3 controls">
@@ -251,9 +245,9 @@
 							</div>
 							<div class="row">
 								<div class="form-group col-xs-12">
-									<button type="submit" class="btn btn-default"><?php echo $lg_leavecomment?></button>
+									<button type="submit" class="btn btn-default"><?php echo lg('Leave Comment')?></button>
 									<input type="hidden" name="post_id" value="<?php echo $id?>"/>
-									<span id="loading" style="display: none">&nbsp;&nbsp; <i class="fa fa-spin fa-repeat"></i>&nbsp;&nbsp;<?php echo $lg_sending?>...</span>
+									<span id="loading" style="display: none">&nbsp;&nbsp; <i class="fa fa-spin fa-repeat"></i>&nbsp;&nbsp;<?php echo lg('Sending')?>...</span>
 								</div>
 							</div>
 						</form>
@@ -270,10 +264,10 @@
 								<a href="#" class="close"><i class="fa fa-times"></i></a><br/>
 								<h4>
 									<i class="fa fa-times-circle text-danger"></i>
-									<span><?php echo $lg_failedtosendmessagepleaseresend?></span>.
+									<span><?php echo lg('Failed to send message, please try again.')?></span>.
 								</h4>
 							</div>
-			                <div id="pleasefill" class="hidden"><?php echo $lg_pleasefillimportant?></div>
+			                <div id="pleasefill" class="hidden"><?php echo lg('Please fill important field (*)')?></div>
 						</div>
 					</div>
 					<?php } ?>

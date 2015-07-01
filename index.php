@@ -17,6 +17,7 @@ $ctheme = $tbt->SelectWhere('status','active','','')->current();
 // get maintenance status
 $tbo = new ElybinTable('elybin_options');
 $maintenance = $tbo->SelectWhere('name','maintenance_mode','','')->current()->value;
+$default_homepage = $tbo->SelectWhere('name','default_homepage ','','')->current()->value;
 
 $mod = @$_GET['mod'];
 $p = @$_GET['p'];  	
@@ -52,6 +53,23 @@ if ($maintenance == "active"){
 			'online' => date("Y-m-d H:i:s")
 		);
 		$tbv->Update($data,'visitor_ip', $ip);
+	}
+	
+	// redirect to default homepage if is set
+	$tbmn = new ElybinTable('elybin_menu');
+	$chomepage = $tbmn->GetRow('menu_id', $default_homepage);
+	if($chomepage == 1 && $chomepage !== "" && $mod == "index"){
+		$menu = $tbmn->SelectWhere('menu_id', $default_homepage,'','')->current();
+		$menu_url = $menu->menu_url;
+		
+		// jika bukan index  yang jadi default
+		if($menu->menu_id > 1){
+			// redirect
+			header('location: '.$menu_url);
+			
+			// terminate main include page
+			exit;
+		}
 	}
 	
 	// include page

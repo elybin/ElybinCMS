@@ -3,7 +3,7 @@
  * [ Main theme of admin panel
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
@@ -11,56 +11,15 @@
 <?php function theme_head(){ 
 define("START_EXEC", microtime());
 include('./lang/main.php');
-//
-$getoption1 = new ElybinTable('elybin_options'); 
-$homeurl = $getoption1->SelectWhere('name','site_url','','')->current()->value; 
 
-$site_name = $getoption1->SelectWhere('name','site_name','','')->current()->value; 
-$admin_theme = $getoption1->SelectWhere('name','admin_theme','','')->current()->value; 
+// grab info
+$op = _op();
 
-$getoption2 = new ElybinTable('elybin_options'); 
-$shortname_option = $getoption2->SelectWhere('name','short_name','','')->current()->value; 
+// current user 
+$u = _u();
 
-//
-$menucount1 = new ElybinTable('elybin_posts'); 
-$c_post = '';
-$c_post = $menucount1->GetRow('',''); 
-
-$menucount2 = new ElybinTable('elybin_category'); 
-$c_category = '';
-$c_category = $menucount2->GetRow('',''); 
-
-$menucount3 = new ElybinTable('elybin_tag'); 
-$c_tag = '';
-$c_tag = $menucount3->GetRow('',''); 
-
-$menucount4 = new ElybinTable('elybin_media'); 
-$c_media = '';
-$c_media = $menucount4->GetRow('',''); 
-
-$menucount5 = new ElybinTable('elybin_album'); 
-$c_album = '';
-$c_album = $menucount5->GetRow('',''); 
-
-$menucount6 = new ElybinTable('elybin_gallery'); 
-$c_gallery = '';
-$c_gallery = $menucount6->GetRow('',''); 
-
-$menucount7 = new ElybinTable('elybin_pages'); 
-$c_page = '';
-$c_page = $menucount7->GetRow('',''); 
-
-$menucount8 = new ElybinTable('elybin_comments'); 
-$c_comment = '';
-$c_comment = $menucount8->GetRow('',''); 
-
-$menucount9 = new ElybinTable('elybin_contact'); 
-$c_message = '';
-$c_message = $menucount9->GetRow('',''); 
-
-$menucount10 = new ElybinTable('elybin_users'); 
-$c_user = '';
-$c_user = $menucount10->GetRow('',''); 
+// current user 
+$ug = _ug();
 
 // get current active user
 $s = $_SESSION['login'];
@@ -83,13 +42,13 @@ $privmedia = $tbug->current()->media;
 // get priv value
 $privalbum = $tbug->current()->album;
 // get priv value
-$privgallery = $tbug->current()->gallery;
+$privgallery = 0;
 // get priv value
 $privpage = $tbug->current()->page;
 // get priv value
 $privcomment = $tbug->current()->comment;
 // get priv value
-$privcontact = $tbug->current()->contact;
+$privcontact = @$tbug->current()->messager;
 // get priv value
 $privuser = $tbug->current()->user;
 // get priv value
@@ -117,48 +76,29 @@ if(isset($subtitle)){
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>ElybinCMS<?php echo $subtitle?></title>
+	<title>Elybin CMS - <?php echo date('H:i:s') ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	
-	<!-- Favicons -->
-    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" />
 	
-	<!-- Open Sans font from Google CDN -->
-	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->	
-
-	<!-- Pixel Admin's stylesheets -->
-	<!--<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
-	
-	<link href="assets/stylesheets/primary.css" rel="stylesheet" type="text/css">-->
-	<!--
-	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/<?php echo $admin_theme?>.min.css" rel="stylesheet" type="text/css">-->
+	<link href="assets/stylesheets/<?php echo $op->admin_theme?>.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css">
-	<!--<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/ui.css" rel="stylesheet" type="text/css">-->
 	
-	<link href="min/?f=assets/stylesheets/bootstrap.min.css,assets/stylesheets/pixel-admin.min.css,assets/stylesheets/<?php echo $admin_theme?>.css,assets/stylesheets/primary.min.css,assets/stylesheets/widgets.min.css,assets/stylesheets/ui.css" rel="stylesheet" type="text/css">
-	
-	<!--<link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/rtl.min.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/themes.min.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/table.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/minicolors.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/datepicker.css" rel="stylesheet" type="text/css">-->
-	<!--<link href="assets/stylesheets/select2.css" rel="stylesheet" type="text/css">-->
-	
-	<!--[if lt IE 9]>
-		<script src="assets/javascripts/ie.min.js"></script>
-	<![endif]-->
 
+	<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/<?php echo $op->admin_theme?>.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/primary.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/stylesheets/ui.css" rel="stylesheet" type="text/css">
+	
 </head>
-<body class="theme-<?php echo $admin_theme; ?> main-menu-animated main-navbar-fixed">
+<body class="theme-<?php echo $op->admin_theme?> main-menu-animated main-navbar-fixed mmc">
 <script>var init = [];</script>
 <div id="main-wrapper">
 
 	<div id="main-navbar" class="navbar navbar-inverse" role="navigation">
 		<!-- Main menu toggle -->
-		<button type="button" id="main-menu-toggle"><i class="navbar-icon fa fa-bars icon"></i><span class="hide-menu-text"><?php echo strtoupper($lg_hidemenu)?></span></button>
+		<button type="button" id="main-menu-toggle"><i class="navbar-icon fa fa-bars icon"></i><span class="hide-menu-text"><?php echo lg('Hide Menu') ?></span></button>
 		
 		<div class="navbar-inner">
 			<!-- Main navbar header -->
@@ -179,41 +119,41 @@ if(isset($subtitle)){
 				<div>
 					<ul class="nav navbar-nav">
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-home"></i>&nbsp;&nbsp;<?php echo $site_name?></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-home"></i>&nbsp;&nbsp;<?php echo $op->site_name?></a>
 							<ul class="dropdown-menu">
-								<li><a href="<?php echo $homeurl?>" target="_blank"><?php echo $lg_visitpage?></a></li>
+								<li><a href="<?php echo $op->site_url?>" target="_blank"><?php echo lg('Visit Page')?></a></li>
 							</ul>
 						</li>
 						<?php
 							// show if have privilage
-							if($privpost == 1 OR $privmedia == 1 OR $privpage == 1 OR $privuser == 1){
+							if($ug->post == 1 || $ug->media == 1 || $ug->page == 1 || $ug->user == 1){
 						?>
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;<?php echo $lg_new?></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;<?php echo lg('New')?></a>
 							<ul class="dropdown-menu">
 							<?php
 								// show if have privilage
-								if($privpost == 1){
+								if($ug->post == 1){
 							?>
-								<li><a href="?mod=post&amp;act=add"><?php echo $lg_post?></a></li>
+								<li><a href="?mod=post&amp;act=add"><?php echo lg('Post') ?></a></li>
 							<?php } ?>
 							<?php
 								// show if have privilage
-								if($privmedia == 1){
+								if($ug->media == 1){
 							?>
-								<li><a href="?mod=media&amp;act=add"><?php echo $lg_media?></a></li>
+								<li><a href="?mod=media&amp;act=add"><?php echo lg('Media') ?></a></li>
 							<?php } ?>
 							<?php
 								// show if have privilage
-								if($privpage == 1){
+								if($ug->page == 1){
 							?>
-								<li><a href="?mod=page&amp;act=add"><?php echo $lg_page?></a></li>
+								<li><a href="?mod=page&amp;act=add"><?php echo lg('Page') ?></a></li>
 							<?php } ?>
 							<?php
 								// show if have privilage
-								if($privuser == 1){
+								if($ug->user == 1){
 							?>
-								<li><a href="?mod=user&amp;act=add"><?php echo $lg_user?></a></li>
+								<li><a href="?mod=user&amp;act=add"><?php echo lg('User')?></a></li>
 							<?php } ?>
 							</ul>
 						</li>
@@ -225,49 +165,62 @@ if(isset($subtitle)){
 
 							<?php
 								// show if have privilage
-								if($privsetting == 1){
+								if($ug->setting == 1){
 								include "notification.php";
 								} 
 							?>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle user-menu" data-toggle="dropdown">
 									<?php
-										$avatar = $tblu->avatar;
-
-										if($avatar == "default/no-ava.png"){
-											$avatar = "../elybin-file/avatar/default/medium-no-ava.png";
+										// avatari
+										if($u->avatar == "default/no-ava.png"){
+											echo  '<img src="../elybin-file/avatar/default/medium-no-ava.png">';
 										}else{
-											if(file_exists("../elybin-file/avatar/medium-".$avatar)){
-												$avatar = "medium-".$avatar;
-											}else{
-												$avatar = $avatar;
-											}
-											$avatar = "../elybin-file/avatar/$avatar";
+											echo  '<img src="../elybin-file/avatar/sm-'.$u->avatar.' ">';
 										}
-									?><img src="<?php echo $avatar?>" alt="<?php echo $lg_thumbnail?>">
-									<span><?php echo $tblu->fullname?></span>
+									?>
+									<span><?php echo $u->fullname?></span>
 								</a>
 								<ul class="dropdown-menu">
-									<li class="dropdown-header text-center"><?php echo $lg_shortcut?></li>
+									<li class="dropdown-header text-center"><?php echo lg('Shortcut')?></li>
 									<li class="divider"></li>
-									<li><a href="<?php echo $homeurl?>"  target="_blank"><i class="fa fa-desktop"></i>&nbsp;&nbsp;<?php echo $lg_frontend?></a></li>
+									<li>
+										<a href="<?php echo $op->site_url ?>"  target="_blank">
+											<i class="fa fa-desktop"></i>&nbsp;&nbsp;<?php echo lg('Front End')?>
+										</a>
+									</li>
+									<li>
+										<a href="?mod=messager">
+											<i class="fa fa-envelope"></i>&nbsp;&nbsp;<?php echo lg('Message')?>
+										</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a href="?mod=profile">
+											<i class="fa fa-user"></i>&nbsp;&nbsp;<?php echo lg('Profile')?>
+										</a>
+									</li>
 									<?php
 										// show if have privilage
-										if($privcontact == 1){
+										if($ug->setting == 1){
 									?>
-									<li><a href="?mod=contact"><i class="fa fa-envelope"></i>&nbsp;&nbsp;<?php echo $lg_message?></a></li>
+									<li>
+										<a href="?mod=option">
+											<i class="fa fa-cog"></i>&nbsp;&nbsp;<?php echo lg('Setting')?>
+										</a>
+									</li>
 									<?php } ?>
+									<li>
+										<a href="?mod=about">
+											<i class="fa fa-info-circle"></i>&nbsp;&nbsp;<?php echo lg('About')?>
+										</a>
+									</li>
 									<li class="divider"></li>
-									<li><a href="?mod=profile"><i class="fa fa-user"></i>&nbsp;&nbsp;<?php echo $lg_account?></a></li>
-									<?php
-										// show if have privilage
-										if($privsetting == 1){
-									?>
-									<li><a href="?mod=option"><i class="fa fa-cog"></i>&nbsp;&nbsp;<?php echo $lg_setting?></a></li>
-									<?php } ?>
-									<li><a href="?mod=about"><i class="fa fa-info-circle"></i>&nbsp;&nbsp;<?php echo $lg_about?></a></li>
-									<li class="divider"></li>
-									<li><a data-toggle="modal" data-target="#logout-modal"><i class="dropdown-icon fa fa-power-off"></i>&nbsp;&nbsp;<?php echo $lg_logout?></a></li>
+									<li>
+										<a href="index.php?p=logout_modal" data-toggle="modal" data-target="#logout-modal">
+											<i class="dropdown-icon fa fa-power-off"></i>&nbsp;&nbsp;<?php echo lg('Logout')?>
+										</a>
+									</li>
 								</ul>
 							</li>
 						</ul> <!-- / .navbar-nav -->
@@ -278,76 +231,61 @@ if(isset($subtitle)){
 			</div> <!-- / #main-navbar-collapse -->
 		</div> <!-- / .navbar-inner -->
 	</div> <!-- / #main-navbar -->
-<!-- /2. $END_MAIN_NAVIGATION -->
 
 	<div id="main-menu" role="navigation">
 		<div id="main-menu-inner">
-			<div class="menu-content top" id="menu-content-demo">
-				<div>
-					<?php
-						$shortname = $tblu->fullname;
-						$shortname = explode(" ", $shortname);
-						if(count($shortname)>0){
-							if($shortname_option=='first'){
-								$shortname = $shortname[0];
-							}else{
-								$shortname = $shortname[count($shortname)-1];
-							}
-							
-						}
-					?><div class="text-bg"><span class="text-slim"><?php echo $lg_hi?>,</span> <span class="text-semibold"><?php echo $shortname?></span></div>
-					<img src="<?php echo $avatar?>" alt="Avatar">
-					<div class="btn-group">	
-						<a href="<?php echo $homeurl?>" target="_blank" class="btn btn-xs btn-primary btn-outline dark" data-original-title="Tooltip on bottom" data-placement="bottom" data-toggle="tooltip"><i class="fa fa-desktop"></i></a>
-						<a href="?mod=profile" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-user"></i></a>
-						<?php
-							// show if have privilage
-							if($privcontact == 1){
-						?>
-						<a href="?mod=option" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-cog"></i></a>
-						<?php }else{ ?>
-						<a href="?mod=about" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-info"></i></a>
-						<?php } ?>
-						<a class="btn btn-xs btn-danger btn-outline dark" data-toggle="modal" data-target="#logout-modal"><i class="fa fa-power-off"></i></a>
-					</div>
-				</div>
-			</div>
 			<ul class="navigation">
 				<li class="active">
-					<a href="?mod=home"><i class="menu-icon fa fa-dashboard"></i><span class="mm-text"><?php echo $lg_dashboard?></span></a>
+					<a href="?mod=home">
+						<i class="menu-icon fa fa-dashboard"></i>
+						<span class="mm-text"><?php echo lg('Dashboard')?></span>
+					</a>
 				</li>
 				<?php
 					// show if have privilage
-					if($privpost == 1 OR $privcat == 1 OR $privtag == 1){
+					if($ug->post == 1 ||  $ug->category == 1 ||  $ug->tag == 1){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-pencil"></i><span class="mm-text"><?php echo $lg_post?></span></a>
+					<a href="?mod=post">
+						<i class="menu-icon fa fa-pencil"></i>
+						<span class="mm-text"><?php echo lg('Post')?></span>
+					</a>
 					<ul>
 						<?php
 							// show if have privilage
-							if($privpost == 1){
+							if($ug->post == 1){
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=post"><span class="mm-text"><?php echo $lg_allpost?></span><span class="label label-info"><?php echo $c_post?></span></a>
+							<a tabindex="-1" href="?mod=post">
+								<span class="mm-text"><?php echo lg('All Post')?></span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=post&amp;act=add"><span class="mm-text"><?php echo $lg_addnew?></span></a>
-						</li>
-						<?php } ?>
-						<?php
-							// show if have privilage
-							if($privcat == 1){
-						?>
-						<li>
-							<a tabindex="-1" href="?mod=category"><i class="menu-icon fa fa-star"></i><span class="mm-text"><?php echo $lg_category?></span><span class="label label-info"><?php echo $c_category?></span></a>
+							<a tabindex="-1" href="?mod=post&amp;act=add">
+								<span class="mm-text"><?php echo lg('Add New')?></span>
+							</a>
 						</li>
 						<?php } ?>
 						<?php
 							// show if have privilage
-							if($privtag == 1){
+							if($ug->category == 1){
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=tag"><i class="menu-icon fa fa-tags"></i><span class="mm-text"><?php echo $lg_tag?></span><span class="label label-info"><?php echo $c_tag?></span></a>
+							<a tabindex="-1" href="?mod=category">
+								<i class="menu-icon fa fa-star"></i>
+								<span class="mm-text"><?php echo lg('Category')?></span>
+							</a>
+						</li>
+						<?php } ?>
+						<?php
+							// show if have privilage
+							if($ug->tag == 1){
+						?>
+						<li>
+							<a tabindex="-1" href="?mod=tag">
+								<i class="menu-icon fa fa-tags"></i>
+								<span class="mm-text"><?php echo lg('Tags')?></span>
+							</a>
 						</li>
 						<?php } ?>
 					</ul>
@@ -355,36 +293,38 @@ if(isset($subtitle)){
 				<?php } ?>
 				<?php
 					// show if have privilage
-					if($privmedia == 1 OR $privalbum == 1 OR $privgallery == 1){
+					if($ug->media == 1 || $ug->album == 1){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-cloud"></i><span class="mm-text"><?php echo $lg_media?></span></a>
+					<a href="#"><i class="menu-icon fa fa-cloud"></i>
+						<span class="mm-text"><?php echo lg('Media')?></span>
+					</a>
 					<ul>
 						<?php
 							// show if have privilage
-							if($privmedia == 1){
+							if($ug->media == 1){
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=media"><span class="mm-text"><?php echo $lg_library?></span><span class="label label-info"><?php echo $c_media?></span></a>
+							<a tabindex="-1" href="?mod=media">
+								<span class="mm-text"><?php echo lg('Library')?></span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=media&amp;act=add"><span class="mm-text"><?php echo $lg_addnew?></span></a>
-						</li>
-						<?php } ?>
-						<?php
-							// show if have privilage
-							if($privalbum == 1){
-						?>
-						<li>
-							<a tabindex="-1" href="?mod=album"><span class="mm-text"><i class="menu-icon fa fa-book"></i><?php echo $lg_album?></span><span class="label label-info"><?php echo $c_album?></span></a>
+							<a tabindex="-1" href="?mod=media&amp;act=add">
+								<span class="mm-text"><?php echo lg('Add New')?></span>
+							</a>
 						</li>
 						<?php } ?>
 						<?php
 							// show if have privilage
-							if($privgallery == 1){
+							if($ug->album == 1){
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=gallery"><span class="mm-text"><i class="menu-icon fa fa-picture-o"></i><?php echo $lg_photogallery?></span><span class="label label-info"><?php echo $c_gallery?></span></a>
+							<a tabindex="-1" href="?mod=album">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-book"></i><?php echo lg('Album')?>
+								</span>
+							</a>
 						</li>
 						<?php } ?>
 					</ul>
@@ -392,58 +332,78 @@ if(isset($subtitle)){
 				<?php } ?>
 				<?php
 					// show if have privilage
-					if($privpage == 1){
+					if($ug->page == 1){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-file"></i><span class="mm-text"><?php echo $lg_page?></span></a>
+					<a href="?mod=page">
+						<i class="menu-icon fa fa-file"></i>
+						<span class="mm-text"><?php echo lg('Page')?></span>
+					</a>
 					<ul>
 						<li>
-							<a tabindex="-1" href="?mod=page"><span class="mm-text"><?php echo $lg_allpage?></span><span class="label label-info"><?php echo $c_page?></span></a>
+							<a tabindex="-1" href="?mod=page">
+								<span class="mm-text"><?php echo lg('All Page')?></span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=page&amp;act=add"><span class="mm-text"><?php echo $lg_addnew?></span></a>
+							<a tabindex="-1" href="?mod=page&amp;act=add">
+								<span class="mm-text"><?php echo lg('Add New')?></span>
+							</a>
 						</li>
 					</ul>
 				</li>
 				<?php } ?>
 				<?php
 					// show if have privilage
-					if($privcomment == 1 OR $privcontact == 1){
+					if($ug->comment == 1 || $u->user_id == 1){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-comments"></i><span class="mm-text"><?php echo $lg_interaction?></span></a>
+					<a href="?mod=comment">
+						<i class="menu-icon fa fa-comments"></i>
+						<span class="mm-text"><?php echo lg('Interaction')?></span>
+					</a>
 					<ul>
 						<?php
 							// show if have privilage
-							if($privcomment == 1){
+							if($ug->comment == 1){
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=comment"><span class="mm-text"><i class="menu-icon fa fa-comment"></i><?php echo $lg_comment?></span><span class="label label-info"><?php echo $c_comment?></span></a>
+							<a tabindex="-1" href="?mod=comment&amp;filter=unread">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-comment"></i><?php echo lg('Comment')?>
+								</span>
+							</a>
 						</li>
 						<?php } ?>
-						<?php
-							// show if have privilage
-							if($privcontact == 1){
-						?>
 						<li>
-							<a tabindex="-1" href="?mod=contact"><span class="mm-text"><i class="menu-icon fa fa-envelope"></i><?php echo $lg_message?></span><span class="label label-info"><?php echo $c_message?></span></a>
+							<a tabindex="-1" href="?mod=messager">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-envelope"></i><?php echo lg('Messager')?>
+								</span>
+							</a>
 						</li>
-						<?php } ?>
 					</ul>
 				</li>
 				<?php } ?>
 				<?php
 					// show if have privilage
-					if($privuser == 1){
+					if($ug->user == 1){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-users"></i><span class="mm-text"><?php echo $lg_user?></span></a>
+					<a href="?mod=user">
+						<i class="menu-icon fa fa-users"></i>
+						<span class="mm-text"><?php echo lg('User') ?></span>
+					</a>
 					<ul>
 						<li>
-							<a tabindex="-1" href="?mod=user"><span class="mm-text"><?php echo $lg_alluser?></span><span class="label label-info"><?php echo $c_user?></span></a>
+							<a tabindex="-1" href="?mod=user">
+								<span class="mm-text"><?php echo lg('All User') ?></span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=user&amp;act=add"><span class="mm-text"><?php echo $lg_addnew?></span></a>
+							<a tabindex="-1" href="?mod=user&amp;act=add">
+								<span class="mm-text"><?php echo lg('Add New') ?></span>
+							</a>
 						</li>
 					</ul>
 				</li>
@@ -458,7 +418,7 @@ if(isset($subtitle)){
 						//explode usergroup and search
 						$plugin_priv = explode(",",$pl->usergroup);
 						// hide if privillage not found
-						if (array_search($level, $plugin_priv) !== false) {
+						if (array_search($u->level, $plugin_priv) !== false) {
 							@$plavailable++;
 						}
 					}
@@ -467,7 +427,9 @@ if(isset($subtitle)){
 					if($cpl>0 AND @$plavailable>0){
 				?>
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-puzzle-piece"></i><span class="mm-text"><?php echo $lg_apps?></span></a>
+					<a href="#">
+						<i class="menu-icon fa fa-puzzle-piece"></i>
+						<span class="mm-text"><?php echo lg('Apps') ?></span></a>
 					<ul>
 						<?php
 							foreach ($lpl as $pl) {
@@ -483,7 +445,11 @@ if(isset($subtitle)){
 									}
 						?>
 						<li>
-							<a tabindex="-1" href="?mod=<?php echo $pl->alias?>"><span class="mm-text"><i class="menu-icon fa <?php echo $pl->icon?>"></i><?php echo $pl->name?></span><span class="label label-info"><?php echo $notif?></span></a>
+							<a tabindex="-1" href="?mod=<?php echo $pl->alias?>">
+								<span class="mm-text">
+									<i class="menu-icon fa <?php echo $pl->icon?>"></i>
+									<?php echo $pl->name?></span>
+								</a>
 						</li>
 						<?php } } ?>
 					</ul>
@@ -491,41 +457,78 @@ if(isset($subtitle)){
 				<?php } ?>
 				<?php
 					// show if have privilage
-					if($privsetting == 1){
+					if($ug->setting == 1){
 				?>				
 				<li class="mm-dropdown">
-					<a href="#"><i class="menu-icon fa fa-wrench"></i><span class="mm-text"><?php echo $lg_setting?></span></a>
+					<a href="?mod=option">
+						<i class="menu-icon fa fa-wrench"></i>
+						<span class="mm-text"><?php echo lg('Setting') ?></span>
+					</a>
 					<ul>
 						<li>
-							<a tabindex="-1" href="?mod=option"><span class="mm-text"><i class="menu-icon fa fa-gear"></i><?php echo $lg_general?></span></a>
+							<a tabindex="-1" href="?mod=option">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-gear"></i><?php echo lg('General') ?>
+								</span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=theme"><span class="mm-text"><i class="menu-icon fa fa-tint"></i><?php echo $lg_theme?></span></a>
+							<a tabindex="-1" href="?mod=theme">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-tint"></i><?php echo lg('Theme') ?>
+								</span></a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=plugin"><span class="mm-text"><i class="menu-icon fa fa-puzzle-piece"></i><?php echo $lg_plugin?></span></a>
+							<a tabindex="-1" href="?mod=plugin">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-puzzle-piece"></i><?php echo lg('Plugin') ?></span>
+								</a>
 						</li>
-						<?php if($tblu->user_id == 1){ ?>
+						<?php if($u->user_id == 1){ ?>
 						<li>
-							<a tabindex="-1" href="?mod=usergroup"><span class="mm-text"><i class="menu-icon fa fa-users"></i><?php echo $lg_usergroup?></span></a>
+							<a tabindex="-1" href="?mod=usergroup">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-users"></i><?php echo lg('Usergroup') ?>
+								</span>
+							</a>
 						</li>
 						<?php } ?>
 						<li>
-							<a tabindex="-1" href="?mod=menumanager"><span class="mm-text"><i class="menu-icon fa fa-bars"></i><?php echo $lg_menumanager?></span></a>
+							<a tabindex="-1" href="?mod=menumanager">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-bars"></i><?php echo lg('Menu Manager')?>
+								</span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=notification"><span class="mm-text"><i class="menu-icon fa fa-bell"></i><?php echo $lg_notification?></span></a>
+							<a tabindex="-1" href="?mod=notification">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-bell"></i><?php echo lg('Notification')?>
+								</span>
+							</a>
 						</li>
 						<li>
-							<a tabindex="-1" href="?mod=widget"><span class="mm-text"><i class="menu-icon fa fa-th-large"></i><?php echo $lg_widget?></span></a>
+							<a tabindex="-1" href="?mod=widget">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-th-large"></i><?php echo lg('Widget')?>
+								</span>
+							</a>
 						</li>
-						<?php if($tblu->user_id == 1){ ?>
+						<?php if($u->user_id == 1){ ?>
 						<li>
-							<a tabindex="-1" href="?mod=tools"><span class="mm-text"><i class="menu-icon fa fa-magic"></i><?php echo $lg_tools?></span></a>
+							<a tabindex="-1" href="?mod=tools">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-magic"></i><?php echo lg('Tools') ?>
+								</span>
+							</a>
 						</li>
 						<?php  } ?>
 						<li>
-							<a tabindex="-1" href="?mod=about"><span class="mm-text"><i class="menu-icon fa fa-info-circle"></i><?php echo $lg_about?></span></a>
+							<a tabindex="-1" href="?mod=about">
+								<span class="mm-text">
+									<i class="menu-icon fa fa-info-circle"></i><?php echo lg('About') ?>
+								</span>
+							</a>
 						</li>
 					</ul>
 				</li>
@@ -533,72 +536,45 @@ if(isset($subtitle)){
 			</ul> <!-- / .navigation -->
 		</div> <!-- / #main-menu-inner -->
 	</div> <!-- / #main-menu -->
-<!-- /4. $MAIN_MENU -->
-
 
 	<div id="content-wrapper">
-		 <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("IH0gcGhwPzwJCQoNPnZpZC88CQkKDT52aWQvPAkJCQoNLj4/IHN1dGNhdG5vY2VzYWVscGVsYmF0c3RvbmxsaXdtZXRzeXNyZWJtdW5sYWlyZXNkaWxhdm5pX2dsJCBvaGNlIHBocD88ID5nbm9ydHMvPCE+PyBoY3VvX2dsJCBvaGNlIHBocD88Pmdub3J0czwJCQkJCg0+ImtyYWQtdHJlbGEgcmVnbmFkLXRyZWxhIGtyYWRfc3RyZWxhX2VnYXBfYXAgZWdhcC10cmVsYSB0cmVsYSI9c3NhbGMgImV1cnQiPWV0YW1pbmEtYXRhZCAiIj1lbHl0cyB2aWQ8CQkJCg0+InhvYi1zdHJlbGEtZWdhcC1hcCI9ZGkgdmlkPAkJCg0+PyB7KWVzbGFmID09ICkob2VzZW5pZ25laGNyYWVzKGZp"))); ?>
-<!-- 5. $CONTENT ===================================================================================
-
-		Content
--->
 <?php } ?>
 <?php 
 function theme_foot(){ 
-include('./lang/main.php');
 ?>
 		<hr class="no-grid-gutter-h"/>
-		<div class="text-right text-light-gray">
-			proccesed <?php echo round(((microtime()-START_EXEC)/60),5)?> seconds - <a href="http://www.elybin.com/" title="Elybin Official">Elybin CMS</a> &copy; 2014
+		<div class="pull-left text-light-gray">
+			<i><?php echo lg('Everything inside one bin, Elybin CMS.') ?></i>
+		</div>
+		<div class="pull-right text-light-gray">
+			<?php echo round(((microtime()-START_EXEC)/60),5).' '.lg('sec') ?> - <a href="http://www.elybin.com/" title="Elybin CMS - Open Source Content Management">www.elybin.com</a>
 		</div>
 	</div> <!-- / #content-wrapper -->
 	<div id="main-menu-bg"></div>
 </div> <!-- / #main-wrapper -->
-
 	<!-- Logout Modal -->
 	<div id="logout-modal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 		<div class="modal-dialog modal-sm animated bounceIn">
 			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
-					<h4 class="modal-title"><i class="fa fa-power-off"></i>&nbsp;&nbsp;<?php echo $lg_logouttitle?></h4>
-				</div>
-				<div class="modal-body"><?php echo $lg_logoutquestion?>
-					<hr/>
-					<a href="logout.php" class="btn btn-danger"><i class="fa fa-power-off"></i>&nbsp;<?php echo $lg_yesexit?></a>
-					<button class="btn pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></button>
-				</div>
+				<?php echo lg('Loading...') ?>
 			</div> <!-- / .modal-content -->
 		</div> <!-- / .modal-dialog -->
 	</div> <!-- / .modal -->
 	<!-- / Logout Modal -->
-<!-- FOR ONLINE HOSTING
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
--->
 
-<!-- FOR LOCALHOST -->
-<!--<script src="assets/javascripts/jquery.min.js"></script>
-<script src="assets/javascripts/bootstrap.min.js"></script>
-<script src="assets/javascripts/pixel-admin.min.js"></script>-->
-
-
-<!-- For Lower than IE 9 -->
-<!--[if lte IE 9]>
- 	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">'+"<"+"/script>"); </script>
-<![endif]-->
-<!-- For all browser except IE -->
-<!--[if !IE]> -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-	<script type="text/javascript">if (!window.jQuery) { document.write('<script src="min/?f=assets/javascripts/jquery.min.js"><\/script>'); }</script>
-	<script src="min/?b=assets/javascripts&amp;f=bootstrap.min.js,pixel-admin.min.js,elybin-function.min.js" type="text/javascript"></script>
-<!-- <![endif]-->
-
+	<script src="assets/javascripts/jquery.min.js"></script>
+	<script src="assets/javascripts/bootstrap.min.js"></script>
+	<script src="assets/javascripts/pixel-admin.min.js"></script>
+	<script src="assets/javascripts/elybin-function.min.js"></script>
 
 <script>
 // load
 init.push(function () {
 	notif();
+	// help
+	$("a#help-button").click(function(){
+		$("div#help-panel").toggle(300);
+	});
 });
 window.PixelAdmin.start(init);
 </script>

@@ -3,30 +3,25 @@
  * [ Module: Setting - Menu manager Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
-
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	exit;
 }else{
 	// start here
 	$v = new ElybinValidasi;
@@ -49,10 +44,11 @@ if($usergroup == 0){
 		}
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('New menu order saved')
 		);
-		json($a);		
+		echo json_encode($a);	
+		exit;
 	}
 	//ADD
 	elseif ($mod=='menumanager' AND $act=='add'){
@@ -63,14 +59,14 @@ if($usergroup == 0){
 
 		//if field empty
 		if(empty($title) || empty($url)){
-			//echo "{,$lg_pleasefillimportant}";
+			//echo "{,lg('Please fill important field (*)')}";
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 
@@ -107,10 +103,10 @@ if($usergroup == 0){
 						//give error code
 						$a = array(
 							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_maximumsubmenu
+							'title' => lg('Error'),
+							'isi' => lg('You can\'t create to many submenu')
 						);
-						json($a);
+						echo json_encode($a);
 						exit;
 					}
 
@@ -145,10 +141,10 @@ if($usergroup == 0){
 
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('New menu created successfully.')
 		);
-		json($a);		
+		echo json_encode($a);	
 	}
 	//EDIT
 	elseif ($mod=='menumanager' AND $act=='edit'){
@@ -164,24 +160,24 @@ if($usergroup == 0){
 		if(empty($id) OR ($comenu == 0)){
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
+				'title' => lg('Error'),
+				'isi' => lg('ID mismatch, please reload page')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 
 		//if field empty
 		if(empty($title) || empty($url)){
-			//echo "{,$lg_pleasefillimportant}";
+			//echo "{,lg('Please fill important field (*)')}";
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 
@@ -216,10 +212,10 @@ if($usergroup == 0){
 						//give error code
 						$a = array(
 							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_maximumsubmenu
+							'title' => lg('Error'),
+							'isi' => lg('You can\'t create to many submenu')
 						);
-						json($a);
+						echo json_encode($a);
 						exit;
 					}
 
@@ -239,10 +235,11 @@ if($usergroup == 0){
 
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Changes Saved')
 		);
-		json($a);		
+		echo json_encode($a);	
+		exit;
 	}
 	//DEL
 	elseif($mod=='menumanager' AND $act=='del'){
@@ -290,7 +287,7 @@ if($usergroup == 0){
 
 	//404
 	else{
-		header('location:../../../404.php');
+		header('location:../../../404.html');
 	}
 }	
 }

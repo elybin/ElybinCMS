@@ -1,270 +1,417 @@
 <?php
 /* Short description for file
- * [ Module: Comment
+ * Module: Comment
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
-	header('location:../403.php');
+	header('location: index.php');
 }else{
 $modpath 	= "app/comment/";
 $action		= $modpath."proses.php";
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
+// string validation for security
+$v 	= new ElybinValidasi();
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->comment;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->comment;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
-	echo '';
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to access this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 	//start here
-	$v 	= new ElybinValidasi();
 	switch (@$_GET['act']) {
 		case 'view':
 
-		$id 	= $v->xss($_GET['id']);
-		$id 	= $v->sql($id);
+		$cid 	= $v->sql(epm_decode(@$_GET['hash']));
 
-		// check id exist or not
-		$tb 	= new ElybinTable('elybin_comments');
-		$cocomment = $tb->GetRow('comment_id', $id);
-		if(empty($id) OR ($cocomment == 0)){
-			er('<strong>'.$lg_ouch.'!</strong> '.$lg_notfound.' 404<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+		// declare table
+		$tb = new ElybinTable('elybin_comments');
+
+		// 1.1.3 
+		// (rsch) merge to only single query, will speed up php processing speed & simplify the code
+		// get all data
+		$cc	= $tb->SelectFullCustom("
+		SELECT
+		*,
+		`c`.`content` as `ccontent`,
+		`p`.`title` as `post_title`,
+		`c`.`status` as `com_status`,
+		`c`.`user_id` as `com_user_id`,
+		COUNT(*) as `row`,	-- counting row
+		CASE		-- check if user_id related to elybin_users
+			WHEN `c`.`user_id` > 0
+			THEN `u`.`fullname`
+			ELSE `c`.`author`
+		END as `realname`
+		FROM
+		`elybin_comments` as `c`
+		LEFT JOIN 
+			`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+        LEFT JOIN 
+			`elybin_visitor` as `v` ON `c`.`visitor_id` = `v`.`visitor_id`
+        LEFT JOIN 
+			`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+		WHERE
+		`c`.`comment_id` = '".$cid."'
+		LIMIT 0,1
+		")->current();
+		
+		if($cc->row < 1){
+			// show error
+			er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 			theme_foot();
 			exit;
 		}
-
-		// get data
-		$ccom	= $tb->SelectWhere('comment_id',$id,'','');
-		$ccom	= $ccom->current();
-
-		$tbluser 	= new ElybinTable('elybin_users');
-		$cuser	= $tbluser->SelectWhere('user_id',$ccom->user_id,'','');
-		$cuser	= $cuser->current();
-
-		if($ccom->user_id > 0){
-			$author = $cuser->fullname;
-			$email = $cuser->user_account_email;
-		}else{
-			$author = $ccom->author;
-			$email = $ccom->email;
-		}
-
-		$content = html_entity_decode($ccom->content);
-		$date = time_elapsed_string($ccom->date." ".$ccom->time);
-
-		if($ccom->post_id > 0){
-			$di = $lg_post;
-			$tbp 	= new ElybinTable('elybin_posts');
-			$last	= $tbp->SelectWhere('post_id',$ccom->post_id,'','');
-			$ptitle = $last->current();
-			$ptitle = $ptitle->title;
-		}
-		elseif($ccom->gallery_id > 0){
-			$di = $lg_photo;
-			$tbp 	= new ElybinTable('elybin_gallery');
-			$last	= $tbp->SelectWhere('gallery_id',$ccom->gallery_id,'','');
-			$ptitle = $last->current();
-			$ptitle = $ptitle->name;
-		}
 ?>
-
 							<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-							<h4 class="modal-title"><i class="fa fa-external-link-square"></i>&nbsp;&nbsp;<?php echo $lg_detailtitle?></h4>
+							<h4 class="modal-title"><i class="fa fa-comment"></i>&nbsp;&nbsp;<?php echo lg('Comment Detail')?></h4>
 							</div>
 							<div class="modal-body">
 								<table class="table">
 									<tr>
-										<td><i><?php echo $lg_commenton?></i></td>
-										<td><?php echo $di?> - <?php echo $ptitle?></td>
+										<td><i><?php echo lg('Commenting')?></i></td>
+										<td><?php 
+										if($cc->type  == 'post'){
+											echo lg('Post');
+										}
+										else if($cc->type  == 'album'){
+											echo lg('Album');
+										}										
+										?> - <?php echo $cc->post_title?></td>
 									</tr>	
 									<tr>
-										<td><i><?php echo $lg_authorname?></i></td>
-										<td><?php echo $author?></td>
-									</tr>		
+										<td><i><?php echo lg('Author')?></i></td>
+										<td>
+											<?php
+											// if comment status is 'active'
+											if($cc->com_status == 'active'){
+												echo '<a href="?mod=comment&amp;act=block&amp;hash='.epm_encode($cc->comment_id).'&amp;clear=yes" class="btn btn-xs btn-danger pull-right" data-toggle="modal" data-target="#delete"><i class="fa fa-ban"></i> '.lg("Block future comment from").'"'.$cc->realname.'"</a>';
+											}else{
+												echo '<a href="?mod=comment&amp;act=unblock&amp;hash='.epm_encode($cc->comment_id).'&amp;clear=yes" class="btn btn-xs btn-default pull-right" data-toggle="modal" data-target="#delete"><i class="fa fa-ban"></i> '.lg("Unblock ").'"'.$cc->realname.'"</a>';
+											}
+											?>
+											
+											<?php echo $cc->realname?><br/>
+											(<?php echo $cc->email ?>)
+										</td>
+									</tr>	
 									<tr>
-										<td><i><?php echo $lg_from?></i></td>
-										<td><?php echo $email?></td>
+										<td><i><?php echo lg('Date')?></i></td>
+										<td><?php echo time_elapsed_string($cc->date)?></td>
 									</tr>
 									<tr>
-										<td><i><?php echo $lg_date?></i></td>
-										<td><?php echo $date?></td>
-									</tr>
-									<tr>
-										<td><i><?php echo $lg_content?></i></td>
-										<td><?php echo $content?></td>
+										<td><i><?php echo lg('Content')?></i></td>
+										<td><?php echo $cc->ccontent?></td>
 									</tr>
 								</table>
-								<hr></hr>
+								<hr/>
+								<form class="" action="app/comment/proses.php" method="post" id="form-quick">
+									<div class="form-group">
+									  <div class="col-sm-12">	
+										<?php
+											// get child comment (reply)
+											$lcr = $tb->SelectFullCustom("
+											SELECT
+											*,
+											`c`.`content` as `ccontent`,
+											CASE		-- check if user_id related to elybin_users
+												WHEN `c`.`user_id` > 0
+												THEN `u`.`fullname`
+												ELSE `c`.`author`
+											END as `realname`
+											FROM
+											`elybin_comments` as `c`
+											LEFT JOIN 
+												`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+											WHERE 
+											`c`.`parent` = '".$cid."'
+											");
+											foreach($lcr as $ccr){
+										?>
+										<!-- comment block -->
+										<div class="panel-body depth-xs" style="margin-bottom: 5px">
+											<p><b class="text-bg"><?php echo $ccr->realname ?></b> &nbsp;<i class="text-light-gray">(<?php echo $ccr->email ?>)</i></b></p>
+											<p><?php echo htmlspecialchars($ccr->ccontent)?></p>
+											<span class="text-xs text-light-gray"><?php echo time_elapsed_string($ccr->date)?></span>
+											<div class="pull-right">
+												<a href="?mod=comment&amp;act=del&amp;hash=<?php echo epm_encode($ccr->comment_id) ?>&amp;clear=yes" data-toggle="modal" data-target="#delete"><i class="fa fa-trash-o"></i> <?php echo lg('Delete') ?></a>
+											</div>
+										</div>
+										<?php 
+											}
+										?>
+									  	<?php
+									  	// if comment have replied
+									  	if($cc->com_user_id !== _u()->user_id){
+									  	?>	
+									  	<br/>
+									  	<a href="?mod=comment&amp;act=reply&amp;hash=<?php echo epm_encode($cid); ?>" class="pull-right"><i class="fa fa-pencil"></i> <?php echo lg('Advanced Reply') ?></a>
+									  	<h4><?php echo lg('Quick Reply') ?></h4>
+										<textarea name="content" cols="50" rows="7" class="form-control" id="text-editor" placeholder="<?php echo lg('Your comment here...')?>"></textarea>
+										<br/>
+										<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Send Reply')?></button>&nbsp;
+										<a href="?mod=comment&amp;act=del&amp;hash=<?php echo epm_encode($cc->comment_id) ?>&amp;clear=yes" class="btn btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete Permanently') ?>"><i class="fa fa-trash-o"></i><i class="fa fa-times"></i>&nbsp;<?php echo lg('Delete') ?></a>
+										<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
+									 
+
+										<input type="hidden" name="hash" value="<?php echo epm_encode($cid); ?>" />
+										<input type="hidden" name="act" value="reply" />
+										<input type="hidden" name="mod" value="comment" />
+										</div>
+									  	<?php 
+									  	} ?>
+									</div> <!-- / .form-group -->
+								</div>
+
 								<div class="form-group no-margin-b">
-									<button class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></button>
+									
 								</div>
 							</div>
-
+<script type="text/javascript">ElybinView();</script>
 <?php
 
 			break;
 
-		case 'edit';
-		$id 	= $v->xss(@$_GET['id']);
-		$id 	= $v->sql($id);
-
-		// check id exist or not
-		$tb 	= new ElybinTable('elybin_comments');
-		$cocomment = $tb->GetRow('comment_id', $id);
-		if(empty($id) OR ($cocomment == 0)){
-			er('<strong>'.$lg_ouch.'!</strong> '.$lg_notfound.' 404<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+		case 'reply';
+		$cid 	= $v->sql(epm_decode(@$_GET['hash']));
+		
+		// declare table
+		$tb = new ElybinTable('elybin_comments');
+		
+		// single query
+		// get all data
+		$cc	= $tb->SelectFullCustom("
+		SELECT
+		*,
+		`c`.`content` as `ccontent`,
+		`p`.`title` as `post_title`,
+		COUNT(*) as `row`,	-- counting row
+		CASE		-- check if user_id related to elybin_users
+			WHEN `c`.`user_id` > 0
+			THEN `u`.`fullname`
+			ELSE `c`.`author`
+		END as `realname`
+		FROM
+		`elybin_comments` as `c`
+		LEFT JOIN 
+			`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+        LEFT JOIN 
+			`elybin_visitor` as `v` ON `c`.`visitor_id` = `v`.`visitor_id`
+        LEFT JOIN 
+			`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+		WHERE
+		`c`.`comment_id` = '".$cid."'
+		LIMIT 0,1
+		")->current();
+		
+		// check existance
+		if($cc->row < 1){
+			er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 			theme_foot();
 			exit;
 		}
-
-		// get data
-		$ccomment	= $tb->SelectWhere('comment_id',$id,'','');
-		$ccomment	= $ccomment->current();
-
-		$tbluser 	= new ElybinTable('elybin_users');
-		$cuser	= $tbluser->SelectWhere('user_id',$ccomment->user_id,'','');
-		$cuser	= $cuser->current();
-
-		if($ccomment->user_id > 0){
-			$author = $cuser->fullname;
-			$email = $cuser->user_account_email;
-			$disabled = ' disabled="disabled"';
-			$infop = '<p class="help-block">'.$lg_dataautomaticfrom.'</p>';
-		}else{
-			$author = $ccomment->author;
-			$email = $ccomment->email;
-			$disabled = "";
-			$infop = "";
-		}
-		$content = html_entity_decode($ccomment->content);
-		if($ccomment->post_id){
-			$di = $lg_post;
-		}
-		elseif($ccomment->gallery_id){
-			$di = $lg_photo;
-		}
+		
 ?>
+		<!-- help -->
+		<div class="page-header" id="help-panel" style="display: none">
+			<p><?php echo lg('...') ?></p>
+		</div>
+		<!-- breadcrumb -->
+		<ul class="breadcrumb breadcrumb-page">
+			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
+			<li><a href="?mod=comment"><?php echo lg('Comment') ?></a></li>
+			<li class="active"><a href="?mod=comment&amp;act=reply&amp;hash=<?php echo epm_encode($id) ?>"><?php echo lg('Reply Comment') ?></a></li>
+			
+			<div class="pull-right">
+				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
+			</div>
+		</ul>
+		<!-- Content here -->
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_interaction?> / <?php echo $lg_comment?> / </span><?php echo $lg_editcomment?></h1>
+			<a href="?mod=comment" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Comment') ?></a>
+			<h1><?php echo lg('Reply Comment') ?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
-		<div class="row">
-			<div class="col-sm-12">
-
-				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-					<div class="panel-heading" id="tooltip">
-						<span class="panel-title"><i class="fa fa-comments"></i>&nbsp;&nbsp;<?php echo $lg_editcurrentcomment?></span>
-						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
-					</div>
-					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_commenton?></label>
-					      <div class="col-sm-10">
-					      	<input type="text" value="<?php echo $di?>" class="form-control" placeholder="<?php echo $lg_commenton?>" disabled="disabled"/>
-					      </div>
-					  </div> <!-- / .form-group -->
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_authorname?>*</label>
-					      <div class="col-sm-10">
-					      	<input type="text" name="author" value="<?php echo $author?>" class="form-control" placeholder="<?php echo $lg_authorname?>"<?php echo $disabled?>/>
-					      </div>
-					  </div> <!-- / .form-group -->
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_email?>*</label>
-					      <div class="col-sm-10">
-					      	<input type="email" name="email" value="<?php echo $email?>" class="form-control" placeholder="<?php echo $lg_email?>"<?php echo $disabled?>/>
-					      	<?php echo $infop?>
-					      </div>
-					  </div> <!-- / .form-group -->
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_content?>*</label>
-					      <div class="col-sm-10">
-<?php
-	// getting text_editor
-	$tblo = new ElybinTable('elybin_options');
-	$editor = $tblo->SelectWhere('name','text_editor','','')->current()->value;
-	if($editor=='summernote'){
-?>
-							<style><?php include("assets/stylesheets/summernote.css"); ?></style>
-<?php 
-	}
-	elseif($editor=='bs-markdown'){
-?>
-							<style><?php include("assets/stylesheets/markdown.css"); ?></style>
-<?php } ?>
-					      	<textarea name="content" cols="50" rows="5" class="form-control" id="text-editor" placeholder="<?php echo $lg_content?>"><?php echo $content?></textarea>
-					      </div>
-					  </div> <!-- / .form-group -->
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_status?></label>
-					      <div class="col-sm-10">
-					      	<input type="checkbox" name="status" class="form-control" id="switcher-style" <?php if($ccomment->status=='active'){echo 'checked="checked"';}?>>
-					      	<p class="help-block"><span class="fa fa-check"></span>&nbsp;<?php echo $lg_approve?>&nbsp;<span class="fa fa-times"></span>&nbsp;<?php echo $lg_decline?></p>
-	      				</div>
-					  </div> <!-- / .form-group -->
-					</div><!-- / .panel-body -->
-
-
-					  <div class="panel-footer">
-						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_savechanges?></button>
-						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></a>
-						  <input type="hidden" name="comment_id" value="<?php echo $ccomment->comment_id?>" />
-						  <input type="hidden" name="act" value="edit" />
-						  <input type="hidden" name="mod" value="comment" />
-					  </div> <!-- / .form-footer -->
-				</form><!-- / .form -->
-				<!-- Help modal -->
-				<div id="help" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+		<?php
+			// 1.1.3
+			if(@$_GET['msg'] == 'posted'){
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Your reply successfully posted and it will inform via email.') . '</div>';
+			}
+			else if(@$_GET['msg'] == 'deleted'){
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Comment successfully deleted.') . '</div>';
+			}
+		?>
+				
+		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
+		<style><?php include("assets/stylesheets/jquery-ui.css"); ?></style>
+		<style><?php include("assets/stylesheets/jquery.tagsinput.min.css"); ?></style>
+		<form class="" action="app/comment/proses.php" method="post" enctype="multipart/form-data" id="form">
+			<div class="row">
+				<div class="col-sm-8">
+					<div class="form-horizontal panel-wide depth-sm" style="margin-bottom: 5px">
+						<div class="panel-body">
+							<!-- comment block -->
+							<div class="panel-body depth-md" style="margin-bottom: 5px">
+								<p><b class="text-bg"><?php echo $cc->realname ?></b> &nbsp;<i class="text-light-gray">(<?php echo $cc->email ?>)</i></b></p>
+								<p><?php echo htmlspecialchars($cc->ccontent)?></p>
+								<span class="text-right text-xs text-light-gray"><?php echo time_elapsed_string($cc->date)?> - <?php echo $cc->post_title ?></span>
 							</div>
-							<div class="modal-body">...</div>
-						</div> <!-- / .modal-content -->
-					</div> <!-- / .modal-dialog -->
-				</div> <!-- / .modal -->
-				<!-- / Help modal -->
-			</div><!-- / .col -->
-		</div><!-- / .row -->
+							
+							<?php
+							// get child comment (reply)
+							$lcr = $tb->SelectFullCustom("
+							SELECT
+							*,
+							`c`.`content` as `ccontent`,
+							`p`.`title` as `post_title`,
+							CASE		-- check if user_id related to elybin_users
+								WHEN `c`.`user_id` > 0
+								THEN `u`.`fullname`
+								ELSE `c`.`author`
+							END as `realname`
+							FROM
+							`elybin_comments` as `c`
+							LEFT JOIN 
+								`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+							LEFT JOIN 
+								`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+							WHERE
+							`c`.`parent` = '".$cid."'
+							");
+							foreach($lcr as $ccr){
+							?>
+							<!-- comment block -->
+							<div class="panel-body depth-xs" style="margin-bottom: 5px">
+								<p><b class="text-bg"><?php echo $ccr->realname ?></b> &nbsp;<i class="text-light-gray">(<?php echo $ccr->email ?>)</i></b></p>
+								<p><?php echo htmlspecialchars($ccr->ccontent)?></p>
+								<span class="text-xs text-light-gray"><?php echo time_elapsed_string($ccr->date)?> - <?php echo $ccr->post_title ?></span>
+								<div class="pull-right">
+									<a href="?mod=comment&amp;act=del&amp;hash=<?php echo epm_encode($ccr->comment_id) ?>&amp;clear=yes" data-toggle="modal" data-target="#delete"><i class="fa fa-trash-o"></i> <?php echo lg('Delete') ?></a>
+								</div>
+							</div>
+							<?php 
+							}
+							?>
+							<div class="form-group">
+							  <div class="col-sm-12">
+								<?php
+								// getting text_editor
+								if(op()->text_editor == 'summernote'){
+									echo '<style>'; include("assets/stylesheets/summernote.css"); echo '</style>';
+								}
+								else if(op()->text_editor == 'bs-markdown'){
+									echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
+								} 
+								?>								
+								<div id="summernote-progress" style="display: none">
+									<p><?php echo lg('Uploading Images...') ?> - <span>1%</span></p>
+									<div class="progress progress-striped">
+										<div class="progress-bar progress-bar-success" style="width: 1%"></div>
+									</div>
+								 </div>
+								<textarea name="content" cols="50" rows="10" class="form-control" id="text-editor" placeholder="<?php echo $lg_content?>"></textarea>
+								<br/>
+								<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Send Reply')?></button>
+							 </div>
+							  
+							</div> <!-- / .form-group -->
 
-<!-- Javascript -->
-<script>
+						  </div><!-- / .panel-body -->
+					</div>
+				</div><!-- / .col -->
+			
+				
+				<div class="col-sm-4">
+					<div class="form-horizontal depth-sm" style="margin-bottom: 5px">
+						<div class="panel-body">
+							<h4><?php echo lg('Recent Comments') ?></h4>
+							<?php
+							// show recent comment (ajax)
+							$lc = $tb->SelectFullCustom("
+							SELECT
+							*,
+							`c`.`content` as `ccontent`,
+							`p`.`title` as `post_title`,
+							CASE		-- check if user_id related to elybin_users
+								WHEN `c`.`user_id` > 0
+								THEN `u`.`fullname`
+								ELSE `c`.`author`
+							END as `realname`
+							FROM
+							`elybin_comments` as `c`
+							LEFT JOIN 
+								`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+							LEFT JOIN 
+								`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+							WHERE
+							`c`.`parent` = 0 &&
+							`c`.`user_id` != '"._u()->user_id."'
+							LIMIT 0,5
+							");
+							// show
+							foreach($lc as $cc2){
+							?>
+								<div class="comment">
+									<div class="comment-body">
+										<div class="comment-by">
+											<a href="#" title=""><?php echo $cc2->realname ?></a> commented on "<a href="<?php echo '../'.$cc2->type.'/'.$cc2->post_id.'/'.$cc2->seotitle.'.html'; ?>"><?php echo substr($cc2->post_title, 0,20) ?></a>..."
+										</div>
+										<div class="comment-text">
+											<?php echo substr(strip_tags($cc->content), 0,200)?>
+										</div>
+										<div class="comment-actions">
+											<a href="?mod=comment&amp;act=reply&amp;hash=<?php echo epm_encode($cc2->comment_id) ?>"><i class="fa fa-comment"></i> <?php echo lg('Reply') ?></a>
+											<span class="pull-right"><?php echo time_elapsed_string($cc->date)?></span>
+										</div>
+									</div> <!-- / .comment-body -->
+								</div> <!-- / .comment -->
+								<br/>
+							<?php } ?>
 
-</script>
-<!-- / Javascript -->
+						</div><!-- / .panel-body -->
+					</div>
+				</div><!-- / .col -->
+				
+				<input type="hidden" name="hash" value="<?php echo epm_encode($cid); ?>" />
+				<input type="hidden" name="act" value="reply" />
+				<input type="hidden" name="mod" value="comment" />
+				
+			</div>
+		</form><!-- / .form -->
+		
+		
+		<!-- Modal 1 -->
+		<div id="delete" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:2000">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<?php echo lg('Loading')?>...
+				</div> <!-- / .modal-content -->
+			</div> <!-- / .modal-dialog -->
+		</div> <!-- / .modal -->
 <?php
 		break;
 
 	case 'del':
 ?>
-
 							<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-							<h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_deletetitle?></h4>
+							<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;<?php echo lg('Delete Permanently') ?></h4>
 							</div>
 							<div class="modal-body">
-								<?php echo $lg_deletequestion?>
+								<p class="text-danger"><?php echo lg('Are you sure you want delete permanently this item. This action cannot be undone.')?></p>
 								<hr></hr>
-								<form action="<?php echo $action?>" method="post">
-									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_yesdelete?></button>
-									<a class="btn btn-default pull-right" data-dismiss="modal" onClick="hide_modal();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_cancel?></a>
-									<input type="hidden" name="comment_id" value="<?php echo $_GET['id']?>" />
+								<form action="app/comment/proses.php" method="post">
+									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Yes, Delete')?></button>
+									<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></a>
+									<input type="hidden" name="hash" value="<?php echo @$_GET['hash']?>" />
 									<input type="hidden" name="act" value="del" />
 									<input type="hidden" name="mod" value="comment" />
 								</form>
@@ -272,223 +419,621 @@ if($usergroup == 0){
 <?php
 			break;
 
-		case 'approve':
-			$comment_id = $v->sql(@$_GET['id']);
+		case 'block':
+			$cid = $v->sql(epm_decode(@$_GET['hash']));
 
-			// check id exist or not
-			$tbl 	= new ElybinTable('elybin_comments');
-			$cocomment = $tbl->GetRow('comment_id', $comment_id);
-			if(empty($comment_id) OR ($cocomment == 0)){
-				er('<strong>'.$lg_ouch.'!</strong> '.$lg_notfound.' 404<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+			// declare table
+			$tb = new ElybinTable('elybin_comments');
+
+			// 1.1.3 
+			// (rsch) merge to only single query, will speed up php processing speed & simplify the code
+			// get all data
+			$cc	= $tb->SelectFullCustom("
+			SELECT
+			*,
+			`c`.`content` as `ccontent`,
+			`p`.`title` as `post_title`,
+			`c`.`user_id` as `com_user_id`,
+			`c`.`status` as `com_status`,
+			COUNT(*) as `row`,	-- counting row
+			CASE		-- check if user_id related to elybin_users
+				WHEN `c`.`user_id` > 0
+				THEN `u`.`fullname`
+				ELSE `c`.`author`
+			END as `realname`
+			FROM
+			`elybin_comments` as `c`
+			LEFT JOIN 
+				`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+	        LEFT JOIN 
+				`elybin_visitor` as `v` ON `c`.`visitor_id` = `v`.`visitor_id`
+	        LEFT JOIN 
+				`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+			WHERE
+			`c`.`comment_id` = '".$cid."'
+			LIMIT 0,1
+			")->current();
+			
+			// if data empty
+			if($cc->row < 1){
+				// show error
+				er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 				theme_foot();
 				exit;
 			}
 
-			$cstatus = $tbl->SelectWhere('comment_id',$comment_id,'','');
-			$cstatus = $cstatus->current();
-			if($cstatus->status == 'active'){
-				$status = 'deactive';
-			}else{
-				$status = 'active';
+			// can`t block his self
+			if($cc->com_user_id == _u()->user_id){
+				// show error
+				echo '<div class="note note-danger depth-xs no-margin"><i class="fa fa-exclamation-triangle"></i> ' . lg('Be careful, you just want to kill your self.') . '</div>';
+				exit;
 			}
-			
-			$data = array(
-				'status' => $status	
-				);
-			$tbl->Update($data,'comment_id',$comment_id);
-			ElybinRedirect('./admin.php?mod='.$mod);
+
+			// system error found, requested data mismatch with our database
+			if($cc->com_status == 'blocked'){
+				// show error
+				echo '<div class="note note-danger depth-xs no-margin"><i class="fa fa-exclamation-triangle"></i> ' . lg('Sorry, we had trouble. The requested data mismatch with our database, please refresh this page.') . '</div>';
+				exit;
+			}
+?>
+							<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+							<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;<?php echo lg('Confrim Block') ?></h4>
+							</div>
+							<div class="modal-body">
+								<p class="text-danger"><?php echo lg('Are you sure you want to block')?> <?php echo $cc->realname ?>?</p>
+								<p class="text-danger">
+								<?php echo lg('It also deny from:') ?>
+									<ul>
+										<li><?php echo lg('Commenting a post') ?></li>
+									</ul>
+								</p>
+								<hr/>
+								<form action="app/comment/proses.php" method="post">
+									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Yes, Block')?></button>
+									<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></a>
+									<input type="hidden" name="hash" value="<?php echo @$_GET['hash']?>" />
+									<input type="hidden" name="act" value="block" />
+									<input type="hidden" name="mod" value="comment" />
+								</form>
+							</div>
+<?php
 			break;
 
-		//
-		default:
-		$tb 	= new ElybinTable('elybin_comments');
-		$lcomment	= $tb->Select('comment_id','DESC');
-		$no = 1;
+		case 'unblock':
+			$cid = $v->sql(epm_decode(@$_GET['hash']));
 
+			// declare table
+			$tb = new ElybinTable('elybin_comments');
+
+			// 1.1.3 
+			// (rsch) merge to only single query, will speed up php processing speed & simplify the code
+			// get all data
+			$cc	= $tb->SelectFullCustom("
+			SELECT
+			*,
+			`c`.`content` as `ccontent`,
+			`p`.`title` as `post_title`,
+			`c`.`user_id` as `com_user_id`,
+			`c`.`status` as `com_status`,
+			COUNT(*) as `row`,	-- counting row
+			CASE		-- check if user_id related to elybin_users
+				WHEN `c`.`user_id` > 0
+				THEN `u`.`fullname`
+				ELSE `c`.`author`
+			END as `realname`
+			FROM
+			`elybin_comments` as `c`
+			LEFT JOIN 
+				`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+	        LEFT JOIN 
+				`elybin_visitor` as `v` ON `c`.`visitor_id` = `v`.`visitor_id`
+	        LEFT JOIN 
+				`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+			WHERE
+			`c`.`comment_id` = '".$cid."'
+			LIMIT 0,1
+			")->current();
+			
+			// if data empty
+			if($cc->row < 1){
+				// show error
+				er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+				theme_foot();
+				exit;
+			}
+
+			// can`t block his self
+			if($cc->com_user_id == _u()->user_id){
+				// show error
+				echo '<div class="note note-danger depth-xs no-margin"><i class="fa fa-exclamation-triangle"></i> ' . lg('Be careful, you just want to kill your self.') . '</div>';
+				exit;
+			}			
+
+			// system error found, requested data mismatch with our database
+			if($cc->com_status == 'active'){
+				// show error
+				echo '<div class="note note-danger depth-xs no-margin"><i class="fa fa-exclamation-triangle"></i> ' . lg('Sorry, we had trouble. The requested data mismatch with our database, please refresh this page.') . '</div>';
+				exit;
+			}
 ?>
+							<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+							<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;<?php echo lg('Confrim Unblock') ?></h4>
+							</div>
+							<div class="modal-body">
+								<p class="text-danger"><?php echo lg('Are you sure you want to unblock')?> <?php echo $cc->realname ?>?</p>
+								<p class="text-danger">
+								<?php echo lg('It will opening access to:') ?>
+									<ul>
+										<li><?php echo lg('Commenting a post') ?></li>
+									</ul>
+								</p>
+								<hr/>
+								<form action="app/comment/proses.php" method="post">
+									<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo lg('It\'s okay, Unblock')?></button>
+									<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></a>
+									<input type="hidden" name="hash" value="<?php echo @$_GET['hash']?>" />
+									<input type="hidden" name="act" value="unblock" />
+									<input type="hidden" name="mod" value="comment" />
+								</form>
+							</div>
+<?php
+			break;
+
+		default:
+			$tb 	= new ElybinTable('elybin_comments');
+
+			$search = $v->sql(@$_GET['search']);	
+				
+			// search
+			if(isset($_GET['search'])){
+				$s_q = " && (`c`.`author` LIKE '%$search%' || `c`.`email` LIKE '%$search%' || `c`.`status` LIKE '%$search%')";
+			}else{
+				$s_q = "";
+			}
+			
+			// get current user
+			$u = _u();
+
+			// 1.1.3
+			// with filter
+			if(!isset($_GET['filter'])){
+				// normal query
+				// show all, exclude: blocked, my comments
+				$que = "
+				SELECT
+				*,
+				`c`.`content` as `ccontent`,
+				`p`.`title` as `post_title`,
+				`c`.`date` as `com_date`,
+				`c`.`content` as `com_content`,
+				`c`.`status` as `com_status`,
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+		        LEFT JOIN 
+					`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+				WHERE
+				`c`.`user_id` != ".$u->user_id." &&
+				`c`.`status` != 'blocked'
+				$s_q
+				";
+			}
+			else if(isset($_GET['filter']) && @$_GET['filter'] == 'unread'){
+				// show only: active (not blocked), replay no
+				$que = "
+				SELECT
+				*,
+				`c`.`content` as `ccontent`,
+				`p`.`title` as `post_title`,
+				`c`.`date` as `com_date`,
+				`c`.`content` as `com_content`,
+				`c`.`status` as `com_status`,
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+		        LEFT JOIN 
+					`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+				WHERE
+				`c`.`user_id` != ".$u->user_id." &&
+				`c`.`status` = 'active' &&
+				`c`.`reply` = 'no'
+				$s_q
+				";
+			}
+			else if(isset($_GET['filter']) && @$_GET['filter'] == 'mine'){
+				// show only with current user_id
+				$que = "
+				SELECT
+				*,
+				`c`.`content` as `ccontent`,
+				`p`.`title` as `post_title`,
+				`c`.`date` as `com_date`,
+				`c`.`content` as `com_content`,
+				`c`.`status` as `com_status`,
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+		        LEFT JOIN 
+					`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+				WHERE
+				`c`.`user_id` = ".$u->user_id." 
+				$s_q
+				";
+			}
+			else if(isset($_GET['filter']) && @$_GET['filter'] == 'blocked'){
+				// show only blocked comment
+				$que = "
+				SELECT
+				*,
+				`c`.`content` as `ccontent`,
+				`p`.`title` as `post_title`,
+				`c`.`date` as `com_date`,
+				`c`.`content` as `com_content`,
+				`c`.`status` as `com_status`,
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+		        LEFT JOIN 
+					`elybin_posts` as `p` ON `c`.`post_id` = `p`.`post_id`
+				WHERE
+				`c`.`user_id` != ".$u->user_id." &&
+				`c`.`status` = 'blocked' 
+				$s_q
+				";
+			}
+
+			
+			$coc = $tb->GetRowFullCustom($que);
+			// modify query to pageable & shortable
+			$oarr = array(
+				'default' => '`c`.`comment_id` DESC',
+				'author' => '`c`.`author`',
+				'date' => '`c`.`date`'
+			);
+			$que = _PageOrder($oarr, $que);
+			$lcom	= $tb->SelectFullCustom($que);
+
+			// /echo '<pre>'.$que.'</pre>';
+?>
+		<!-- help -->
+		<div class="page-header" id="help-panel" style="display: none">
+			<p><?php echo lg('...') ?></p>
+		</div>
+		<!-- breadcrumb -->
+		<ul class="breadcrumb breadcrumb-page">
+			<div class="breadcrumb-label text-light-gray"><?php echo lg('You are here:') ?></div>
+			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
+			<li class="active"><a href="?mod=comment"><?php echo lg('Comment') ?></a></li>
+			
+			<div class="pull-right">
+				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
+			</div>
+		</ul>
 		<!-- Page Header -->
 		<div class="page-header">
 			<div class="row">
 				<h1 class="col-xs-12 col-sm-6 col-md-6 text-center text-left-sm">
-					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-comments"></i>&nbsp;&nbsp;<?php echo $lg_comment?></span>
-					<span class="hidden-xs"><span class="text-light-gray"><?php echo $lg_comment?> / </span><?php echo $lg_all?></span>
+					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-comment"></i>&nbsp;&nbsp;<?php echo lg('Comment')?></span>
+					<span class="hidden-xs"><?php echo lg('Comment') ?></span>
+					<?php if($search!==''){ echo '&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-light-gray text-sm">'.lg('Search result for').' <i>&#34;'.$search.'&#34;</i>';} ?>
 				</h1>
-				<div class="col-xs-12 col-sm-6 col-md-6">
-					<div class="row">
-						<hr class="visible-xs no-grid-gutter-h">
-						<!-- Search Bar -->
-						<form action="#" class="pull-right col-xs-12 col-sm-6 col-md-8">
-							<div class="input-group no-margin">
-								<span class="input-group-addon" style="border:none;background: #fff;background: rgba(0,0,0,.05);"><i class="fa fa-search"></i></span>
-								<input id="search" placeholder="<?php echo $lg_search?>..." class="form-control no-padding-hr" style="border:none;background: #fff;background: rgba(0,0,0,.05);" type="text">
-							</div>
-						</form>
-					</div>
-				</div>
 			</div>
 		</div> <!-- ./Page Header -->
-		
+
+		<?php
+			// 1.1.3
+			if(@$_GET['msg'] == 'blocked'){
+				$cbc = $tb->SelectFullCustom("		
+				SELECT
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+				WHERE
+				`c`.`comment_id` = ".epm_decode(@$_GET['hash'])."
+				")->current();
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('You\'ve blocked') . ' '. $cbc->realname. ', ' . lg('We\'re sorry that you\'ve had this experience.') . '</div>';
+			}
+			else if(@$_GET['msg'] == 'unblocked'){
+				$cubc = $tb->SelectFullCustom("		
+				SELECT
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+				WHERE
+				`c`.`comment_id` = ".epm_decode(@$_GET['hash'])."
+				")->current();
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Successfully unblock') . ' '. $cubc->realname. ', ' . lg('That\'s kind of you.') . '</div>';
+			}
+			else if(@$_GET['msg'] == 'posted'){
+				$cubc = $tb->SelectFullCustom("		
+				SELECT
+				CASE		-- check if user_id related to elybin_users
+					WHEN `c`.`user_id` > 0
+					THEN `u`.`fullname`
+					ELSE `c`.`author`
+				END as `realname`
+				FROM
+				`elybin_comments` as `c`
+				LEFT JOIN 
+					`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+				WHERE
+				`c`.`comment_id` = ".epm_decode(@$_GET['hash'])."
+				")->current();
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Your reply to ') . ' "'. $cubc->realname. '""  '. lg('successfully posted. There few comment you must reply too.') . '</div>';
+			}
+		?>
+
 		<!-- Content here -->
 		<div class="row">
-			<div class="col-sm-12">
-				<form action="<?php echo $action?>" method="post" class="panel">
-					<input type="hidden" name="act" value="multidel" />
-					<input type="hidden" name="mod" value="comment" />
-					
-					<!-- Panel Heading -->
-					<div class="panel-heading">
-						<span class="panel-title"><i class="fa fa-comments hidden-xs">&nbsp;&nbsp;</i><?php echo $lg_allcomment?></span>
-						<div class="panel-heading-controls" id="tooltip">
-							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
-						</div> <!-- / .panel-heading-controls -->
-					</div> 
-					<!-- ./Panel Heading -->
-					
-					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
-					  <div class="table-responsive">
-						<table class="table table-hover" id="results">
-						 <thead>
-						  <tr>
-						    <th>#</th>
-						    <th><i class="fa fa-check-square" id="tooltip-ck" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_checkall?>"></i></th>
-						    <th><?php echo $lg_photo?></th>
-						    <th><?php echo $lg_authorname?></th>
-						    <th><?php echo $lg_commenton?></th>
-						    <th><?php echo $lg_date?></th>
-						    <th><?php echo $lg_status?></th>
-						    <th><?php echo $lg_action?></th>
-						  </tr>
-						</thead>
-						<tbody>
-						<?php
-						foreach($lcomment as $com){
-							if($com->post_id > 0){
-								$di = $lg_post;
-								$tbp 	= new ElybinTable('elybin_posts');
-								$last	= $tbp->SelectWhere('post_id',$com->post_id,'','');
-								$ptitle = $last->current();
-								$ptitle = @$ptitle->title;
-							}
-							elseif($com->gallery_id > 0){
-								$di = $lg_photo;
-								$tbp 	= new ElybinTable('elybin_gallery');
-								$last	= $tbp->SelectWhere('gallery_id',$com->gallery_id,'','');
-								$ptitle = $last->current();
-								$ptitle = $ptitle->name;
-							}
-							
-							if($com->status == 'active'){
-								$status = $lg_decline;
-								$link = '<i class="fa fa-ban"></i>';
-							}else{
-								$status = $lg_approve;
-								$link = '<i class="fa fa-check"></i>';	
-							}
-
-							if($com->user_id > 0){
-								$tbuser = new ElybinTable('elybin_users');
-								$cuser	= $tbuser->SelectWhere('user_id',$com->user_id,'','');
-								$cuser = $cuser->current();
-								$avatar = $cuser->avatar;
-								$author = $cuser->fullname;
-								$email = $cuser->user_account_email;
-							}else{
-								$avatar = "default/medium-no-ava.png";
-								$author = $com->author;
-								$email = $com->email;
-							}
-							$date = time_elapsed_string($com->date." ".$com->time);
+			<div class="col-sm-12">	
+				<!-- Tabs -->
+				<ul class="nav nav-tabs nav-tabs-xs">
+					<li<?php if(!isset($_GET['filter'])){echo' class="active"'; }?>>
+						<?php 
+						// count all post
+						$totallcom = $tb->GetRowFullCustom("
+							SELECT
+							*
+							FROM
+							`elybin_comments` as `c`
+							WHERE
+							`c`.`user_id` != ".$u->user_id." &&
+							`c`.`status` != 'blocked'
+						");
 						?>
-						<tr>
-						    <td><?php echo $no?></td>
-						    <td><label class="px-single"><input type="checkbox" class="px" name="del[]" value="<?php echo $com->comment_id?>|<?php echo $author?>"><span class="lbl"></span></label></td>
-						    <td><img src="../elybin-file/avatar/<?php echo $avatar?>" alt="Foto" class="rounded" style="width:30px;height:30px;"/></td>
-						    <td><a href='mailto:<?php echo $email?>'><?php echo $author?></a></td>
-						    <td><?php echo $di?> - <?php echo $ptitle?></td>
-						    <td><?php echo $date?></td>
-						    <td><?php echo $com->status?></td>
-						    <td>
+						<a href="?mod=comment"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallcom ?></span></a>
+					</li>
+					<li<?php if(@$_GET['filter']=='unread'){echo' class="active"'; }?>>
+						<?php 
+						// count all page
+						$toturcc = $tb->GetRowFullCustom("
+							SELECT
+							*
+							FROM
+							`elybin_comments` as `c`
+							WHERE
+							`c`.`user_id` != ".$u->user_id." &&
+							`c`.`status` != 'blocked' &&
+							`c`.`reply` = 'no'
+						");
+						?>
+						<a href="?mod=comment&amp;filter=unread"><?php echo lg('Unread') ?> <span class="badge badge-info"><?php echo $toturcc ?></span></a>
+					</li>
+					<li<?php if(@$_GET['filter']=='mine'){echo' class="active"'; }?>>
+						<?php 
+						// count all page
+						$totmicc = $tb->GetRowFullCustom("
+							SELECT
+							*
+							FROM
+							`elybin_comments` as `c`
+							WHERE
+							`c`.`user_id` = ".$u->user_id."
+						");
+						?>
+						<a href="?mod=comment&amp;filter=mine"><?php echo lg('Mine') ?> <span class="badge badge-success"><?php echo $totmicc ?></span></a>
+					</li>
+					<li<?php if(@$_GET['filter']=='blocked'){echo' class="active"'; }?>>
+						<?php 
+						// count all post
+						$totblcc = $tb->GetRowFullCustom("
+							SELECT
+							*
+							FROM
+							`elybin_comments` as `c`
+							WHERE
+							`c`.`user_id` != ".$u->user_id." &&
+							`c`.`status` = 'blocked' 
+						");
+						?>
+						<a href="?mod=comment&amp;filter=blocked"><?php echo lg('Blocked') ?> <span class="badge badge-danger"><?php echo $totblcc ?></span></a>
+					</li>
+				</ul> <!-- / .nav -->
+				<!-- Panel -->
+				<div class="panel">
+					<!-- ./Panel Heading -->
+					<div class="panel-body">
+					  <div class="table-primary table-responsive">
+						
+						<?php
+						$orb = array(
+							'author' => lg('Author'),
+							'date' => lg('Date')
+						);
+						showOrder($orb);
+						showSearch();
+						?>
+						<!-- delate -->
+						<form action="app/comment/proses.php" method="post">
+						<input type="hidden" name="act" value="multidel" />
+						<input type="hidden" name="mod" value="comment" />
+						
+						<table class="table table-bordered table-striped" id="results">
+						 <thead>
+						   <tr>
+						    <th><i class="fa fa-square" id="tooltip-ck" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Check All')?>"></i></th>
+						    <th><?php echo lg('Author') ?></th>
+						    <th><?php echo lg('Preview') ?></th>
+						    <th><?php echo lg('Comment on') ?></th>
+						    <th><?php echo lg('Date') ?></th>
+						    <th><?php echo lg('Reply')?></th>
+						    <th><?php echo lg('Status')?></th>
+						    <th><?php echo lg('Action')?></th>
+						   </tr>
+						 </thead>
+						 <tbody>
+						<?php
+
+						$no = 0;
+						foreach($lcom as $cc){
+						?>
+						   <tr>
+							<td width="1%"><label class="px-single"><input type="checkbox" class="px" name="del[]" value="<?php echo epm_encode($cc->comment_id)?>|<?php echo substr(strip_tags($cc->content), 0, 200) ?>"><span class="lbl"></span></label></td>
+							<td width="15%">
+								<?php echo $cc->realname ?>
+								<br/>
+								<i class="text-xs text-light-gray">
+								<?php
+								// check status
+								if($cc->user_id > 0){
+									echo lg('User');
+								}else{
+									echo lg('Guest');
+								}
+								?>
+								</i>
+							</td>
+							<td width="20%"><i class="text-sm"><?php echo substr(strip_tags($cc->com_content), 0, 80) ?>...</i></td>
+							<td><?php 
+							if($cc->type == 'post'){
+								echo lg('Post');
+							}
+							else if($cc->type == 'album'){
+								echo lg('Album');
+							}
+							 ?><br/><a href="#"><i class="text-xs"><?php echo $cc->post_title ?></i></a></td>
+							<td><?php echo friendly_date($cc->com_date)?>
+								<br/><i class="text-light-gray text-xs"><?php echo time_elapsed_string($cc->com_date)?></i></td>
+							<td><?php 
+							// status
+							if($cc->reply == 'no'){
+								echo lg('Not yet');
+							}
+							else{
+								echo '<i class="text-light-gray">'.lg('Replied').'</i>';
+							}
+							?></td>
+							<td><?php 
+							// status
+							if($cc->com_status == 'active'){
+								echo lg('Activate');
+							}
+							else if($cc->com_status == 'blocked'){
+								echo '<i class="text-danger">'.lg('Blocked').'</i>';
+							}
+							?></td>
+							<td>
 								<div id="tooltip">
-									<a href="?mod=comment&amp;act=approve&amp;id=<?php echo $com->comment_id?>" class="btn btn-success btn-outline btn-sm" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $status?>"><?php echo $link?></a>
-									<a href="?mod=comment&amp;act=view&amp;id=<?php echo $com->comment_id?>&amp;clear=yes" class="btn btn-success btn-outline btn-sm" id="view-link" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_view?>"><i class="fa fa fa-external-link-square"></i></a>
-									<a href="?mod=comment&amp;act=edit&amp;id=<?php echo $com->comment_id?>" class="btn btn-success btn-outline btn-sm" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_edit?>"><i class="fa fa-pencil-square-o"></i></a>
-							    	<a href="?mod=comment&amp;act=del&amp;id=<?php echo $com->comment_id?>&amp;clear=yes" class="btn btn-danger btn-outline btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo $lg_delete?>"><i class="fa fa-times"></i></a>
+									
+						    		<?php 
+										echo '<a href="?mod=comment&amp;act=view&amp;hash='.epm_encode($cc->comment_id).'&amp;clear=yes" class="btn btn-success btn-outline btn-sm" data-toggle="modal" data-target="#view" data-placement="bottom" data-toggle="tooltip" data-original-title="'.lg('Detail').'"><i class="fa fa-external-link"></i></a>&nbsp;';
+										echo '<a href="?mod=comment&amp;act=reply&amp;hash='.epm_encode($cc->comment_id).'" class="btn btn-success btn-outline btn-sm" data-placement="bottom" data-toggle="tooltip" data-original-title="'.lg('Reply').'"><i class="fa fa-comment"></i></a>&nbsp;';
+										echo '<a href="?mod=comment&amp;act=del&amp;hash='.epm_encode($cc->comment_id).'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="'.lg('Delete Permanently').'"><i class="fa fa-trash-o"></i><i class="fa fa-times"></i></a>';
+									?>
+									
 								</div>
-						    </td>
-						</tr>
+							</td>
+						   </tr>
 						<?php
 							$no++;
 						}
+						
+						
+						if($no < 1){
+							echo '<tr><td colspan="8"><div class="text-center text-light-gray panel-padding"><i class="fa fa-5x fa-comment"></i><br/>'. lg('Nothing can be shown.').'</div></td></tr>';
+						}
 						?>
-			
 						 </tbody>
 						</table>
-					  </div> <!-- /.table-responsive -->
-						<div class="alert" id="notfound"><strong><?php echo $lg_nodatafound?></strong></div>
-						<hr/>
+						
+						
 						<!-- Multi Delete Modal -->
 						<div id="deleteall" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 							<div class="modal-dialog modal-sm">
 								<div class="modal-content">
 									<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-									<h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_deletetitle?></h4>
+									<?php echo '<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;'.lg('Delete Permanently').'</h4>'; ?>
 									</div>
 									<div class="modal-body">
-										<?php echo $lg_deletequestion?>
+										<?php 
+										echo lg('Are you sure you want delete permanently this item?');
+										?>
 										<div id="deltext"></div>
 										<hr/>
-										<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_yesdelete?></button>
-										<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_cancel?></a>
+										<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Yes, Delete All')?></button>
+										<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></a>
 									</div>
 								</div> <!-- / .modal-content -->
 							</div> <!-- / .modal-dialog -->
 						</div> <!-- / .modal -->
 						<!-- / Multi Delete Modal -->
 						<div class="col-md-3">
-							<button class="btn btn-danger btn-sm" id="delall" data-toggle="modal" data-target="#deleteall"><i class="fa fa-times"></i>&nbsp;&nbsp;<?php echo $lg_deleteselected?></button>
+							<button class="btn btn-danger btn-sm" id="delall" data-toggle="modal" data-target="#deleteall" style="display:none"><i class="fa fa-times"></i>&nbsp;&nbsp;<?php echo lg('Delete Selected')?></button>
 						</div>
-						<div class="col-md-4 col-md-offset-5 text-right">
-							<ul class="pagination pagination-xs" id="page-nav">
-							</ul>
-						</div>
+						</form>
+						
+						
+						
+						<?php showPagging($coc) ?>
+						
+					  </div> <!-- /.table-responsive -->
+
+
 					</div><!-- / .panel-body -->
-				</form>
+				</div><!-- / .panel -->
 				<!-- Delete Modal -->
-				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+				<div id="delete" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:3000">
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">
-							<?php echo $lg_loading?>...
+							<?php echo lg('Loading')?>...
 						</div> <!-- / .modal-content -->
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
-				<!-- View Modal -->
-				<div id="view" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-					<div class="modal-dialog modal-md">
-						<div class="modal-content">
-							<?php echo $lg_loading?>...
-						</div> <!-- / .modal-content -->
-					</div> <!-- / .modal-dialog -->
-				</div> <!-- / .modal -->
-				<!-- / View Modal -->
-				<!-- Help modal -->
-				<div id="help" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+				<!-- / Delete Modal -->
+
+				
+				<!-- Large modal -->
+				<div id="view" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:2000">
 					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
-							</div>
-							<div class="modal-body">
-								...
-							</div>
+							<?php echo lg('Loading')?>...
 						</div> <!-- / .modal-content -->
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
-				<!-- / Help modal -->
+				<!-- / Large modal -->
+
 			</div><!-- / .col -->
 		</div><!-- / .row -->
+
 <?php
 		break;
 		}

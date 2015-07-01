@@ -3,13 +3,13 @@
  * [ Module: Tag Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
@@ -30,11 +30,11 @@ if(empty($_SESSION['login'])){
 			//please fill important
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important filed (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		//explode coma
@@ -57,7 +57,7 @@ if(empty($_SESSION['login'])){
 			'title' => $lg_success,
 			'isi' => $lg_datainputsuccessful
 		);
-		json($a);
+		echo json_encode($a);
 	}
 	
 	//DEL

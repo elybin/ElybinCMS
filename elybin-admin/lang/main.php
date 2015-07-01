@@ -1,5 +1,6 @@
 <?php
 // theme.php -> #navbar
+/*
 $lg_hidemenu = "Sembunyi Menu";
 $lg_visitpage = "Kunjungi Halaman";
 $lg_new = "Baru";
@@ -13,7 +14,7 @@ $lg_logout = "Keluar";
 $lg_morenotif = "Lebih Banyak Notifikasi";
 // theme.php -> #logout-modal
 $lg_logouttitle = "Keluar";
-$lg_logoutquestion = "Apakah anda yakin ingin keluar? Data session anda akan terhapus dengan aman.";
+$lg_logoutquestion = "Apakah anda yakin ingin keluar?";
 $lg_yesexit = "Ya, Keluar";
 // theme.php -> #help-modal
 $lg_helptitle = "Bantuan";
@@ -98,7 +99,10 @@ $lg_nobio = "Tanpa Bio";
 $lg_error = "Kesalahan";
 $lg_success = "Berhasil";
 $lg_login = "Masuk";
+$lg_register = "Daftar";
 $lg_resetpassword = "Atur ulang kata sandi";
+$lg_registernewaccount = "Daftarkan akun Baru";
+$lg_registertothissite = "Daftarkan ke situs ini";
 $lg_first = "Depan";
 $lg_last = "Belakang";
 $lg_adminpanel = "Panel Admin";
@@ -109,6 +113,7 @@ $lg_datainputsuccessful = "Data berhasil diinput";
 $lg_dataeditsuccessful = "Data berhasil disunting";
 $lg_changessaved = "Perubahan tersimpan";
 $lg_useralreadytaken = "User sudah terpakai";
+$lg_usernamealreadytakenpickanotherone = "Username sudah terpakai, pilih yang lain";
 $lg_emailalreadytaken = "E-mail sudah terpakai";
 $lg_iderrorpleasereloadpage = "ID bermasalah. Coba muat ulang halaman";
 
@@ -161,6 +166,7 @@ $lg_allowcomment = "Izinkan Komentar";
 $lg_writer = "Penulis";
 $lg_totalcomment = "Banyak Komentar";
 $lg_relatedcommentwillbedeleted = "Komentar terkait akan ikut dihapus";
+
 // post.php > error
 $lg_pleasefillimportant = "Mohon isi kolom yang dibutuhkan";
 $lg_invalidimages = "File gambar tidak sesuai";
@@ -234,7 +240,7 @@ $lg_username = "Username";
 $lg_password = "Kata Sandi";
 $lg_passwordconfrim = "Konfirmasi Kata Sandi";
 $lg_passworduserhint = "Saran: Gunakan kombinasi huruf, angka, dan simbol untuk menjaga keamanan akun.";
-$lg_leftpasswordempty = "Biarkan kosong jika tidak ingin mengubah password.";
+$lg_leftpasswordempty = "Biarkan kosong jika tidak ingin mengubah kata sandi.";
 $lg_fullname = "Nama Lengkap";
 $lg_phone = "Telepon";
 $lg_level = "Tingkatan";
@@ -247,7 +253,14 @@ $lg_deactivate = "Non-Aktifkan";
 $lg_editprofile = "Ubah Profil";
 $lg_editmyprofile = "Ubah Profil Saya";
 $lg_yourprofileupdated = "Akun anda berhasil diperbaharui";
-$lg_yourpasswordupdated = "Password anda berhasil diperbaharui";
+$lg_yourpasswordupdated = "Kata Sandi anda berhasil diperbaharui";
+$lg_characternotallowed = "Karakter tidak diperbolehkan, hanya boleh mengandung";
+$lg_usernametoolong = "Username yang anda masukan terlalu panjanjang, maksimal 12 karakter";
+$lg_youremailnotverifiedyet = "E-mail anda belum diverifikasi";
+$lg_resendconfirmation = "Kirim ulang konfirmasi";
+$lg_datachangessuccessfullysaved = "Perubahan data berhasil disimpan";
+$lg_emailconfrimed = "E-mail dikonfirmasi";
+
 // option.php
 $lg_general = "Umum";
 $lg_generalsetting = "Pengaturan Umum";
@@ -265,12 +278,16 @@ $lg_herotitle = "Judul Hiro";
 $lg_herosubtitle = "Subjudul Hiro";
 $lg_sitelogo = "Logo Situs";
 $lg_favicon = "Favicon";
+$lg_twitteraccount = "Akun Twitter";
+$lg_facebookaccount = "Akun Facebook";
+$lg_instagramaccount = "Akun Instagram";
 
 $lg_system = "Sistem";
 $lg_usercanregister = "Pengguna Bisa Mendaftar";
 $lg_defaultcategory = "Kategori Bawaan";
 $lg_defaultcommentstatus = "Status Komentar Bawaan";
 $lg_postperpage = "Tulisan Per Halaman";
+$lg_defaulthomepage = "Halaman Awal";
 $lg_timezone = "Zona Waktu";
 $lg_language = "Bahasa";
 $lg_maintenancemode = "Mode Pemeliharaan";
@@ -347,7 +364,7 @@ $lg_class = "Kelas";
 $lg_menuedit = "Ubah Menu";
 $lg_editcurrentmenu = "Ubah Menu Ini";
 $lg_warningdeletesubmenu = "Peringatan: Menu ini memiliki submenu yang mungkin akan terhapus, pindahkan ke menu lain, atau lanjutkan?";
-$lg_menumanagerhint = "Arrage Hint: Maximum is 1 sub sub menu";
+$lg_menumanagerhint = "Anda bisa mengatur menu navigasi dengan mudah, cukup seret ke atas atau kebawah. Maksimal susunan menu adalah 1 sub sub menu.";
 $lg_maximumsubmenu = "Anda tidak bisa membuat terlalu banyak sub menu.";
 
 // notification.php
@@ -381,6 +398,9 @@ $lg_bannedattempt = "Anda terlalu banyak gagal memasukan kombinasi, anda tidak b
 $lg_emailsentcheckyouremail = "Email sudah terkirim, silahkan periksa e-mail anda";
 $lg_noaccountwithemailexist = "Tidak ada akun dengan e-mail ini";
 $lg_forgotemailhint = "Masukan alamat email anda untuk mengatur ulang kata sandi. Anda mungkin perlu memeriksa folder spam atau coba kirim ulang";
+
+// register.php
+
 
 
 // forgot.php
@@ -431,6 +451,7 @@ $lg_databasehost = "Host Database";
 $lg_databaseuser = "User Database";
 $lg_databasepassword = "Sandi Database";
 $lg_databasename = "Nama Database";
+$lg_example = "Contoh";
 
 $lg_welcome = "Selamat Datang";
 $lg_areyouready = "Apakah anda sudah siap";
@@ -460,5 +481,5 @@ $lg_cannotconnecttodatabasehostpleasecheck = "Tidak bisa terhubung ke Host Basis
 $lg_cannotconnecttodatabasepleasecheck = "Tidak bisa menemukan nama Basisdata anda, Mohon cek kembali nama database anda";
 $lg_systeminformationsaved = "Informasi Sistem Tersimpan";
 $lg_fewqueryfailedtoexecutedbutok = "Beberapa kueri gagal dieksekusi, tapi itu tidak masalah.";
-
+*/
 ?>

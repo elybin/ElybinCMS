@@ -11,7 +11,7 @@ if(!isset($_SESSION['login'])){
 	
 	function refresh_tips(){
 		include('./lang/main.php');
-		echo '<div class="col-md-12"><div class="alert alert-info alert-dark">'.$lg_connecting.'...</div></div>';
+		echo '<div class="col-md-12"><div class="alert alert-info alert-dark">'.lg('Connecting...').'</div></div>';
 		
 		// compose request
 		$tbop = new ElybinTable('elybin_options'); 
@@ -113,10 +113,6 @@ if(!isset($_SESSION['login'])){
 				$content = $tips_array[$rand]->content;
 
 				echo '
-<!-- 7. $EARNED_TODAY_STAT_PANEL ===================================================================
-
-					Earned today stat panel
--->
 					<div class="col-sm-12 col-md-12">
 						<div class="stat-panel" style="height: 160px;">
 							<!-- Danger background, vertically centered text -->
@@ -132,7 +128,7 @@ if(!isset($_SESSION['login'])){
 							</div> <!-- /.stat-cell -->
 						</div> <!-- /.stat-panel -->
 					</div>
-<!-- /7. $EARNED_TODAY_STAT_PANEL -->';
+				';
 			}
 		}
 	}

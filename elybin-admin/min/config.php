@@ -16,7 +16,7 @@ $min_enableBuilder = false;
  * If non-empty, the Builder will be protected with HTTP Digest auth.
  * The username is "admin".
  */
-$min_builderPassword = 'adminwwwwq1323';
+$min_builderPassword = 'adminww23i40hlsmfn9sudflsdfnmkwwq1323';
 
 
 /**
@@ -75,10 +75,18 @@ include_once("../../elybin-core/elybin-config.php");
 //$min_documentRoot = substr(__FILE__, 0, -15); ///ok
 //$min_documentRoot = $_SERVER['SUBDOMAIN_DOCUMENT_ROOT'];
 // Elybin Customization
-if(isset($_GET['w']) && ($_GET['w'] == "front")){
-	$min_documentRoot = str_replace("/","\\",substr(DIR_ROOT, 0, -1));
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	if(isset($_GET['w']) && ($_GET['w'] == "front")){
+		$min_documentRoot = str_replace("/","\\",substr(DIR_ROOT, 0, -1));
+	}else{
+		$min_documentRoot = str_replace("/","\\",substr(DIR_ADMIN, 0, -1));
+	}
 }else{
-	$min_documentRoot = str_replace("/","\\",substr(DIR_ADMIN, 0, -1));
+	if(isset($_GET['w']) && ($_GET['w'] == "front")){
+		$min_documentRoot = str_replace("\\","/",substr(DIR_ROOT, 0, -1));
+	}else{
+		$min_documentRoot = str_replace("\\","/",substr(DIR_ADMIN, 0, -1));  
+	}
 }
 
 

@@ -3,39 +3,64 @@
  * [ Module: Tag
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
+ ---------------------------
+ 1.1.3
+ - Redesign List
+ - Clear unused tags
+ - Removing add Tags (You can add tags in post module)
+ - Add Mostly, Rare and Unused Data
+ - Add Clear Unused Tags
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
-	header('location:../403.php');
+	header('location: index.php');
 }else{
 $modpath 	= "app/tag/";
 $action		= $modpath."proses.php";
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
+// string validation for security
+$v 	= new ElybinValidasi();
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->tag;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->tag;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
-	echo '';
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 
 	// module start here 
 	switch (@$_GET['act']) {
+		// shut down since 1.1.3
+/*		
 		case 'add':
-?>
+		exit;
+?>		<!-- help -->
+		<div class="page-header" id="help-panel" style="display: none">
+			<p><?php echo lg('...') ?></p>
+		</div>
+		<!-- breadcrumb -->
+		<ul class="breadcrumb breadcrumb-page">
+			<div class="breadcrumb-label text-light-gray"><?php echo lg('You are here') ?>:</div>
+			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
+			<li><a href="?mod=category"><?php echo lg('Category') ?></a></li>
+			<li class="active"><a href="?mod=category&amp;act=add"><?php echo lg('New Category') ?></a></li>
+			
+			<div class="pull-right">
+				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
+			</div>
+		</ul>
+		<!-- Content here -->
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_post?> / <?php echo $lg_tag?> / </span><?php echo $lg_addnew?></h1>
+			<a href="?mod=category" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Category') ?></a>
+			<h1><?php echo lg('New Category')?></h1>
 		</div> <!-- / .page-header -->
+				
+
 		<!-- Content here -->
 		<div class="row">
 			<div class="col-sm-12">
@@ -45,7 +70,6 @@ if($usergroup == 0){
 						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_title?>*</label>
 					      <div class="col-sm-10">
@@ -81,7 +105,9 @@ if($usergroup == 0){
 <?php
 			break;
 
+		// shutdown at 1.1.3
 		case 'del':
+		exit;
 ?>
 							<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
@@ -99,147 +125,109 @@ if($usergroup == 0){
 								</form>
 							</div>
 <?php
+			break;*/
+
+		// 1.1.3
+		// clear unused tags
+		case 'clear':
+			// remove tags with (count=0);
+			$tbt = new ElybinTable('elybin_tag');
+			$tbt->Delete('count',0);
+			_red('?mod=tag');
+			exit;
 			break;
 
 		default:
 		$tb 	= new ElybinTable('elybin_tag');
-		$ltag	= $tb->Select('tag_id','DESC');
-		$no = 1;
-?>
-		<!-- Page Header -->
-		<div class="page-header">
-			<div class="row">
-				<h1 class="col-xs-12 col-sm-6 col-md-6 text-center text-left-sm">
-					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-tags"></i>&nbsp;&nbsp;<?php echo $lg_tag?></span>
-					<span class="hidden-xs"><span class="text-light-gray"><?php echo $lg_tag?> / </span><?php echo $lg_all?></span>
-				</h1>
-				<div class="col-xs-12 col-sm-6 col-md-6">
-					<div class="row">
-						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
-							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
-							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo $lg_addnew?></a>
-						</div>
-						<!-- Margin -->
-						<div class="visible-xs clearfix form-group-margin"></div>
-						<!-- Search Bar -->
-						<form action="#" class="pull-right col-xs-12 col-sm-6 col-md-8">
-							<div class="input-group no-margin">
-								<span class="input-group-addon" style="border:none;background: #fff;background: rgba(0,0,0,.05);"><i class="fa fa-search"></i></span>
-								<input id="search" placeholder="<?php echo $lg_search?>..." class="form-control no-padding-hr" style="border:none;background: #fff;background: rgba(0,0,0,.05);" type="text">
-							</div>
-						</form>
-					</div>
-				</div>
+		$ltag	= $tb->Select('count','DESC');
+		$ctag	= $tb->GetRow();
+?>		<!-- help -->
+		<div class="page-header" id="help-panel" style="display: none">
+			<p><?php echo lg('...') ?></p>
+		</div>
+		<!-- breadcrumb -->
+		<ul class="breadcrumb breadcrumb-page">
+			<div class="breadcrumb-label text-light-gray"><?php echo lg('You are here') ?>:</div>
+			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
+			<li class="active"><a href="?mod=tag"><?php echo lg('Tags') ?></a></li>
+			
+			<div class="pull-right">
+				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
-		</div> <!-- ./Page Header -->
-
+		</ul>
+		<!-- Content here -->
+		<div class="page-header">
+			<?php
+			if($ctag > 0){
+			?>
+			<a href="?mod=tag&amp;act=clear&amp;clear=yes" class="btn btn-info pull-right"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;<?php echo lg('Clear Unused Tags') ?></a>
+			<?php } ?>
+			<h1><?php echo lg('Tags')?></h1>
+		</div> <!-- / .page-header -->
+				
+	
 		<!-- Content here -->
 		<div class="row">
-			<div class="col-sm-12">
-				<form action="<?php echo $action?>" method="post" class="panel">
-					<input type="hidden" name="act" value="multidel" />
-					<input type="hidden" name="mod" value="tag" />
-					
-					<!-- Panel Heading -->
-					<div class="panel-heading">
-						<span class="panel-title"><i class="fa fa-tags hidden-xs">&nbsp;&nbsp;</i><?php echo $lg_alltag?></span>
-						<div class="panel-heading-controls" id="tooltip">
-							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
-						</div> <!-- / .panel-heading-controls -->
-					</div> 
-					<!-- ./Panel Heading -->
-					
-					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
-					  <div class="table-responsive">
-						<table class="table table-hover" id="results">
-						 <thead>
-						    <th>#</th>
-						    <th><i class="fa fa-check-square" id="tooltip-ck" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo $lg_checkall?>"></i></th>
-						    <th><?php echo $lg_title?></th>
-						    <th><?php echo $lg_totalused?></th>
-						    <th><?php echo $lg_action?></th>
-						  </tr>
-						</thead>
-						<tbody>
-						<?php
-							foreach($ltag as $tg){
+			<div class="col-sm-12">	
+				<!-- Tabs -->
+				<ul class="nav nav-tabs nav-tabs-xs">
+					<li<?php if(!isset($_GET['filter'])){echo' class="active"'; }?>>
+						<?php 
+						// count all category
+						$totallt = $tb->GetRowFullCustom("
+							SELECT
+							*
+							FROM
+							`elybin_tag` as `t`
+						");
 						?>
-						<tr>
-						    <td><?php echo $no?></td>
-						    <td><label class="px-single"><input type="checkbox" class="px" name="del[]" value="<?php echo $tg->tag_id?>|<?php echo $tg->name?>"><span class="lbl"></span></label></td>
-						    <td><?php echo $tg->name?></td>
-						    <td><?php echo $tg->count?></td>
-						    <td>
-						    	<div id="tooltip">
-						    		<a href="?mod=tag&amp;act=del&amp;id=<?php echo $tg->tag_id?>&amp;clear=yes" class="btn btn-danger btn-outline btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo $lg_delete?>"><i class="fa fa-times"></i></a>
-						    	</div>
-						    </td>
-						  </tr>
+						<a href="?mod=tag"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallt ?></span></a>
+					</li>
+				</ul> <!-- / .nav -->
+				<!-- Panel -->
+				<div class="panel">
+					<!-- ./Panel Heading -->
+					<div class="panel-body">
 						<?php
-						$no++;
+						if($ctag == 0){
+							echo '<div class="text-center text-light-gray panel-padding"><i class="fa fa-5x fa-tags"></i><br/>'.lg('You don\'t have any tag!').'</div>';
+						
+						}else{
+							// convert to array
+							// because i cant use this 
+							$x = 0;
+							foreach($ltag as $tg){
+								$atag[$x] = $tg->count;
+								$x++;
+							}
+							$Et = array_sum($atag);
+							// little formulas
+							$n1 = (80/100)*($Et/$x);
+							
+							foreach($ltag as $tg){
+								if($tg->count == 0){
+									echo '<a href="?mod=post&amp;search=tag:'.$tg->tag_id.'" class="btn btn-md btn-rounded btn-default disabled" style="margin-bottom: 5px;">'.$tg->name.'</a>&nbsp;';
+								}
+								elseif($tg->count > $n1){
+									echo '<a href="?mod=post&amp;search=tag:'.$tg->tag_id.'" class="btn btn-md btn-rounded btn-danger" style="margin-bottom: 5px;">'.$tg->name.' ('.$tg->count.')</a>&nbsp;';
+								}
+								else{
+									echo '<a href="?mod=post&amp;search=tag:'.$tg->tag_id.'" class="btn btn-md btn-rounded btn-primary" style="margin-bottom: 5px;">'.$tg->name.' ('.$tg->count.')</a>&nbsp;';
+								}
+							}
+							echo '
+							<hr/>
+							<a class="btn btn-sm btn-rounded btn-danger"></a>'.lg('Mostly Used').'<br/>
+							<a class="btn btn-sm btn-rounded btn-primary"></a>'.lg('Rare Used').'<br/>
+							<a class="btn btn-sm btn-rounded btn-default disabled"></a>'.lg('Unused');
+						
 						}
 						?>
-						</tbody>
-					  </table>
-				  	</div>
-						<div class="alert" id="notfound"><strong><?php echo $lg_nodatafound?></strong></div>
-						<hr/>
-						<!-- Multi Delete Modal -->
-						<div id="deleteall" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-							<div class="modal-dialog modal-sm">
-								<div class="modal-content">
-									<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-									<h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_deletetitle?></h4>
-									</div>
-									<div class="modal-body">
-										<?php echo $lg_deletequestion?>
-										<div id="deltext"></div>
-										<hr/>
-										<button type="submit" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_yesdelete?></button>
-										<a class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_cancel?></a>
-									</div>
-								</div> <!-- / .modal-content -->
-							</div> <!-- / .modal-dialog -->
-						</div> <!-- / .modal -->
-						<!-- / Multi Delete Modal -->
-						<div class="col-md-3">
-							<button class="btn btn-danger btn-sm" id="delall" data-toggle="modal" data-target="#deleteall"><i class="fa fa-times"></i>&nbsp;&nbsp;<?php echo $lg_deleteselected?></button>
-						</div>
-						<div class="col-md-4 col-md-offset-5 text-right">
-							<ul class="pagination pagination-xs" id="page-nav">
-							</ul>
-						</div>
 					</div><!-- / .panel-body -->
-				</form>
-				<!-- Delete Modal -->
-				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-					<div class="modal-dialog modal-sm">
-						<div class="modal-content">
-							<?php echo $lg_loading?>...
-						</div> <!-- / .modal-content -->
-					</div> <!-- / .modal-dialog -->
-				</div> <!-- / .modal -->
-				<!-- / Delete Modal -->
-				<!-- Help modal -->
-				<div id="help" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
-							</div>
-							<div class="modal-body">
-								...
-							</div>
-						</div> <!-- / .modal-content -->
-					</div> <!-- / .modal-dialog -->
-				</div> <!-- / .modal -->
-				<!-- / Help modal -->
+				</div><!-- / .panel -->
 			</div><!-- / .col -->
 		</div><!-- / .row -->
+
 <?php
 		break;
 		}

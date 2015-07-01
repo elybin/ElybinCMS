@@ -9,7 +9,7 @@
 		<!-- search bar -->
 		<div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center" id="contact-title">
-                <h2 class="section-heading">SITEMAP</h2>
+                <h2 class="section-heading"><?php echo lg('SITEMAP') ?></h2>
 				<hr/>
             </div>
             <div class="clearfix form-group-margin" style="margin-top: 50px"></div>
@@ -20,10 +20,10 @@
 <?php
 	// post
 	$tbp = new ElybinTable('elybin_posts');
-	$cpost = $tbp->GetRow('status', 'publish');
+	$cpost = $tbp->GetRowAnd('type','post','status', 'publish');
 	if($cpost > 0){
 ?>
-				<h3><?php echo $lg_post ?></h3>
+				<h3><?php echo lg('Post') ?></h3>
 				<ol>
 <?php
 		// get post
@@ -37,18 +37,18 @@
 
 <?php
 	// page
-	$tbpa = new ElybinTable('elybin_pages');
-	$cpage = $tbpa->GetRow('status', 'active');
+	$tbpa = new ElybinTable('elybin_posts');
+	$cpage = $tbpa->GetRowAnd('type', 'page','status','active');
 	if($cpage > 0){
 ?>
-				<h3><?php echo $lg_page ?></h3>
+				<h3><?php echo lg('Page') ?></h3>
 				<ol>
 <?php
 		// get page
-		$page = $tbpa->SelectWhere('status','active','','');
+		$page = $tbpa->SelectWhereAnd('type', 'page','status','active');
 		foreach($page as $pa){
 ?>
-					<li><a href="page-<?php echo $pa->page_id?>-<?php echo $pa->seotitle?>.html"><?php echo $pa->title?></a>
+					<li><a href="page-<?php echo $pa->post_id?>-<?php echo $pa->seotitle?>.html"><?php echo $pa->title?></a>
 <?php 	} ?>
 				</ol>
 <?php } ?>
@@ -59,7 +59,7 @@
 	$ccategory = $tbpa->GetRow('status', 'active');
 	if($ccategory > 0){
 ?>
-				<h3><?php echo $lg_category ?></h3>
+				<h3><?php echo lg('Category') ?></h3>
 				<ol>
 <?php
 		// get category
@@ -77,7 +77,7 @@
 	$ctag = $tbpa->GetRow('', '');
 	if($ctag > 0){
 ?>
-				<h3><?php echo $lg_tag ?></h3>
+				<h3><?php echo lg('Tag') ?></h3>
 				<ol>
 <?php
 		// get tag
@@ -89,25 +89,8 @@
 				</ol>
 <?php } ?>
 
-<?php
-	// gallery
-	$tbgal = new ElybinTable('elybin_gallery');
-	$cgallery = $tbgal->GetRow('', '');
-	if($cgallery > 0){
-?>
-				<h3><?php echo $lg_photo ?></h3>
-				<ol>
-<?php
-		// get gallery
-		$gallery = $tbgal->Select('','');
-		foreach($gallery as $gal){
-?>
-					<li><a href="photo-<?php echo $gal->gallery_id?>-<?php echo seo_title($gal->name); ?>.html"><?php echo $gal->name?></a>
-<?php 	} ?>
-				</ol>
-<?php } ?>
 
-<h3><?php echo $lg_menu ?></h3>
+<h3><?php echo lg('Menu') ?></h3>
                 <ul>
 <?php
     $tbm = new ElybinTable('elybin_menu');

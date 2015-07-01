@@ -3,20 +3,19 @@
  * [ Module: Profile
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
-	header('location:../403.php');
+	header('location: index.php');
 }else{
 $modpath 	= "app/profile/";
 $action		= $modpath."proses.php";
 $v 	= new ElybinValidasi();
 
 switch (@$_GET['act']) {
-	default;
+	default:
 	$s = $_SESSION['login'];
 	$tblu = new ElybinTable("elybin_users");
 	$tblu = $tblu->SelectWhere("session","$s","","");
@@ -34,7 +33,24 @@ switch (@$_GET['act']) {
 		<!-- Content here -->
 		<div class="row">
 			<div class="col-sm-12">
-
+				<?php
+				// if msg set
+				if(isset($_GET['msg']) && @$_GET['msg'] == "saved"){
+				?>
+				<div class="note note-success">
+					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo $lg_datachangessuccessfullysaved ?>.
+				</div>
+				<?php
+				}
+				// email confrimed
+				if(isset($_GET['msg']) && @$_GET['msg'] == "email-confrimed"){
+				?>
+				<div class="note note-success">
+					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo $lg_emailconfrimed ?>.
+				</div>
+				<?php
+				}
+				?>
 				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 					<div class="panel-heading" id="tooltip">
 						<span class="panel-title"><i class="fa fa-users"></i>&nbsp;&nbsp;<?php echo $lg_editmyprofile?></span>
@@ -58,8 +74,15 @@ switch (@$_GET['act']) {
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_email?>*</label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo $lg_email?>" required/>
-					      </div>
+					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo $lg_email?>"<?php if($cuser->email_status == "verified"){ echo " disabled"; } ?> required/>
+							<?php
+							// update v1.1.3
+							// show resend link, if email not verified yet
+							if($cuser->email_status == "notverified"){
+							?>
+							<p class="help-block"><span class="text-warning"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_youremailnotverifiedyet?>, </span><a href="?mod=profile&amp;act=resend&amp;clear=yes"><?php echo $lg_resendconfirmation ?></a>.</p>
+							<?php } ?>
+						  </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo $lg_fullname?>*</label>
@@ -115,6 +138,14 @@ switch (@$_GET['act']) {
 		</div><!-- / .row -->
 
 <?php
+		break;
+	
+	// update 1.1.3
+	// resend email
+	case "resend":
+		
+		// redirect
+		header('location: ?mod=profile&msg=email-confrimed');
 		break;
 }
 }

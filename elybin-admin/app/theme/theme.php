@@ -3,66 +3,97 @@
  * [ Module: Theme
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	echo '403';
-	header('location:../403.php');
+	header('location: index.php');
 }else{
 $modpath 	= "app/theme/";
 $action		= $modpath."proses.php";
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
-
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 	// start here
 	switch (@$_GET['act']) {
 		case 'add':
 ?>
+<?php
+		// check extended themes
+		// scan `/elybin-file/ext/` directory
+		$dir = scandir("../elybin-file/ext");
+		$file_found = false;
+		$file_name = array();
+		foreach($dir as $d){
+			if(substr($d, 0, 4) == "thm." && substr($d, -4) == ".zip"){
+				array_push($file_name, array('file_name' => $d));
+				$file_found = true;
+			}
+		}
+?>
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_setting?> / <?php echo $lg_theme?> / </span><?php echo $lg_addnew?></h1>
+			<h1><span class="text-light-gray"><?php echo lg('Setting')?> / <?php echo lg('Themes')?> / </span><?php echo lg('Add New')?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
 		<div class="row">
 			<div class="col-sm-12">
 
-				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
+				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" id="form">
 					<div class="panel-heading" id="tooltip">
-						<span class="panel-title"><i class="fa fa-tint"></i>&nbsp;&nbsp;<?php echo $lg_addnewtheme?></span>
-						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+						<span class="panel-title"><i class="fa fa-tint"></i>&nbsp;&nbsp;<?php echo lg('Add New Themes')?></span>
+						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
-					  <div class="note note-info"><?php echo $lg_getmorethemehint?>&nbsp;<a href="http://store.elybin.com/" target="_blank">http://store.elybin.com/</a></div>
+					  <div class="note note-info"><?php echo lg('Get more themes at our store.')?>&nbsp;<a href="http://store.elybin.com/theme" target="_blank">http://store.elybin.com/theme</a></div>
+					<?php
+						if($file_found){
+							$fst = true;
+					?>
 					  <div class="form-group">
-					      <label class="col-sm-3 control-label"></label>
-					      <div class="col-sm-4">
-					      	<input type="file" name="theme_file" id="file-style" required/>
-					      	<p><?php echo $lg_filethemehint?></p>
-					      </div>
-					      <div class="col-sm-2">
-					      	<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-upload"></i>&nbsp;<?php echo $lg_upload?></button>
+					      <label class="col-sm-2 control-label">Tema Terdeteksi</label>
+					      <div class="col-sm-10">
+							<p>
+					<?php
+						foreach($file_name as $f){
+					?>
+								<label class="radio">
+									<input type="radio" name="file_name" value="<?php echo $f['file_name']?>" class="px" <?php if($fst){echo ' checked="checked"';}?>>
+									<span class="lbl"><?php echo $f['file_name']?></span>
+							</label>
+					<?php 
+						$fst = false;
+						} 
+					?>
+							</p>
 					      </div>
 					  </div> <!-- / .form-group -->
+					<?php
+						
+					}else{
+					?>
+					<div class="text-center panel-padding">
+						<i class="fa fa-5x fa-tint"></i><br/>
+						<b><?php echo lg('No Themes Detected.')?></b><br/>
+					    <?php echo lg('Try to put downloaded plugin inside <code>elybin-file/ext/</code> directory.') ?>
+					</div>
+					<?php } ?>
+					  	</div> <!-- / .panel-body -->
 
 					  <div class="panel-footer">
-						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></a>
+						  <button type="submit" value="Submit" class="btn btn-success"<?php if(!$file_found){ echo ' disabled';} ?>><i class="fa fa-check"></i>&nbsp;<?php echo lg('Install')?></button>
+						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
 						  <input type="hidden" name="act" value="add" />
 						  <input type="hidden" name="mod" value="theme" />
 					  </div> <!-- / .form-footer -->
-					</div> <!-- / .panel-body -->
+					</div> <!-- / .panel -->
 				</form><!-- / .form -->
 				<!-- Help modal -->
 				<div id="help" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
@@ -70,7 +101,7 @@ if($usergroup == 0){
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help')?></h4>
 							</div>
 							<div class="modal-body">...</div>
 						</div> <!-- / .modal-content -->
@@ -136,22 +167,22 @@ if($usergroup == 0){
 		$cotheme = $tb->GetRow('', '');
 		
 		// get data
-		$ltheme	= $tb->Select('theme_id','DESC');
+		$ltheme	= $tb->Select('theme_id','ASC');
 		$no = 1;
 ?>
 		<!-- Page Header -->
 		<div class="page-header">
 			<div class="row">
 				<h1 class="col-xs-12 col-sm-6 col-md-6 text-center text-left-sm">
-					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-tint"></i>&nbsp;&nbsp;<?php echo $lg_theme?></span>
-					<span class="hidden-xs"><span class="text-light-gray"><?php echo $lg_setting?> / </span><?php echo $lg_theme?></span>
+					<span class="hidden-sm hidden-md hidden-lg"><i class="fa fa-tint"></i>&nbsp;&nbsp;<?php echo lg('Themes')?></span>
+					<span class="hidden-xs"><span class="text-light-gray"><?php echo lg('Setting')?> / </span><?php echo lg('Themes')?></span>
 				</h1>
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
 						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
 							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
-							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo $lg_addnew?></a>
+							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('Add New')?></a>
 						</div>
 					</div>
 				</div>
@@ -165,23 +196,22 @@ if($usergroup == 0){
 				
 					<!-- Panel Heading -->
 					<div class="panel-heading">
-						<span class="panel-title"><i class="fa fa-tint hidden-xs">&nbsp;&nbsp;</i><?php echo $lg_alltheme?></span>
+						<span class="panel-title"><i class="fa fa-tint hidden-xs">&nbsp;&nbsp;</i><?php echo lg('All themes')?></span>
 						<div class="panel-heading-controls" id="tooltip">
-							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 						</div> <!-- / .panel-heading-controls -->
 					</div> 
 					<!-- ./Panel Heading -->
 					
 					<div class="panel-body">
-						<?php @eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fTt0aXhlOykodG9vZl9lbWVodCBwaHA/PAkJCQkJCg0+LS0gd29yLiAvIC0tITw+dmlkLzwJCQoNPi0tIGxvYy4gLyAtLSE8PnZpZC88CQkJCg0+LS0gbXJvZi4gLyAtLSE8Pm1yb2YvPAkJCQkKDT4tLSBsZW5hcC4gLyAtLSE8ID52aWQvPAkJCQkJCg0+dmlkLzw+YS88bG10aC5lZG9tLWtjYWxiL2NpcG90L21vYy5uaWJ5bGUucGxlaC8vOnB0dGg+ImtuYWxiXyI9dGVncmF0ICJsbXRoLmVkb20ta2NhbGIvY2lwb3QvbW9jLnNtY25pYnlsZS5wbGVoLy86cHR0aCI9ZmVyaCBhPDtwc2JuJj4/ZGVrY29sZXJ1dGFlZmVkb21rY2FsYm5pbWV0c3lzX2dsJCBvaGNlIHBocD88PiJyZWduYWQtZXRvbiBldG9uIj1zc2FsYyB2aWQ8ICAJCQkJCQoNPj8geyllc2xhZiA9PSApKG9lc2VuaWduZWhjcmFlcyhmaQ=="))); ?>
 						<div class="col-sm-12">	
 							<!-- Tabs for md -->
 							<ul class="nav nav-tabs nav-tabs-simple hidden-xs hidden-sm">
 								<li class="pull-right">
-									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo $lg_adminpanel; ?> <span class="badge badge-info">10</span></a>
+									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo lg('Admin Panel'); ?> <span class="badge badge-info">1</span></a>
 								</li>
 								<li class="active pull-right">
-									<a href="#frontend-tabs" data-toggle="tab"><?php echo $lg_frontend; ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
+									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
 								</li>
 							</ul> <!-- / .nav -->
 							<!-- / Tabs for md -->
@@ -189,10 +219,10 @@ if($usergroup == 0){
 							<!-- Tabs for xs sm -->
 							<ul class="nav nav-tabs nav-tabs-simple nav-justified visible-xs visible-sm">
 								<li>
-									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo $lg_adminpanel; ?> <span class="badge badge-info">10</span></a>
+									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo lg('Admin Panel'); ?> <span class="badge badge-info">10</span></a>
 								</li>
 								<li class="active">
-									<a href="#frontend-tabs" data-toggle="tab"><?php echo $lg_frontend; ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
+									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
 								</li>
 							</ul> <!-- / .nav -->
 							<!-- / Tabs xs sm -->
@@ -216,8 +246,8 @@ if($usergroup == 0){
 							
 								<form action="'.$action.'" method="post">
 									<div class="btn-group">
-									<a href="?mod=theme&amp;act=del&amp;id='.$cat->theme_id.'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="left" data-original-title="'.$lg_delete.'"><i class="fa fa-trash-o"></i></a>
-									<button class="btn btn-sm" data-placement="left" data-original-title="'.$lg_activate.'"><span class="fa fa-eye"></span></button>
+									<a href="?mod=theme&amp;act=del&amp;id='.$cat->theme_id.'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="left" data-original-title="'.lg('Delete').'"><i class="fa fa-trash-o"></i></a>
+									<button class="btn btn-sm" data-placement="left" data-original-title="'.lg('Activate').'"><span class="fa fa-eye"></span></button>
 									</div>
 									<input type="hidden" name="theme_id" value="'.$cat->theme_id.'" />
 									<input type="hidden" name="act" value="active" />
@@ -225,7 +255,7 @@ if($usergroup == 0){
 								</form>
 							';
 						}else{
-							$status = $lg_active.' <span class="fa fa-check-circle" id="equal-height"></span>';
+							$status = lg('Active').' <span class="fa fa-check-circle" id="equal-height"></span>';
 						}
 						?>
 						<div class="col-xs-12 col-sm-6 col-md-3">	
@@ -247,7 +277,7 @@ if($usergroup == 0){
 										<img src="<?php echo $preview?>" class="img-thumbnail grid-gutter-margin-b">	
 										<p class="no-margin-hr">
 											<?php echo $cat->description?><br>
-											<?php echo $lg_by?> <i><?php echo $cat->author?></i><br>
+											<?php echo lg('By')?> <i><?php echo $cat->author?></i><br>
 											<a href="<?php echo $cat->url?>" target="_blank"><?php echo $cat->url?>&nbsp;<i class="fa fa-external-link"></i></a>
 										</p>
 									</div>
@@ -260,16 +290,7 @@ if($usergroup == 0){
 						?>
 							</div><!-- ./tab -->
 							<div class="tab-pane fade" id="adminpanel-tabs">
-								<style><?php include("assets/stylesheets/default.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/asphalt.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/purple-hills.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/adminflare.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/dust.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/frost.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/fresh.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/silver.min.css"); ?></style>
 								<style><?php include("assets/stylesheets/clean.min.css"); ?></style>
-								<style><?php include("assets/stylesheets/white.min.css"); ?></style>
 								<div class="demo-themes-row" id="demo-themes">
 									<?php
 									// get option
@@ -278,16 +299,7 @@ if($usergroup == 0){
 									
 									$theme_admin = json_decode('
 									[
-									  { "name": "default", "title": "Default", "img": "assets/full/themes/default.png" },
-									  { "name": "asphalt", "title": "Asphalt", "img": "assets/full/themes/asphalt.png" },
-									  { "name": "purple-hills", "title": "Purple Hills", "img": "assets/full/themes/purple-hills.png" },
-									  { "name": "adminflare",  "title": "Adminflare", "img": "assets/full/themes/adminflare.png" },
-									  { "name": "dust",  "title": "Dust", "img": "assets/full/themes/dust.png" },
-									  { "name": "frost",  "title": "Frost", "img": "assets/full/themes/frost.png" },
-									  { "name": "fresh",  "title": "Fresh", "img": "assets/full/themes/fresh.png" },
-									  { "name": "silver",  "title": "Silver", "img": "assets/full/themes/silver.png" },
-									  { "name": "clean",  "title": "Clean", "img": "assets/full/themes/clean.png" },
-									  { "name": "white",  "title": "White", "img": "assets/full/themes/white.png" }
+									  { "name": "clean",  "title": "Clean", "img": "assets/full/themes/clean.png" }
 									]
 									');
 									for($i=0; $i < count($theme_admin); $i++){
@@ -324,7 +336,7 @@ if($usergroup == 0){
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help')?></h4>
 							</div>
 							<div class="modal-body">
 								...

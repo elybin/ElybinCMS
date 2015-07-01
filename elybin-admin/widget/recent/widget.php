@@ -2,37 +2,33 @@
 if(!isset($_SESSION['login'])){
 	header('location: ../../../404.html');
 }else{
-	// get user privilages
-	$tbus = new ElybinTable('elybin_users');
-	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-	$level = $tbus->current()->level; // getting level from curent user
 
-	$tbug = new ElybinTable('elybin_usergroup');
-	$tbug = $tbug->SelectWhere('usergroup_id', $level,'','')->current();
+
+
 	// get priv setting
-	$ugp = $tbug->post;
-	$ugcom = $tbug->comment;
-	if($ugp == 1 OR $ugcom == 1){
+	$ugp = _ug()->post;
+	$ugcom = _ug()->comment;
+	if($ugp == 1 || $ugcom == 1){
 ?>
 				<!-- Recent Widget -->
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="panel panel-warning" id="dashboard-recent">
 							<div class="panel-heading">
-								<span class="panel-title"><i class="panel-title-icon fa fa-fire text-danger"></i><?php echo $lg_recent?></span>
+								<span class="panel-title"><i class="panel-title-icon fa fa-fire text-danger"></i><?php echo lg('Recent')?></span>
 								<ul class="nav nav-tabs nav-tabs-xs">
 									<?php
 									if($ugcom == 1){
 									?>
 									<li class="active">
-										<a href="#dashboard-recent-comments" data-toggle="tab"><?php echo $lg_comment?></a>
+										<a href="#dashboard-recent-comments" data-toggle="tab"><?php echo lg('Comment')?></a>
 									</li>
 									<?php } ?>
 									<?php
 									if($ugp == 1){
 									?>
 									<li<?php if($ugcom == 0){?> class="active"<?php } ?>>
-										<a href="#dashboard-recent-threads" data-toggle="tab"><?php echo $lg_post?></a>
+										<a href="#dashboard-recent-threads" data-toggle="tab"><?php echo lg('Post')?></a>
 									</li>
 									<?php } ?>
 								</ul>
@@ -80,30 +76,20 @@ if(!isset($_SESSION['login'])){
 													$purl = "post-$getpost->post_id-$getpost->seotitle"; //
 													$ppart = "Tulisan"; //
 												}
-												elseif($cm->gallery_id > 0){
-													$tblp = new ElybinTable('elybin_gallery');
-													$getgallery = $tblp->SelectWhere('gallery_id', $cm->gallery_id, '', '');
-													$getgallery = $getgallery->current();
-													$ptitle = $getgallery->name; //
-													$purl = $getgallery->image; //
-													$ppart = "Foto"; //
-												}
-												$content = html_entity_decode($cm->content);
-												$date = time_elapsed_string($cm->date." ".$cm->time);
+												$date = time_elapsed_string($cm->date);
 										?>
 										<div class="comment">
 											<img src="../elybin-file/avatar/<?php echo $avatar; ?>" alt="" class="comment-avatar">
 											<div class="comment-body">
 												<div class="comment-by">
-													<a href="#" title=""><?php echo $cm->author; ?></a> <?php echo $lg_commenton?> <a href="../<?php echo $purl?>.html" title="" target="_blank">(<?php echo $ppart?>) <?php echo $ptitle?></a>
+													<a href="#" title=""><?php echo $cm->author; ?></a> <?php echo lg('Comment')?> <a href="../<?php echo $purl?>.html" title="" target="_blank">(<?php echo $ppart?>) <?php echo $ptitle?></a>
 												</div>
 												<div class="comment-text">
-													<?php echo $content; ?>
+													<?php echo substr($cm->content,0,500) ?>
 												</div>
 												<div class="comment-actions">
-													<a href="?mod=comment&amp;act=edit&amp;id=<?php echo $cm->comment_id?>"><i class="fa fa-pencil"></i>Edit</a>
-													<a href="?mod=comment&amp;act=view&amp;clear=yes&amp;id=<?php echo $cm->comment_id?>" data-toggle="modal" data-target="#view"><i class="fa fa-external-link"></i><?php echo $lg_detail?></a>
-													<a href="?mod=comment&amp;act=del&amp;clear=yes&amp;id=<?php echo $cm->comment_id?>" data-toggle="modal" data-target="#delete"><i class="fa fa-times"></i><?php echo $lg_delete?></a>
+													<a href="?mod=comment&amp;act=view&amp;clear=yes&amp;hash=<?php echo epm_encode($cm->comment_id) ?>" data-toggle="modal" data-target="#view"><i class="fa fa-external-link"></i><?php echo lg('Detail')?></a>
+													<a href="?mod=comment&amp;act=del&amp;clear=yes&amp;hash=<?php echo epm_encode($cm->comment_id) ?>" data-toggle="modal" data-target="#delete"><i class="fa fa-times"></i><?php echo lg('Delete')?></a>
 													<span class="pull-right"><?php echo $date?></span>
 												</div>
 											</div> <!-- / .comment-body -->
@@ -126,7 +112,7 @@ if(!isset($_SESSION['login'])){
 										<?php
 											//POSTS
 											$tbp = new ElybinTable('elybin_posts');
-											$post = $tbp->Select('post_id', 'DESC');
+											$post = $tbp->SelectWhere('status','publish','post_id', 'DESC');
 											$no = 1;
 											foreach($post as $ps){
 
@@ -142,19 +128,18 @@ if(!isset($_SESSION['login'])){
 												$author = $getava->current()->fullname;
 
 												//ambil category
-												$tblu = new ElybinTable('elybin_category');
-												$getcat = $tblu->SelectWhere('category_id', $ps->category_id, '', '');
-												$getcat = $getcat->current();
+												$tblcc = new ElybinTable('elybin_category');
+												$getcat = $tblcc->SelectWhere('category_id', $ps->category_id)->current();
 												$category = $getcat->name;
 
-												$date = time_elapsed_string($ps->date." ".$ps->time);
+												$date = time_elapsed_string($ps->date);
 										?>
 										<div class="thread">
 											<img src="../elybin-file/avatar/<?php echo $avatar; ?>" alt="" class="thread-avatar">
 											<div class="thread-body">
 												<span class="thread-time"><?php echo $date?></span>
 												<a class="thread-title"><?php echo $ps->title?></a>
-												<div class="thread-info"><?php echo $lg_writedby?> <a title=""><?php echo $author?></a> in <a title=""><?php echo $category?></a></div>
+												<div class="thread-info"><?php echo lg('Author')?> <a title=""><?php echo $author?></a> in <a title=""><?php echo $category?></a></div>
 											</div> <!-- / .thread-body -->
 										</div> <!-- / .thread -->
 										<?php
@@ -165,7 +150,28 @@ if(!isset($_SESSION['login'])){
 									</div>
 								</div> <!-- / .panel-body -->
 								<?php } ?>
-								
+
+				<!-- Delete Modal -->
+				<div id="delete" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:3000">
+					<div class="modal-dialog modal-sm">
+						<div class="modal-content">
+							<?php echo lg('Loading')?>...
+						</div> <!-- / .modal-content -->
+					</div> <!-- / .modal-dialog -->
+				</div> <!-- / .modal -->
+				<!-- / Delete Modal -->
+
+				
+				<!-- Large modal -->
+				<div id="view" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:2000">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<?php echo lg('Loading')?>...
+						</div> <!-- / .modal-content -->
+					</div> <!-- / .modal-dialog -->
+				</div> <!-- / .modal -->
+				<!-- / Large modal -->
+				
 							</div>
 						</div> <!-- / .widget-threads -->
 						<!-- Javascript -->
@@ -173,6 +179,7 @@ if(!isset($_SESSION['login'])){
 							init.push(function () {
 								$('#dashboard-recent .panel-body > div').slimScroll({ height: 300, alwaysVisible: true, color: '#888',allowPageScroll: true });
 							})
+							ElybinView();
 						</script>
 						<!-- / Javascript -->
 					</div><!-- col-12 -->

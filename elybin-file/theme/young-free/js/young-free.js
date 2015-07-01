@@ -16,6 +16,7 @@ $(function() {
 	$("#contact-form form .btn").click(function(){
 		// get all value
 		var name = $("#contact-form #name").val();
+		var subject = $("#contact-form #subject").val();
 		var email = $("#contact-form #email").val();
 		var message = $("#contact-form #message").val();
 		var code = $("#contact-form #code").val();
@@ -28,23 +29,23 @@ $(function() {
 		
 			$("#loading").fadeIn();
 			$.ajax({
-			  url: $("#contact-form form").attr('action'),
+			  url: 'elybin-main/contact/contact.php?r=j',
 			  type: 'POST',
-			  data: 'name=' + name + '&email=' + email + '&message=' + message + '&code=' + code,
+			  data: 'name=' + name + '&subject=' + subject + '&email=' + email + '&message=' + message + '&code=' + code ,
 			  success: function(data) {
 			  	console.log(data);
 			  	var data = $.parseJSON(data);
 			  	// check first success nor
 			  	if(data.status == "ok"){
 					$("#success").slideDown();
-					$("#success p").html(data.isi);
+					$("#success p").html(data.msg);
 					$("#contact-form, #contact-title").slideUp();
 					
 
 					$("#loading").fadeOut();	
 			  	}
 			  	else if(data.status == "error"){
-					$("#error p").html(data.isi);
+					$("#error p").html(data.msg);
 			  		$("#error").slideDown();
 					$("#contact-form, #contact-title").slideUp();
 					$("#loading").fadeOut();
@@ -73,7 +74,7 @@ $(function() {
 	$('#comment-post').submit(function(e){
 		$("#comment-form #loading").fadeIn();
 	    $.ajax({
-	      url: $(this).attr('action'),
+	      url: $(this).attr('action') + '?r=j',
 	      type: 'POST',
 	      data: new FormData(this),
 	      processData: false,
@@ -81,10 +82,11 @@ $(function() {
 	      success: function(data) {
 				console.log(data);
 			  	var data = $.parseJSON(data);
+			  	console.log(data);
 			  	// check first success nor
 			  	if(data.status == "ok"){
 					$("#comment-form #success").slideDown();
-					$("#comment-form #success h4 span").html(data.isi);
+					$("#comment-form #success h4 span").html(data.msg);
 					$("#comment-post, #comment-title").slideUp();
 					
 
@@ -100,7 +102,7 @@ $(function() {
 					$("#comment-dummy").slideDown();
 			  	}
 			  	else if(data.status == "error"){
-					$("#comment-form #error h4 span").html(data.isi);
+					$("#comment-form #error h4 span").html(data.msg);
 			  		$("#comment-form #error").slideDown();
 					$("#comment-post, #comment-title").slideUp();
 					$("#comment-form #loading").fadeOut();

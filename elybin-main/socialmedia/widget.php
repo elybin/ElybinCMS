@@ -10,7 +10,7 @@ include("lang.php");
 				<!-- .row -->
 				<div class="row">
 					<div class="col-sm-12">
-						<h3 class="text-center"><?php echo $lg_followus?></h3>
+						<h3 class="text-center"><?php echo lg('Follow us')?></h3>
 						<div class="clearfix"></div>
 						<ul class="list-inline text-center">
 							<li>

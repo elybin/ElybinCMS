@@ -76,31 +76,26 @@
 						$category = $tbca->SelectWhere('category_id',$p->category_id,'','')->current();
 						
 						// tag
-						$tag2 = $p->tag;
-						if($tag2 !== ''){
-							$tag2 = explode(",", $tag2);
-							$ctag2 = count($tag2);
-							
-							if($ctag >= 3) $tag2 = array_slice($tag2, 0, 3);
-						}else{
-							$ctag = 0;
-						}
+						$tag2 = json_decode($p->tag);
+						$ctag = count($tag2);
+
 
 						//content
 						$content = substr(strip_tags(html_entity_decode($p->content)),0,500);
 						
 						// date 
-						$date = explode("-", $p->date);
-						$monthpfx = date("M", mktime(0,0,0,$date[1],1,2000));
+						$date = explode(" ", $p->date);
+						$date2 = explode("-", $date[0]);
+						$monthpfx = date("M", mktime(0,0,0,$date2[1],1,2000));
 						
 				?>
 				<!-- post -->
 				<div class="col-md-2">
 					<div class="circle-date">
 					    <span class="day-prefix">Writed</span>
-						<span class="day"><?php echo $date[2]?></span>
+						<span class="day"><?php echo $date2[2]?></span>
 						<span class="slash"></span> 
-						<span class="month"><?php echo $date[1]?></span>
+						<span class="month"><?php echo $date2[1]?></span>
 						<span class="month-prefix"><?php echo $monthpfx?></span>
 						<span class="fa fa-calendar"></span>
 					</div>
@@ -112,7 +107,7 @@
 								<?php echo $p->title; ?>
 							</h2>
 						 </a>	
-						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;Posted by <em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date.$p->time)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
+						<p class="post-meta"><i class="fa fa-user"></i>&nbsp;<?php echo lg('Posted by ')?><em><?php echo $user?></em><?php if($comment>0){ ?> got <?php echo $comment?> comments<?php } ?><span class="pull-right hidden-xs"><?php echo time_elapsed_string($p->date)?>&nbsp;<i class="fa fa-clock-o"></i></span></p>
 						<?php
 							if($p->image !== ''){
 						?>
@@ -177,7 +172,7 @@
     <hr>
 	<!-- Pager -->
 	<div class="pager">
-		<h3><?php echo strtoupper($lg_page)?></h3>
+		<h3><?php echo strtoupper(lg('Page'))?></h3>
 		<ul>
 			<?php
 				if($page > 1){

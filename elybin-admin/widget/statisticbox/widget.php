@@ -6,29 +6,21 @@ if(!isset($_SESSION['login'])){
 				<!-- Statistic Box -->
 				<div class="row">
 <?php
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
+$ug = _ug();
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id', $level,'','')->current();
 // get priv (11)
-$ugp = $tbug->post;
-$ugcom = $tbug->comment;
-$ugct = $tbug->contact;
-$ugal = $tbug->album;
-$ugu = $tbug->user;
-$ugca = $tbug->category;
-$ugm = $tbug->media;
-$ugs = $tbug->setting;
-$ugt = $tbug->tag;
-$ugg = $tbug->gallery;
-$ugpa = $tbug->page;
+$ugp 	= $ug->post;
+$ugcom	= $ug->comment;
+$ugal 	= $ug->album;
+$ugu 	= $ug->user;
+$ugca 	= $ug->category;
+$ugm 	= $ug->media;
+$ugs 	= $ug->setting;
+$ugt 	= $ug->tag;
+$ugpa 	= $ug->page;
 
 $ugshow = 1;
-$ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $ugg + $ugpa;
-
+$ugtotal = $ugp + $ugcom  + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $ugpa;
 
 	// if have priv
 	if($ugtotal < 3){
@@ -48,7 +40,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold">
-									<i class="fa fa-inbox"></i>&nbsp;&nbsp;Why Should Elybin?
+									<i class="fa fa-inbox"></i>&nbsp;&nbsp;<?php echo lg('Why Should Elybin?') ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
@@ -66,10 +58,10 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 	}
 
 	// show post
-	if($ugp == 1 AND $ugshow < 4){
+	if($ugp == 1 && $ugshow < 4){
 		$tbp = new ElybinTable('elybin_posts'); 
 		// get data
-		$copost = $tbp->GetRow('',''); 
+		$copost = $tbp->GetRowAnd('status','publish','type','post'); 
 		$ugshow++;
 ?>
 					<div class="col-xs-12 col-sm-12 col-md-4">
@@ -77,14 +69,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-pencil"></i>&nbsp;&nbsp;<?php echo $lg_post; ?>
+									<i class="fa fa-pencil"></i>&nbsp;&nbsp;<?php echo lg('Post'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $copost; ?></span>
-									<br><small><small><?php echo $lg_published ?></small></small>
+									<br><small><small><?php echo lg('Published') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -103,14 +95,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-cloud"></i>&nbsp;&nbsp;<?php echo $lg_media; ?>
+									<i class="fa fa-cloud"></i>&nbsp;&nbsp;<?php echo lg('Media') ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $comedia; ?></span>
-									<br><small><small><?php echo $lg_stored ?></small></small>
+									<br><small><small><?php echo lg('Organized') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -130,14 +122,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-comments"></i>&nbsp;&nbsp;<?php echo $lg_comment; ?>
+									<i class="fa fa-comments"></i>&nbsp;&nbsp;<?php echo lg('Comment'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $cocomment; ?></span>
-									<br><small><small>Writed</small></small>
+									<br><small><small><?php echo lg('Reached') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -146,35 +138,8 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 		} 
 		
 		
-	// show contact
-	if($ugct == 1 AND $ugshow < 4){
-		$tbct = new ElybinTable('elybin_contact'); 
-		// get data
-		$cocontact = $tbct->GetRow('',''); 
-		$ugshow++;
-?>
-					<div class="col-xs-12 col-sm-12 col-md-4">
-						<div class="stat-panel lol">
-							<div class="stat-row">
-								<!-- Info background, without padding, horizontally centered text, super large text -->
-								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-envelope"></i>&nbsp;&nbsp;<?php echo $lg_contact; ?>
-								</div>
-							</div> <!-- /.stat-row -->
-							<div class="stat-row">
-								<!-- Bordered, without top border, horizontally centered text, large text -->
-								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg"><?php echo $cocontact; ?></span>
-									<br><small><small>Saved</small></small>
-								</div>
-							</div> <!-- /.stat-row -->
-						</div> <!-- /.stat-panel -->
-					</div><!-- /.col-xs-4 -->
-<?php 
-		} 
-		
 	// show album
-	if($ugal == 1 AND $ugshow < 4){
+	if($ugal == 1 && $ugshow < 4){
 		$tbal = new ElybinTable('elybin_album'); 
 		// get data
 		$coalbum = $tbal->GetRow('',''); 
@@ -185,14 +150,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-book"></i>&nbsp;&nbsp;<?php echo $lg_album; ?>
+									<i class="fa fa-book"></i>&nbsp;&nbsp;<?php echo lg('Album'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $coalbum; ?></span>
-									<br><small><small>Created</small></small>
+									<br><small><small><?php echo lg('Created') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -201,7 +166,7 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 		} 
 		
 	// show user
-	if($ugu == 1 AND $ugshow < 4){
+	if($ugu == 1 && $ugshow < 4){
 		$tbu = new ElybinTable('elybin_users'); 
 		// get data
 		$couser = $tbu->GetRow('',''); 
@@ -212,14 +177,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-users"></i>&nbsp;&nbsp;<?php echo $lg_user; ?>
+									<i class="fa fa-users"></i>&nbsp;&nbsp;<?php echo lg('User'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $couser; ?></span>
-									<br><small><small>Registred</small></small>
+									<br><small><small><?php echo lg('Registered') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -239,14 +204,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-star"></i>&nbsp;&nbsp;<?php echo $lg_category; ?>
+									<i class="fa fa-star"></i>&nbsp;&nbsp;<?php echo lg('Category') ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $cocategory; ?></span>
-									<br><small><small>Saved</small></small>
+									<br><small><small><?php echo lg('Saved') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -266,48 +231,21 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-tags"></i>&nbsp;&nbsp;<?php echo $lg_tag; ?>
+									<i class="fa fa-tags"></i>&nbsp;&nbsp;<?php echo lg('Tag'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $cotag; ?></span>
-									<br><small><small>Used</small></small>
+									<br><small><small><?php lg('Used') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
 					</div><!-- /.col-xs-4 -->
 <?php
 		} 
-		
-	// show gallery
-	if($ugg == 1 AND $ugshow < 4){
-		$tbg = new ElybinTable('elybin_gallery'); 
-		// get data
-		$cogallery = $tbg->GetRow('',''); 
-		$ugshow++;
-?>
-					<div class="col-xs-12 col-sm-12 col-md-4">
-						<div class="stat-panel lol">
-							<div class="stat-row">
-								<!-- Info background, without padding, horizontally centered text, super large text -->
-								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-picture-o"></i>&nbsp;&nbsp;Photos
-								</div>
-							</div> <!-- /.stat-row -->
-							<div class="stat-row">
-								<!-- Bordered, without top border, horizontally centered text, large text -->
-								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg"><?php echo $cogallery; ?></span>
-									<br><small><small>Stored</small></small>
-								</div>
-							</div> <!-- /.stat-row -->
-						</div> <!-- /.stat-panel -->
-					</div><!-- /.col-xs-4 -->
-<?php 
-		} 
-		
+
 	// show page
 	if($ugpa == 1 AND $ugshow < 4){
 		$tbpa = new ElybinTable('elybin_pages'); 
@@ -320,14 +258,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-file"></i>&nbsp;&nbsp;<?php echo $lg_page; ?>
+									<i class="fa fa-file"></i>&nbsp;&nbsp;<?php echo lg('Page'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
 									<span class="text-slg"><?php echo $copage; ?></span>
-									<br><small><small>Writed</small></small>
+									<br><small><small><?php echo lg('Created') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->
@@ -345,14 +283,14 @@ $ugtotal = $ugp + $ugcom + $ugct + $ugal + $ugu + $ugca + $ugm + $ugs + $ugt + $
 							<div class="stat-row">
 								<!-- Info background, without padding, horizontally centered text, super large text -->
 								<div class="stat-cell bg-dark-gray padding-md text-md text-semibold text-center">
-									<i class="fa fa-gear"></i>&nbsp;&nbsp;<?php echo $lg_setting; ?>
+									<i class="fa fa-gear"></i>&nbsp;&nbsp;<?php echo lg('Setting'); ?>
 								</div>
 							</div> <!-- /.stat-row -->
 							<div class="stat-row">
 								<!-- Bordered, without top border, horizontally centered text, large text -->
 								<div class="stat-cell bordered no-border-t text-center text-lg">
-									<span class="text-slg"><?php echo $lg_yes; ?></span>
-									<br><small><small><?php echo $lg_fullcontrol; ?></small></small>
+									<span class="text-slg"><?php echo lg('Yes'); ?></span>
+									<br><small><small><?php echo lg('Full Control') ?></small></small>
 								</div>
 							</div> <!-- /.stat-row -->
 						</div> <!-- /.stat-panel -->

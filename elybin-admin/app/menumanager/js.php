@@ -1,80 +1,79 @@
 <?php
 /* Javascript
- * Module: -
+ * Module: Menu Manager
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location: index.php');
 }else{	
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
 	
-	// get user privilages
-	$tbus = new ElybinTable('elybin_users');
-	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-	$level = $tbus->current()->level; // getting level from curent user
-
-	$tbug = new ElybinTable('elybin_usergroup');
-	$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-	$usergroup = $tbug->current()->setting;
+	// get usergroup privilage/access from current user to this module
+	$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	header('location:../403.php');
+	header('location:../403.html');
 	exit;
 }else{
 	switch (@$_GET['act']) {
 		case 'add': // case 'add'
 ?>
 <!-- Javascript -->
-<!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
--->
 <script src="assets/javascripts/select2.min.js"></script>
 <script>
 init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
+	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg("Select file")?>...' });
 	$("#multiselect-style").select2({
 		allowClear: false,
-		placeholder: "<?php echo $lg_category?>"
+		placeholder: "<?php echo lg('Category')?>"
 	});
 	$('#tooltip a').tooltip();
 
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: 'app/menumanager/proses.php',
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
+	// on submit
+	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+		// start ajax
+	    $.ajax({
+	      url: 'app/menumanager/proses.php',
+	      type: 'POST',
+	      data: $(this).serialize(),
+	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
+	      		console.log(data);
+				// decode json
+				try {
+					var data = $.parseJSON(data);
+				}
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
+				}
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.isi });
 					window.location.href="?mod=menumanager";
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.isi });
 				}
-				
-
-			}
-		})
-		return false;
-	});
+		   }
+	    });
+	    e.preventDefault();
+	    return false;
+  	});
 });
 </script>
 <!-- / Javascript -->
@@ -84,53 +83,53 @@ init.push(function () {
 		case 'edit': // case 'edit'
 ?>
 <!-- Javascript -->
-<!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-
-<script src="assets/javascripts/select2.min.js"></script>
-<script src="assets/javascripts/sortable.min.js"></script>
--->
-
 <script src="min/?f=assets/javascripts/select2.min.js,assets/javascripts/sortable.min.js"></script>
 <script>
 init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
+	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg("Select file")?>...' });
 	$("#multiselect-style").select2({
 		allowClear: false,
-		placeholder: "<?php echo $lg_category?>"
+		placeholder: "<?php echo lg('Category')?>"
 	});
 	$('#tooltip a').tooltip();
 
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: 'app/menumanager/proses.php',
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
+	// on submit
+	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+		// start ajax
+	    $.ajax({
+	      url: 'app/menumanager/proses.php',
+	      type: 'POST',
+	      data: $(this).serialize(),
+	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
+	      		console.log(data);
+				// decode json
+				try {
+					var data = $.parseJSON(data);
+				}
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
+				}
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.isi });
 					window.location.href="?mod=menumanager";
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.isi });
 				}
-				
-
-			}
-		})
-		return false;
-	});
+		   }
+	    });
+	    e.preventDefault();
+	    return false;
+  	});
 
 	//shorable
 	$('#sortable-list').sortable({
@@ -143,19 +142,32 @@ init.push(function () {
 				neworder.push(id);
 			});
 
+			// disable button and growl!
+			$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+			// start ajax
 			$.ajax({
 				type: "POST",
 				url: "app/menumanager/proses.php",
 				data: "mod=menumanager&act=save&neworder=" + neworder,
 				success: function(data){
-					console.log(neworder);
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
+					// enable button
+					$("#growls .growl-default").hide();
+					console.log(data);
+					// decode json
+					try {
+						var data = $.parseJSON(data);
 					}
-					else{
-						$.growl.warning({ title: '<?php echo $lg_error?>', message: data });
+					catch(e){
+						// if failed to decode json
+						$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
+					}
+					if(data.status == "ok"){
+						// ok growl
+						$.growl.notice({ title: data.title, message: data.isi });
+					}
+					else if(data.status == "error"){
+						// error growl
+						$.growl.warning({ title: data.title, message: data.isi });
 					}
 				}
 			});
@@ -170,13 +182,6 @@ init.push(function () {
 		default: // case default
 ?>
 <!-- Javascript -->
-<!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-
-<script src="assets/javascripts/select2.min.js"></script>
-<script src="assets/javascripts/sortable.min.js"></script>
--->
 <script src="min/?f=assets/javascripts/select2.min.js,assets/javascripts/sortable.min.js"></script>
 <script>
 init.push(function () {
@@ -193,26 +198,40 @@ init.push(function () {
 				neworder.push(id);
 			});
 
+			// disable button and growl!
+			$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+			// start ajax
 			$.ajax({
 				type: "POST",
 				url: "app/menumanager/proses.php",
 				data: "mod=menumanager&act=save&neworder=" + neworder,
 				success: function(data){
+					// enable button
+					$("#growls .growl-default").hide();
 					console.log(data);
-					data = explode(",",data);
-
-					if(data[0] == "ok"){
-						$.growl.notice({ title: data[1], message: data[2] });
-						//window.location.href="?mod=menumanager";
+					// decode json
+					try {
+						var data = $.parseJSON(data);
 					}
-					else{
-						$.growl.warning({ title: '<?php echo $lg_error?>', message: data });
+					catch(e){
+						// if failed to decode json
+						$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
+					}
+					if(data.status == "ok"){
+						// ok growl
+						$.growl.notice({ title: data.title, message: data.isi });
+					}
+					else if(data.status == "error"){
+						// error growl
+						$.growl.warning({ title: data.title, message: data.isi });
 					}
 				}
 			});
 		}
 	});
+	
 });
+ElybinView();
 </script>
 <!-- / Javascript -->
 <?php		

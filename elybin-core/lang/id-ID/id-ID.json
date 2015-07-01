@@ -1,0 +1,465 @@
+{
+	"info": [
+		{
+			"language":"id-ID",
+			"language_detail":"Bahasa Indonesia",
+			"version":"0.0.1",
+			"translator":"Khakim A <kim@elybin.com>"
+		}
+	],
+	"dictionary": [
+{
+	"f":"Ouch!", 
+	"t":"Aduh!", 
+	"i":"post.php #37"
+},
+{
+	"f":"You don't have access to access this page. Access Desied 403.", 
+	"t":"Anda tidak punya akses ke halaman ini. Akses Ditolak 403.", 
+	"i":"post.php #37"
+},
+{
+	"f":"Back", 
+	"t":"Kembali", 
+	"i":"post.php #37"
+},
+{
+	"f":"Oops!", 
+	"t":"Ups!", 
+	"i":"post.php #49"
+},
+{
+	"f":"Please create at least one Category.", 
+	"t":"Buatlah sedikitnya satu kategori.", 
+	"i":"post.php #49"
+},
+{
+	"f":"Create New Category", 
+	"t":"Buat Kategori Baru", 
+	"i":"post.php #49"
+},
+{
+	"f":"Home", 
+	"t":"Beranda", 
+	"i":"post.php #83"
+},
+{
+	"f":"Post", 
+	"t":"Tulisan", 
+	"i":"post.php #84"
+},
+{
+	"f":"New Post", 
+	"t":"Tulisan Baru", 
+	"i":"post.php #85"
+},
+{
+	"f":"Help", 
+	"t":"Bantuan", 
+	"i":"post.php #88"
+},
+{
+	"f":"Back to Post", 
+	"t":"Kembali ke Daftar Tulisan", 
+	"i":"post.php #92"
+},
+{
+	"f":"Back to Post", 
+	"t":"Kembali ke Daftar Tulisan", 
+	"i":"post.php #92"
+},
+{
+	"f":"Post Title", 
+	"t":"Judul Tulisan", 
+	"i":"post.php #106"
+},
+{
+	"f":"Post Title", 
+	"t":"Judul Tulisan", 
+	"i":"post.php #106"
+},
+{
+	"f":"Uploading images...", 
+	"t":"Mengunggah gambar...", 
+	"i":"post.php #122"
+},
+{
+	"f":"Write post content here...", 
+	"t":"Tulis isi tulisan disini... ", 
+	"i":"post.php #127"
+},
+{
+	"f":"Save", 
+	"t":"Simpan", 
+	"i":"post.php #137"
+},
+{
+	"f":"Save", 
+	"t":"Simpan", 
+	"i":"post.php #137"
+},
+{
+	"f":"Saving...", 
+	"t":"Menyimpan...", 
+	"i":"post.php #141"
+},
+{
+	"f":"Status", 
+	"t":"Keadaan", 
+	"i":"post.php #147"
+},
+{
+	"f":"Draft", 
+	"t":"Draf", 
+	"i":"post.php #147"
+},
+{
+	"f":"Publish", 
+	"t":"Publikasi", 
+	"i":"post.php #150"
+},
+{
+	"f":"Ok", 
+	"t":"Oke", 
+	"i":"post.php #153"
+},
+{
+	"f":"Cancel", 
+	"t":"Batal", 
+	"i":"post.php #153"
+},
+{
+	"f":"Visibility", 
+	"t":"Keterlihatan", 
+	"i":"post.php #159"
+},
+{
+	"f":"Public", 
+	"t":"Umum", 
+	"i":"post.php #162"
+},
+{
+	"f":"User Only", 
+	"t":"Hanya Pengguna", 
+	"i":"post.php #163"
+},
+{
+	"f":"Secret", 
+	"t":"Rahasia", 
+	"i":"post.php #165"
+},
+{
+	"f":"Password Protected", 
+	"t":"Terproteksi Sandi", 
+	"i":"post.php #164"
+},
+{
+	"f":"Type post password...", 
+	"t":"Ketikan sandi tulisan...", 
+	"i":"post.php #167"
+},
+{
+	"f":"Showed", 
+	"t":"Tampilkan", 
+	"i":"post.php #174"
+},
+{
+	"f":"Forever", 
+	"t":"Selamanya", 
+	"i":"post.php #174"
+},
+{
+	"f":"Category", 
+	"t":"Kategori", 
+	"i":"post.php #187"
+},
+{
+	"f":"Tags", 
+	"t":"Label", 
+	"i":"post.php #203"
+},
+{
+	"f":"holiday, fun, family", 
+	"t":"liburan, senang, keluarga", 
+	"i":"post.php #206"
+},
+{
+	"f":"Photo", 
+	"t":"Foto", 
+	"i":"post.php #210"
+},
+{
+	"f":"Allowed extension is", 
+	"t":"Ekstensi yang boleh", 
+	"i":"post.php #210"
+},
+{
+	"f":"Page not found. (404)", 
+	"t":"Halaman tidak ditemukan. (404)", 
+	"i":"post.php #236"
+},
+{
+	"f":"Edit Post", 
+	"t":"Ubah Tulisan", 
+	"i":"post.php #292"
+},
+{
+	"f":"Revision History", 
+	"t":"Sejarah Penyuntingan", 
+	"i":"post.php #293"
+},
+{
+	"f":"Revision History", 
+	"t":"Sejarah Penyuntingan", 
+	"i":"post.php #293"
+},
+{
+	"f":"Back to Editing", 
+	"t":"Kembali ke Penyuntingan", 
+	"i":"post.php #300"
+},
+{
+	"f":"Revision History of", 
+	"t":"Sejarah Penyuntingan dari", 
+	"i":"post.php #301"
+},
+{
+	"f":"revision", 
+	"t":"revisi", 
+	"i":"post.php #302"
+},
+{
+	"f":"Current State", 
+	"t":"Keadaan Sekarang", 
+	"i":"post.php #317"
+},
+{
+	"f":"Edited", 
+	"t":"Tersunting", 
+	"i":"post.php #317"
+},
+{
+	"f":"by", 
+	"t":"oleh", 
+	"i":"post.php #317"
+},
+{
+	"f":"Auto Save", 
+	"t":"Simpan Otomatis", 
+	"i":"post.php #317"
+},
+{
+	"f":"Page", 
+	"t":"Halaman", 
+	"i":"post.php #328"
+},
+{
+	"f":"Restore to this state", 
+	"t":"Pulihkan ke keadaan ini", 
+	"i":"post.php #341"
+},
+{
+	"f":"There are some error inside this page, this is our mistake. Please contact administrator.", 
+	"t":"Ada beberapa kesalahan pada halaman ini, ini adalah kesalahan kami. Mohon hubungi Administrator.", 
+	"i":"post.php #341"
+},
+{
+	"f":"Can't edit Deleted or Revision post. 403", 
+	"t":"Ada beberapa kesalahan pada halaman ini, ini adalah kesalahan kami. Mohon hubungi Administrator.", 
+	"i":"post.php #341"
+},
+{
+	"f":"Allow", 
+	"t":"Boleh", 
+	"i":"post.php #522"
+},
+{
+	"f":"Deny", 
+	"t":"Dilarang", 
+	"i":"post.php #525"
+},
+{
+	"f":"Edit Post", 
+	"t":"Sunting Tulisan", 
+	"i":"post.php #556"
+},
+{
+	"f":"Edit Post", 
+	"t":"Sunting Tulisan", 
+	"i":"post.php #556"
+},
+{
+	"f":"Post published successfully.", 
+	"t":"Tulisan berhasil di publikasi.", 
+	"i":"post.php #572"
+},
+{
+	"f":"View", 
+	"t":"Lihat", 
+	"i":"post.php #573"
+},
+{
+	"f":"Changes Saved.", 
+	"t":"Perubahan Tersimpan", 
+	"i":"post.php #578"
+},
+{
+	"f":"Post saved to Draft.", 
+	"t":"Tulisan disimpan di Draf.", 
+	"i":"post.php #581"
+},
+{
+	"f":"Post restored successfully.", 
+	"t":"Tulisan berhasil dipulihkan.", 
+	"i":"post.php #584"
+},
+{
+	"f":"Post successfully restored from Recycle Bin.", 
+	"t":"Tulisan berhasil dipulihkan dari Tempat Sampah.", 
+	"i":"post.php #587"
+},
+{
+	"f":"Commenting", 
+	"t":"Berkomentar", 
+	"i":"post.php #669"
+},
+{
+	"f":"Revisions", 
+	"t":"Revisi", 
+	"i":"post.php #698"
+},
+{
+	"f":"Changed", 
+	"t":"Terubah", 
+	"i":"post.php #703"
+},
+{
+	"f":"Left empty if you are not changing the images. Maximum size of images is 1MB with allowed extensions (jpg, jpeg, png or gif).", 
+	"t":"Biarkan kosong jika anda tidak merubah gambar. Maksimal ukuran gambar adalah 1MB dengan ekstensi yang diperbolehkan (jpg, jpeg, png atau gif).", 
+	"i":"post.php #703"
+},
+{
+	"f":"Delete Permanently", 
+	"t":"Hapus Permanen", 
+	"i":"post.php #856"
+},
+{
+	"f":"Are you sure you want to permanently delete this post?", 
+	"t":"Apakah anda yakin ingin menghapus tulisan ini secara permanen?", 
+	"i":"post.php #859"
+},
+{
+	"f":"Yes, Delete", 
+	"t":"Ya, Hapus", 
+	"i":"post.php #862"
+},
+{
+	"f":"Delete Post", 
+	"t":"Hapus Tulisan", 
+	"i":"post.php #862"
+},
+{
+	"f":"Are you sure you want to move this post to Recycle Bin?", 
+	"t":"Apakah anda yakin ingin memindahkan tulisan ini ke Tempat Sampah?", 
+	"i":"post.php #862"
+},
+{
+	"f":"Yes, Move It", 
+	"t":"Ya, Pindahkan", 
+	"i":"post.php #883"
+},
+{
+	"f":"All", 
+	"t":"Semua", 
+	"i":"post.php #1084"
+},
+{
+	"f":"Published", 
+	"t":"Terpublikasi", 
+	"i":"post.php #1100"
+},
+{
+	"f":"Recycle Bin", 
+	"t":"Tempat Sampah", 
+	"i":"post.php #1132"
+},
+{
+	"f":"Title", 
+	"t":"Judul", 
+	"i":"post.php #1143"
+},
+{
+	"f":"Date", 
+	"t":"Tanggal", 
+	"i":"post.php #1144"
+},
+{
+	"f":"Check All", 
+	"t":"Pilih Semua", 
+	"i":"post.php #1164"
+},
+{
+	"f":"Author", 
+	"t":"Penulis", 
+	"i":"post.php #1166"
+},
+{
+	"f":"Total Comments", 
+	"t":"Jumlah Komentar", 
+	"i":"post.php #1168"
+},
+{
+	"f":"Action", 
+	"t":"Tindakan", 
+	"i":"post.php #1171"
+},
+{
+	"f":"Deleted", 
+	"t":"Terhapus", 
+	"i":"post.php #1201"
+},
+{
+	"f":"Restore Post", 
+	"t":"Pulihkan Tulisan", 
+	"i":"post.php #1204"
+},
+{
+	"f":"Edit", 
+	"t":"Sunting", 
+	"i":"post.php #1217"
+},
+{
+	"f":"Delete", 
+	"t":"Hapus", 
+	"i":"post.php #1218"
+},
+{
+	"f":"Nothing can be shown.", 
+	"t":"Tak ada yang bisa ditampilkan.", 
+	"i":"post.php #1229"
+},
+{
+	"f":"Delete selected item", 
+	"t":"Hapus item terpilih", 
+	"i":"post.php #1248"
+},
+{
+	"f":"Yes, Delete All", 
+	"t":"Ya, Hapus Semua", 
+	"i":"post.php #1264"
+},
+{
+	"f":"Delete Selected", 
+	"t":"Hapus Terpilih", 
+	"i":"post.php #1272"
+},
+{
+	"f":"Loading...", 
+	"t":"Memuat...", 
+	"i":"post.php #1283"
+},
+		
+		
+		{"f":" ", "t":" ", "i":"post.php #0"}
+	]
+}

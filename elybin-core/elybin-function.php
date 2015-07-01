@@ -1,4 +1,26 @@
 <?php
+// minimum is php 5.3.7+
+
+// json function, to put clear data respone
+function json(Array $a){
+	echo json_encode($a);
+	exit;
+}
+
+// 1.1.3
+// mixing json and showing manual redirect if javascript fail to load
+// r = redirect, j = json
+function result(Array $a, $result = 'r'){
+	if($result == 'j'){
+		json($a);
+	}else{
+		// set session first
+		@$_SESSION['msg'] = $a['msg_ses'];
+		header('location: '.@$a['red']);
+	}
+	exit;
+}
+
 function ElybinRedirect($url)
 {
     if (!headers_sent())
@@ -16,23 +38,156 @@ function ElybinRedirect($url)
         echo '</noscript>'; exit;
     }
 }
-
-class ElybinValidasi{
-	function __construct(){}
-	function xss($str){
-				$str = htmlspecialchars($str);
-				return $str;
-	}
-	function sql($str){	
-				$rms = array("'","`","=",'"',"@","<",">","*");
-				$str = str_replace($rms, '', $str);
-				$str = stripcslashes($str);	
-				$str = htmlspecialchars($str);
-				return $str;
-	}
+// 1.1.3
+// simple redirect
+function _red($tr){
+	header('location: ' . $tr );
 }
 
+class ElybinValidasi{
+	//include 'lib/antixss.php';
+	function __construct(){}
+	function xss($str){
+		$str = htmlspecialchars($str);
+		return $str;
+	}
+	function sql($str){	
+		$rms = array("'","`","=",'"',"@","<",">","*");
+		$str = str_replace($rms, '', $str);
+		$str = stripcslashes($str);	
+		$str = htmlspecialchars($str);
+		return $str;
+	}
+	function mail($str, $red = 'index.php'){
+		// never let them empty
+		if(empty($str)){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Please fill E-mail'),
+				'msg_ses' => 'fill_email',
+				'red' => $red
+			), @$_GET['r']);
+		}
+ 		// filter email
+		if(!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/", $str)){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('E-mail format not recognized. Example format is xxx@xxx.xxx'),
+				'msg_ses' => 'invalid_email',
+				'red' => $red
+			), @$_GET['r']);
+		}
+	}
 
+	function uname($str, $red = 'index.php'){
+		// limit username length
+		if(strlen($str) > 12){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Maximum username character is 12 letter'),
+				'msg_ses' => 'username_too_long',
+				'red' =>  $red
+			), @$_GET['r']);
+		}
+		// limit username length
+		if(strlen($str) < 3){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Minimum username character is 3 letter'),
+				'msg_ses' => 'username_too_short',
+				'red' => $red
+			), @$_GET['r']);
+		}
+		// if input email error, try filter username
+		if(!preg_match("/^[a-z0-9_]+$/", $str)){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Username format not recognized. Allowed character for Username is letter(a-z), number(0-9) and underscore (_)'),
+				'msg_ses' => 'invalid_username',
+				'red' => $red
+			), @$_GET['r']);
+		}
+		// never let them empty
+		if(empty($str)){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Please fill Username first'),
+				'msg_ses' => 'fill_username',
+				'red' => $red
+			), @$_GET['r']);
+		}
+	}
+	function name($str, $red = 'index.php'){
+		// limit username length
+		if(strlen($str) > 40){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Maximum fullname character is 40 letter'),
+				'msg_ses' => 'fullname_too_long',
+				'red' =>  $red
+			), @$_GET['r']);
+		}
+		// limit username length
+		if(strlen($str) < 3){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Minimum fullname character is 3 letter'),
+				'msg_ses' => 'fullname_too_short',
+				'red' => $red
+			), @$_GET['r']);
+		}		
+		if(!preg_match("/^[a-zA-Z \']+$/", $str)){
+			// woops! not matched anything, I given up! give 'em result!
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Name contain illegal character (a-zA-Z \')'),
+				'msg_ses' => 'invalid_fullname',
+				'red' => $red
+			), @$_GET['r']);
+		}
+	}
+}
+// 1.1.3
+// id or hash ecrypt to prevent sqli
+// Ecrypt to Prevent Maling (EPM)
+function epm_encode($id){
+    $a = array("0","1","2","3","4","5","6","7","8","9");
+    $b = array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
+    $r = str_replace($a, $b, $id);
+    $enc = rand(10,99).base64_encode(base64_encode($r));
+    return $enc;
+}
+// DeEcrypt to Prevent Maling (EPM)
+function epm_decode($enc) {
+	$tr = substr($enc,2,strlen($enc));
+    $str = base64_decode(base64_decode($tr));
+    $b =  array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
+    $a = array("0","1","2","3","4","5","6","7","8","9");
+    $id = str_replace($b, $a, $str);
+
+    // check id decoded successfully?
+	if(!preg_match("/^[0-9]+$/", $id)){
+		$id = 0;
+	}
+
+	//return
+    return $id;
+}
 
 class Paging{
 	function cariPosisi($batas){
@@ -86,6 +241,241 @@ class Paging{
 		return $link_halaman;
 	}
 }
+// 1.1.3
+// data order adv
+function showOrder(array $orba){
+	// collect data
+	$mod = @$_GET['mod'];
+	$act = @$_GET['act'];
+	$orb = @$_GET['orderby'];
+	$or = @$_GET['order'];
+	$fil = @$_GET['filter'];
+	$search = @$_GET['search'];
+	
+	$o = '
+	<!-- order -->
+	<form action="" method="get" class="pull-left" style="margin-bottom: 5px">';
+	// prefix
+	// jika act di set
+	$o .= '
+		<input type="hidden" name="mod" value="'.$mod.'" />';
+	if(isset($act)){
+		$o .= '<input type="hidden" name="act" value="'.$act.'" />';
+	}
+	if(isset($orb)){
+		$o .= '<input type="hidden" name="orderby" value="'.$orb.'" />';
+	}
+	if(isset($or)){
+		$o .= '<input type="hidden" name="order" value="'.$or.'" />';
+	}
+	if(isset($fil)){
+		$o .= '<input type="hidden" name="filter" value="'.$fil.'" />';
+	}
+	if(isset($search)){
+		$o .= '<input type="hidden" name="search" value="'.$search.'" />';
+	}
+	$o .= '
+		<select name="orderby" class="form-control input-sm" style="margin-bottom: 0;display: inline; width: auto"">';
+	// show data
+	foreach($orba as $val => $cap){
+		// if
+		if($orb==$val){
+			$o .= '<option value="'.$val.'" selected="selected">'.$cap.'</option>';
+		}else{
+			$o .= '<option value="'.$val.'">'.$cap.'</option>';
+		}
+	}
+	$o .= '	
+	</select>&nbsp;	
+		<select name="order" class="form-control input-sm" style="margin-bottom: 0; display: inline; width: auto">';
+		
+		// if order selecred
+		if($or=='desc'){
+			$o .= '<option value="desc" selected="selected">'.lg('Descanding').'</option>';
+		}else{
+			$o .= '<option value="desc">'.lg('Descanding').'</option>';
+		}
+		if($or=='asc'){
+			$o .= '<option value="asc" selected="selected">'.lg('Ascending').'</option>';
+		}else{
+			$o .= '<option value="asc">'.lg('Ascending').'</option>';
+		}
+	$o .= '	
+		</select>&nbsp;	
+		<input type="submit" value="'.lg('Sort').'" class="btn">
+	</form>
+	';
+	// output
+	echo $o;
+}
+// 1.1.3
+// search adv
+function showSearch(){
+	$act = @$_GET['act'];
+	$fil = @$_GET['filter'];
+	if(isset($_GET['search'])){
+		$search = $_GET['search'];
+	}else{
+		$search = "";
+	}
+
+	// collect data 
+	$mod = @$_GET['mod'];
+	$o = '
+	<form action="" method="get" class="input-group input-group-sm pull-right col-md-3" style="margin-bottom: 5px">
+		<input type="hidden" name="mod" value="'.$mod.'"/>';
+		
+	// jika act di set
+	if(isset($act)){
+		$o .= '<input type="hidden" name="act" value="'.$act.'" />';
+	}
+	
+	// jika filter di set
+	if(isset($fil)){
+		$o .= '<input type="hidden" name="filter" value="'.$fil.'" />';
+	}
+	
+	$o .= '
+		<input type="text" name="search" value="'.$search.'" placeholder="'.lg('Search Keywords..').'" class="form-control"/>
+			
+		<span class="input-group-btn">
+			<button type="submit" class="btn" type="button">'.lg('Search').'</button>
+		</span>
+	</form>';
+	// output
+	echo $o;
+}
+// 1.1.3
+// pagging adv
+function showPagging($totalrow, $aid = false){
+	// if total row > 0
+	if($totalrow > 0){
+		// collect data 
+		$act = @$_GET['act'];
+		$mod = @$_GET['mod'];
+		
+		// if act isset
+		if(isset($act)){
+			$mod .= '&amp;act='.$act;
+		}
+		
+		$orb = @$_GET['orderby'];
+		$or = @$_GET['order'];
+		$fil = @$_GET['filter'];
+		$search = @$_GET['search'];
+		// pagg
+		$pr = _op()->pagging_row;
+		$mp = ceil($totalrow/$pr);
+		// get 
+		if(isset($_GET['page'])){
+			$cpag = $_GET['page'];
+		}else{
+			$cpag = 1;
+		}
+		// prefix
+		$pfx = '';
+		if(isset($orb)){
+			$pfx = '&amp;orderby='.$orb;
+		}
+		if(isset($or)){
+			$pfx .= '&amp;order='.$or;
+		}
+		// v1.1.3
+		// filter
+		if(isset($fil)){
+			$pfx .= '&amp;filter='.$fil;
+		}
+		// additional id
+		// v1.1.3 - used for revision of post
+		if($aid !== false){
+			$pfx .= '&amp;id='.$aid;
+		}
+		if(isset($search)){
+			$pfx .= '&amp;search='.$search;
+		}
+		
+		$o = '<i class="text-light-gray text-xs">'.$totalrow.' '.lg('Entry').'</i>&nbsp;&nbsp;&nbsp;';
+		
+		// first
+		$o .= '<a href="?mod='.$mod.$pfx.'&amp;page=1" class="btn btn-sm btn-default"><i class="fa fa-angle-double-left"></i></a>&nbsp;';	
+		// pref
+		if($cpag > 1){
+			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.($cpag-1).'" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i></a>&nbsp;';
+		}else{
+			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page=1" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i></a>&nbsp;';
+		}
+		// drop down
+		$o .= "
+		<script>
+			function pageDD(pfx){
+				window.location = pfx + '&page=' + $(\"select#pagging option:selected\").val();
+			}
+		</script>";	
+		$o .= '<select id="pagging" onchange="pageDD(\'?mod='.$mod.$pfx.'\')">';
+		for($i=1; $i <= $mp; $i++){
+			// jika halamana sama
+			if($cpag == $i){
+				$o .= '<option value="'.$i.'" selected="selected">&#64;'.$i.'</option>';
+			}else{
+				$o .= '<option value="'.$i.'">'.$i.'</option>';
+			}
+		}
+		$o .= '</select>&nbsp;';		
+		// next
+		if($cpag < $mp){
+			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.($cpag+1).'" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i></a>&nbsp;';
+		}else{
+			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.$mp.'" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i></a>&nbsp;';
+		}
+		// last
+		$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.$mp.'" class="btn btn-sm btn-default"><i class="fa fa-angle-double-right"></i></a>&nbsp;';
+		// output
+		echo '<div class="pull-right">'.$o.'</div>';
+	}else{
+		return false;
+	}
+}
+// 1.1.3
+// pagging (query)
+// "numer of total data", "array of order data", "query want to modify" 
+function _PageOrder(array $orderArr, $query, $limstart = 0){
+
+	// pagg
+	$pr = _op()->pagging_row;
+	//$mp = ceil($count/$pr);
+	// get 
+	if(isset($_GET['page'])){
+		$cpag = $_GET['page'];
+	}else{
+		$cpag = 1;
+	}
+
+	// order get 
+	$orb = @$_GET['orderby'];
+	$or = @$_GET['order'];
+	// order
+	if(isset($orb) && isset($or)){
+		// order by
+		foreach($orderArr as $val => $code){
+			// orderby
+			if($orb == $val){
+				$query .= ' ORDER BY '.$code.' ';
+			}
+		}
+		// order
+		if($or == 'asc'){
+			$query .= 'ASC ';
+		}else{
+			$query .= 'DESC ';
+		}
+	}else{
+		$query .= ' ORDER BY '.$orderArr['default'].' ';
+	}
+	// if pagging set
+	$query .= 'LIMIT '.((($cpag-1)*$pr)+$limstart).','.$pr;
+	return $query;
+}
+
 
 // function textdash
 function textdash($s){
@@ -112,17 +502,34 @@ function keyword_filter($w){
 	$wj = rtrim($wj, ", ");
     return $wj;
 }
+function cutword($s, $len = 200){
+	
+	if(strlen($s) > $len){
+		$s = substr($s, 0, strpos($s, ' ', $len));
+		$s = trim($s);
+	}
+	return $s;
+}
 function UploadImage($fupload_name,$mod){
 	//include  lang 
 	include('../../../elybin-admin/lang/main.php');
 
 	$vdir_upload = "../../../elybin-file/$mod/";
 	$vfile_upload = $vdir_upload . $fupload_name;
+	
+	@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,Error,Failed Processing Image");
+	// 1280px ~ 90%
+	resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);		
+	// 300px ~ 80%
+	resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);		
+	// 100px  ~ 40%
+	resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+	// 50px ~ 30%
+	resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 30);
+/* 	if($_FILES["file"]["type"]=="image/jpeg"){
+		$im_src = @imagecreatefromjpeg($_FILES["file"]["tmp_name"]) or die("error,$lg_error,$lg_invalidimages");
 
-	if($_FILES["image"]["type"]=="image/jpeg"){
-		$im_src = @imagecreatefromjpeg($_FILES["image"]["tmp_name"]) or die("error,$lg_error,$lg_invalidimages");
-
-		@move_uploaded_file($_FILES["image"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
+		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
 
 		$src_width = imageSX($im_src);
 		$src_height = imageSY($im_src);
@@ -135,17 +542,30 @@ function UploadImage($fupload_name,$mod){
 
 		imagedestroy($im_src);
 		imagedestroy($im);
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		// 100px
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		// 50px
+		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
 	}
-	elseif($_FILES["image"]["type"]=="image/png"){
-		@move_uploaded_file($_FILES["image"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload);
+	elseif($_FILES["file"]["type"]=="image/png"){
+		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		// 100px
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		// 50px
+		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
 	}
-	elseif($_FILES["image"]["type"]=="image/gif"){
-		@move_uploaded_file($_FILES["image"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload);
-	}
+	elseif($_FILES["file"]["type"]=="image/gif"){
+		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		// 100px
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		// 50px
+		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
+	} */
 }
-function resize($newWidth, $targetFile, $originalFile) {
+function resize($newWidth, $targetFile, $originalFile, $quality) {
 
     $info = getimagesize($originalFile);
     $mime = $info['mime'];
@@ -183,7 +603,7 @@ function resize($newWidth, $targetFile, $originalFile) {
     if (file_exists($targetFile)) {
             unlink($targetFile);
     }
-    $image_save_func($tmp, "$targetFile");
+    $image_save_func($tmp, "$targetFile", $quality);
 }
 function UploadFile($fupload_name,$mod){
 	$vdir_upload = "../../../elybin-file/$mod/";
@@ -258,8 +678,33 @@ function deleteDir($dirname) {
     return true;
 }
 
+// comparing date
+// diff_date($future, $past, $res = second/minute/hour/day);
+function diff_date($date1, $date2, $result = 'day'){
+	$diff = strtotime($date1)-strtotime($date2);
+
+	// dicision
+	switch ($result) {
+		case 'second':
+			$diff = $diff;
+			break;
+		case 'minute':
+			$diff = $diff/60;
+			break;
+		case 'hour':
+			$diff = $diff/60/60;
+			break;
+		case 'day':
+			$diff = $diff/60/60/24;
+			break;
+		default:
+			$diff = $diff/60/60/24;
+			break;
+	}
+	
+	return $diff;
+}
 function time_elapsed_string($datetime, $full = false) {
-	settzone();
 
     $now = new DateTime;
     $ago = new DateTime($datetime);
@@ -288,17 +733,31 @@ function time_elapsed_string($datetime, $full = false) {
     if (!$full) $string = array_slice($string, 0, 1);
     return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
-function settzone(){
-	$tbl = new ElybinTable("elybin_options");
-	$gset = $tbl->SelectWhere('name','timezone','','');
-	$gset = $gset->current();
 
-	$tzone = $gset->value;
-	date_default_timezone_set($tzone);
+
+function settzone(){
+	$tz = _op()->timezone;
+	date_default_timezone_set($tz);
 }
-function friendly_date($date){
-	$date = explode("-", $date);
-	$date = date("d F Y",mktime(0,0,0,$date[1],$date[2],$date[0]));
+function friendly_date($date, $format = 'full'){
+	// if datetime
+	$datetmp = @explode(" ", $date);
+	if(count($datetmp) < 2){
+		$date = $datetmp [0];
+		// tanpa datetime
+		$date = explode("-", $date);
+		$date = date("d F Y",mktime(0,0,0,$date[1],$date[2],$date[0]));
+	}else{
+		// dg datetime
+		$date = $datetmp [0];
+		$date = explode("-", $date);
+		$date = date("d F Y",mktime(0,0,0,$date[1],$date[2],$date[0]));
+		
+		// format
+		if($format == 'full'){
+			$date = $date.' '.$datetmp[1];
+		}
+	}
 	return $date;
 }
 function rename_timezone($old){
@@ -431,22 +890,10 @@ function er($s){
 function now(){
 	return date("Y-m-d");
 }
-
-function json($s){
-	$a = "";
-	foreach ($s as $s) {
-		//$a = $a.'"'.$s.'",';
-		$a = $a.$s.',';
-	}
-
-	$a = rtrim($a,",");
-	echo "{$a}";
-}
-
 // Function to get the client IP address
 function client_info($ip) {
 	if($ip == "yes"){
-		$i = "IP: ".$_SERVER['REMOTE_ADDR'];
+		$i = $_SERVER['REMOTE_ADDR'];
 	}else{
 		$i = "";
 		$i .= "IP Address: ".$_SERVER['REMOTE_ADDR']."</br>";
@@ -467,7 +914,7 @@ function notif_push($code, $title, $value, $type, $icon){
 	}
 	elseif(empty($code)){
 		$code = 'general';
-		$title = $lg_general;
+		$title = lg('General');
 	}
 
 	//insert to notification
@@ -476,8 +923,7 @@ function notif_push($code, $title, $value, $type, $icon){
 		'notif_code'=> $code,
 		'title'=> $title,
 		'value'=> $value,
-		'date'=>date("Y-m-d"),
-		'time'=>date("H:i:s"),
+		'date'=>date("Y-m-d H:i:s"),
 		'type'=> $type,
 		'icon'=> $icon
 	);
@@ -489,7 +935,7 @@ function pushnotif($data){
 	settzone();
 	// generate module 
 	if(empty($data['module'])){
-		$data['module'] = "general";
+		$data['module'] = "home";
 	}
 	
 	// check and fix empty data
@@ -510,8 +956,7 @@ function pushnotif($data){
 		'module'=> $data['module'],
 		'title'=> $data['title'],
 		'value'=> $data['content'],
-		'date'=>date("Y-m-d"),
-		'time'=>date("H:i:s"),
+		'date'=>date("Y-m-d H:i:s"),
 		'type'=> $data['type'],
 		'icon'=> $data['icon']
 	);
@@ -519,23 +964,31 @@ function pushnotif($data){
 	
 	return $result;
 }
-																																		@eval(base64_decode("JGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSJleHBsb2RlIjskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGwoIjoiLCJtZDU6Y3J5cHQ6c2hhMTpzdHJyZXY6YmFzZTY0X2RlY29kZSIpOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFs0XTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFszXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsPSRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsWzJdOyRsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFsxXTskbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbD0kbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbFswXTs="));@eval($llllllllllllllllllllllllllllllllllllllllllllll($lllllllllllllllllllllllllllllllllllllllllllllll("fQoNO2RpbGF2bmVrb3RvZXMkIG5ydXRlcn07ZXVydCA9IGRpbGF2bmVrb3RvZXMkeyluZWtvdG9lcyQgPT09ICkpKSkiZXRhZGxsYXRzbmkkLGxydV9ldGlzJCx0c29oX2V0aXMkIihdM1tpaWlpaWlpaWlpJChdMltpaWlpaWlpaWlpJChdMFtpaWlpaWlpaWlpJCgoZmk7KSJlZG9jZWRfNDZlc2FiOnZlcnJ0czoxYWhzOnRweXJjOjVkbSIgLCI6IihpaWlpaWlpaWkkID0gaWlpaWlpaWlpaSQ7ImVkb2xweGUiID0gaWlpaWlpaWlpJDtuZWtvdG9lcz4tcG8kID0gbmVrb3RvZXMkO2V0YWRsbGF0c25pPi1wbyQgPSBldGFkbGxhdHNuaSQ7bGlhbWVfZXRpcz4tcG8kID0gbGlhbWVfbmltZGEkO10wW2xydV9ldGlzJCA9IGxydV9ldGlzJDspbHJ1X2V0aXMkICwiLyIoZWRvbHB4ZSA9IGxydV9ldGlzJDspbHJ1X2V0aXMkICwnJyAseGZwJChlY2FscGVyX3J0cyA9IGxydV9ldGlzJCA7KSIud3d3Ly86c3B0dGgiLCIud3d3Ly86cHR0aCIsIi53d3ciLCIvLzpzcHR0aCIsIi8vOnB0dGgiKHlhcnJhID0geGZwJCA7bHJ1X2V0aXM+LXBvJCA9IGxydV9ldGlzJDtdJ1RTT0hfUFRUSCdbUkVWUkVTXyQgPSB0c29oX2V0aXMkO2VzbGFmID0gZGlsYXZuZWtvdG9lcyR9O2V1bGF2JCA9IHllayQ+LXBvJHspZXVsYXYkID49IHllayQgc2Egbm9pdHBvJCggaGNhZXJvZjspKHNzYWxDZHRzIHdlbiA9IHBvJDspKSIvIi5yZWRsb2Y+LWVtZWh0YyQuIi9lbWVodC9lbGlmLW5pYnlsZS8iLl0nbHJ1X2V0aXMnW25vaXRwbyQgPj0gJ3JlZGxvZl9zZW1laHQnKHlhcnJhICxub2l0cG8kKGVncmVtX3lhcnJhID0gbm9pdHBvJDspKHRuZXJydWM+LSknJywnJywnZXZpdGNhJywnc3V0YXRzJyhlcmVoV3RjZWxlUz4tdGJ0JCA9IGVtZWh0YyQ7KSdzZW1laHRfbmlieWxlJyhlbGJhVG5pYnlsRSB3ZW4gPSB0YnQkfTspKWV1bGF2Pi1vZyQgPj0gZW1hbj4tb2ckKHlhcnJhICxub2l0cG8kKGVncmVtX3lhcnJhID0gbm9pdHBvJHsgKW9nJCBzYSBwb3RlZyQoIGhjYWVyb2Y7KScnLCcnKHRjZWxlUz4tb2J0JCA9IHBvdGVnJDspIlNNQ25pYnlsRSIgPj0gJ2VzYWJzbWMnKHlhcnJhID0gbm9pdHBvJDspJ3Nub2l0cG9fbmlieWxlJyhlbGJhVG5pYnlsRSB3ZW4gPSBvYnQkCg17KShvZXNlbmlnbmVoY3JhZXMgbm9pdGNudWY=")));
-
 // session expired
 function session_exp(){
 	if(isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)){
-	  // last request was more than 30 min
-	  //logout!
-	  // set session to offline
-	  $tbus = new ElybinTable('elybin_users');
-	  $tbus->Update(array('session' => 'offline'), 'session',$_SESSION['login']);
+		// last request was more than 30 min
+		//logout!
+		// set session to offline
+		$tbus = new ElybinTable('elybin_users');
+		$tbus->Update(array('session' => 'offline'), 'session',$_SESSION['login']);
 	  
-	  session_unset();
-	  session_destroy();
-	  unset($_SESSION['login']);
-	  unset($_SESSION['last_activity']);
-	  unset($_SESSION['activity_created']);
-	  header('location:index.php?act=sessionexpired');
+		session_unset();
+		session_destroy();
+		unset($_SESSION['login']);
+		unset($_SESSION['last_activity']);
+		unset($_SESSION['activity_created']);
+
+	  	// set ref
+		if(empty($_SESSION['login']) || !isset($_SESSION['login'])){
+			$ref = urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+			$_SESSION['ref'] = $ref;
+		}
+
+		// set sessioon
+		$_SESSION['msg'] = 'session_expired';
+
+		header('location:index.php?msg=session_expired');
 	}
 	$_SESSION['last_activity'] = time(); // renew
 	if(!isset($_SESSION['activity_created'])){
@@ -568,6 +1021,22 @@ function session_renew(){
 }
 
 function checkcode($code){
+	// check match or not
+	if(empty($code) || empty($_SESSION['cp'])){
+		$res = false;
+	}else{
+		$codeses = $_SESSION['cp'];
+		if(strtolower($codeses) == strtolower($code)){
+			$res = true;
+		}else{
+			$res = false;
+		}
+	}
+	return $res;
+}
+// 1.1.3
+// changing fucntion name to ccode
+function ccode($code){
 	// check match or not
 	if(empty($code) || empty($_SESSION['cp'])){
 		$res = false;
@@ -616,4 +1085,220 @@ function minify_js($buffer){
 	return $buffer;
 }
 
+// 1.1.3
+// fungsi bahasa
+// menggunakan json nantinya
+function lg($s){
+	// cek apakah cookie bahasa tidak di setting?
+	if(!isset($_COOKIE['lang'])){
+		// ambil setting bahasa default
+		$lang = _op()->language;
+		// buat cookie bahasa
+		@setcookie("lang", $lang, time()+(60*60*24*30));
+	}else{
+		// jika sudah di set maka lanjutkan baca kitab bahasa
+		$lang = @$_COOKIE['lang'];
+	}
+
+	// cek apakah bahasa ada pada direktori?
+	$fl = dirname(__FILE__)."/lang/$lang/$lang.json";
+	if(file_exists($fl)){
+		// baca file tesebut
+		$fp = fopen($fl, "r");
+		$dict = '';
+		while(!feof($fp)){
+			$dict .= fgets($fp);
+		}
+		fclose($fp);
+		// temukan array katanya
+		$object_dict = json_decode($dict);
+		for($i=0; $i < count($object_dict->dictionary); $i++){
+			$dt = $object_dict->dictionary;
+			// jika ketemu
+			if($dt[$i]->f == $s){
+				// masukan ke s
+				$s = $dt[$i]->t;
+				return $s;
+				// stop
+				exit;
+			}
+		}
+	}
+	// berikan nilai return
+	return $s;
+}
+
+// 1.1.3
+// ambil setting
+function op(){
+	// get options
+	$tbso = new ElybinTable('elybin_options');
+	// this is all information
+	$option = array('main_cms' => "Elybin CMS");
+	// option
+	$getop = $tbso->Select('','');
+	foreach ($getop as $sop) {
+		$option = array_merge($option, array($sop->name => $sop->value));
+	}
+	// convert array to object
+	$op = new stdClass();
+	foreach ($option as $key => $value)
+	{
+	    $op->$key = $value;
+	}
+
+	//ret
+	return $op;
+}
+// alternate
+function _op(){
+	return op();
+}
+
+ 
+// 1.1.3
+// get user info from session
+function _u($uid = false){
+	//get current user
+	$tbu = new ElybinTable("elybin_users");
+	
+	// jika uid di set
+	if($uid){
+		$u = $tbu->SelectWhere('user_id', $uid)->current();
+	}else{
+		$u = $tbu->SelectWhere('session',$_SESSION['login'])->current();
+	}
+	
+	return $u;
+}
+// 1.1.3
+// get post
+// _p('post_id',1);
+function _p($where = 'post_id', $value = 1){
+	//get current post
+	$tbp = new ElybinTable("elybin_posts");
+	
+	// jika id di set
+	$u = $tbp->SelectWhere($where, $value)->current();
+	
+	return $u;
+}
+// 1.1.3
+// get visitor
+// _vi('visitor_id',1);
+function _vi($where = 'visitor_id', $value = 1){
+	//get current post
+	$tbv = new ElybinTable("elybin_visitor");
+	
+	// jika id di set
+	$vi = $tbv->SelectWhere($where, $value)->current();
+	
+	return $vi;
+}
+
+// 1.1.3
+// get user group from session/spesific
+function _ug($uid = false){
+	// jika uid di set
+	if($uid){
+		//get current user
+		$tbu = new ElybinTable("elybin_users");
+		$u = $tbu->SelectWhere('user_id',$uid)->current();
+	}else{
+		$u = _u();
+	}
+	
+	//get current usergroup
+	$tbug = new ElybinTable('elybin_usergroup');
+	$ug = $tbug->SelectWhere('usergroup_id',$u->level,'','')->current();
+	return $ug;
+}
+
+// 1.1.3
+// human readable filesize
+// # http://jeffreysambells.com/2012/10/25/human-readable-filesize-php
+function human_filesize($bytes, $decimals = 2) {
+    $size = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ' '. @$size[$factor];
+}
+
+// 1.1.3
+// categorize mime type
+function categorize_mime_types($mime)
+{
+	
+    // Classify mime types into desired categories, key-val pairings
+    $mimes = array(
+		"application/pdf"=>"office",
+		"application/vnd.openxmlformats-officedocument.word"=>"office",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"=>"office",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.template"=>"office",
+        "application/vnd.openxmlformats-officedocument.presentationml.template"=>"office",
+        "application/vnd.openxmlformats-officedocument.presentationml.slideshow"=>"office",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"=>"office",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"=>"office",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.template"=>"office",
+        "application/vnd.ms-excel"=>"office",
+        "application/vnd.ms-powerpoint"=>"office",
+        "application/vnd.ms-xpsdocument"=>"office",
+        "application/vnd.oasis.opendocument.text"=>"office",
+        "application/vnd.oasis.opendocument.spreadsheet"=>"office",
+        "application/vnd.oasis.opendocument.presentation"=>"office",
+        "application/vnd.oasis.opendocument.graphics"=>"office",
+        "text/plain"=>"text",
+        "text/rtf"=>"text",
+        "text/javascript"=>"text",
+        "text/html"=>"text",
+        "image/png"=>"image",
+        "image/jpg"=>"image",
+        "image/jpeg"=>"image",
+        "image/gif"=>"image",
+        "image/pjpeg"=>"image",
+        "image/bmp"=>"image",
+        "image/svg+xml"=>"image",
+        "image/tiff"=>"image",
+        "audio/mp3"=>"audio",
+        "audio/basic"=>"audio",
+        "audio/L24"=>"audio",
+        "audio/mp4"=>"audio",
+        "audio/mpeg"=>"audio",
+        "audio/ogg"=>"audio",
+        "audio/flac"=>"audio",
+        "audio/opus"=>"audio",
+        "audio/vorbis"=>"audio",
+        "audio/vnd.rn-realaudio"=>"audio",
+        "audio/vnd.wave"=>"audio",
+        "audio/webm"=>"audio",
+        "video/avi"=>"video",
+        "video/mpeg"=>"video",
+        "video/mp4"=>"video",
+        "video/ogg"=>"video",
+        "video/quicktime"=>"video",
+        "video/webm"=>"video",
+        "video/x-matroska"=>"video",
+        "video/x-ms-wmv"=>"video",
+        "video/x-flv"=>"video",
+        "application/x-7z-compressed"=>"archive",
+        "application/zip"=>"archive",
+        "application/x-rar-compressed"=>"archive",
+        "application/gzip"=>"archive",
+        "application/octet-stream"=>"archive"
+	);
+	
+	// if data empty
+	if(@$mimes[$mime] == ''){
+		//file extension deny
+		$a = array(
+			'status' => 'error',
+			'title' => lg('Error'),
+			'isi' => lg('MIME Type not recognized')
+		);
+		echo json_encode($a);
+		exit;
+	}else{
+		// return
+		return $mimes[$mime];
+	}
+}
 ?>

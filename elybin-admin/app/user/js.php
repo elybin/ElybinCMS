@@ -3,13 +3,13 @@
  * Module: User
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location: index.php');
 }else{	
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
@@ -26,55 +26,74 @@ if(empty($_SESSION['login'])){
 
 // give error if no have privilage
 if($usergroup == 0){
-	header('location:../403.php');
+	header('location:../403.html');
 	exit;
 }else{
 	switch (@$_GET['act']) {
 		case 'add': // case 'add'
 ?>
-<!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
--->
 <script src="assets/javascripts/select2.min.js"></script>
 <!-- Javascript -->
 <script>
 init.push(function () {
-	$("#multiselect-style").select2({
-		allowClear: false,
-		placeholder: "<?php echo $lg_level?>"
-	});
 	$('#tooltip a').tooltip();	
 
-
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=user";
+ 	// on submit
+	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Please wait...')?>...", duration: 9999*9999 });
+		// start ajax
+	    $.ajax({
+	      url: $(this).attr('action') + '?result=json',
+	      type: 'POST',
+	      data: new FormData(this),
+	      processData: false,
+	      contentType: false,
+	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
+	      		console.log(data);
+				// decode json
+				try {
+					var data = $.parseJSON(data);
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
 				}
-				
-
-			}
-		})
-		return false;
-	});
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.msg });
+					
+					// 1.1.3
+					// msg
+					if(data.callback_msg == ''){
+						data.callback_msg = '';
+					}else{
+						data.callback_msg = "&msg=" + data.callback_msg
+					}
+					// callback
+					if(data.callback !== "" && data.callback_hash !== 0){
+						window.location.href="?mod=user&act=" + data.callback + "&hash=" + data.callback_hash + data.callback_msg;
+					}
+					else if(data.callback !== ""){
+						window.location.href="?mod=user&act=" + data.callback + data.callback_msg;
+					}
+					else{
+						window.location.href="?mod=user" + data.callback_msg;
+					}
+				}
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.msg });
+				}
+		   }
+	    });
+	    e.preventDefault();
+	    return false;
+  	});
 });
 </script>
 <!-- / Javascript -->
@@ -83,18 +102,15 @@ init.push(function () {
 
 		case 'edit': // case 'edit'
 ?>
-<!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
--->
 <script src="assets/javascripts/select2.min.js"></script>
 
 <!-- Javascript -->
 <script>
 init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
+	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg("Select file...")?>' });
 	$("#multiselect-style").select2({
 		allowClear: false,
-		placeholder: "<?php echo $lg_level?>"
+		placeholder: "<?php echo lg('Level')?>"
 	});
 	$('#switcher-style').switcher({
 		theme: 'square',
@@ -103,31 +119,56 @@ init.push(function () {
 	});
 	$('#tooltip a, #tooltipl').tooltip();
 
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-
+	// on submit
 	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Please wait...')?>...", duration: 9999*9999 });
+		// start ajax
 	    $.ajax({
-	      url: $(this).attr('action'),
+	      url: $(this).attr('action') + '?result=json',
 	      type: 'POST',
 	      data: new FormData(this),
 	      processData: false,
 	      contentType: false,
 	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
 	      		console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
-					window.location.href="?mod=user";
+				// decode json
+				try {
+					var data = $.parseJSON(data);
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "Failed to decode JSON!", message: e + "<br/><br/>" + data, duration: 10000 });
+				}
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.msg });
+					
+					// 1.1.3
+					// msg
+					if(data.callback_msg == ''){
+						data.callback_msg = '';
+					}else{
+						data.callback_msg = "&msg=" + data.callback_msg
+					}
+					// callback
+					if(data.callback !== "" && data.callback_hash !== 0){
+						window.location.href="?mod=user&act=" + data.callback + "&hash=" + data.callback_hash + data.callback_msg;
+					}
+					else if(data.callback !== ""){
+						window.location.href="?mod=user&act=" + data.callback + data.callback_msg;
+					}
+					else{
+						window.location.href="?mod=user" + data.callback_msg;
+					}
+				}
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.msg });
 				}
 		   }
 	    });
@@ -147,8 +188,7 @@ init.push(function () {
 init.push(function () {
 	$('#tooltip a, #tooltip-ck').tooltip();	
 });
-ElybinPager();
-ElybinSearch();
+ElybinView();
 ElybinCheckAll();
 countDelData();
 </script>

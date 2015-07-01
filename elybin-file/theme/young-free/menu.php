@@ -17,9 +17,9 @@ if((empty($mod) OR $mod=='index') AND $p > 0){
 ?>	<!-- Search Bar -->
 	<div class="row" style="z-index: 4; position: fixed; top: 0px; width: 100%; margin: 0px;">
 		<div class="col-md-12" id="search">
-			<form action="search.html" method="POST">
+			<form action="search.html" method="GET">
 				<div class="input-group no-margin">
-				<input type="text" name="q" placeholder="<?php echo $lg_search?>..." class="form-control input-lg" style="border:none;box-shadow: none;background-color: transparent">
+				<input type="text" name="q" placeholder="<?php echo lg('Search')?>..." class="form-control input-lg" style="border:none;box-shadow: none;background-color: transparent">
 				<span class="input-group-addon" style="border:none; background-color: rgba(0,0,0,0);" id="search-close"><i class="glyphicon glyphicon-3x glyphicon-remove"></i></span>
 				</div>
 			</form>
@@ -32,7 +32,7 @@ if((empty($mod) OR $mod=='index') AND $p > 0){
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
+                    <span class="sr-only"><?php echo lg('Toggle navigation') ?></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>

@@ -3,31 +3,27 @@
  * [ Module: Setting - Plugin Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once '../../../elybin-core/elybin-pclzip.lib.php';
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
 
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+// get usergroup privilage/access from current user to this module
+$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	exit;
 }else{
 	// start here
 	$v = new ElybinValidasi;
@@ -36,118 +32,132 @@ if($usergroup == 0){
 
 	//ADD
 	if ($mod=='plugin' AND $act=='add'){
+		$file_name = $_POST['file_name'];
+		$ext = substr($file_name, -4);
+		$prefix = substr($file_name, 0, 4);
 		
-		$fileName = $_FILES['plugin_file']['name'];
-		$tmpName = $_FILES['plugin_file']['tmp_name'];
-		$pecah = explode(".", $fileName);
-		$ekstensi = $pecah[2];
-		$folder = seo_title($pecah[1]);
+		// check file extension
+		if($prefix!=="com." || $ext!==".zip"){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'isi' => lg('Plugin Corrupt.')." (Err.Invalid filename)"
+			);
+			echo json_encode($a);
+			exit;
+		}
+		// remove prefix and ext
+		$folder = str_replace("com.", "", $file_name);
+		$folder = str_replace(".zip", "", $folder);
+		
 
-		if(!empty($tmpName)){
-			// only zip file
-			$extensionList = array("zip");
-			if (in_array($ekstensi, $extensionList)){
-				UploadPlugin($folder.".zip");
-
-				// move to temp folder
-				$destination_dir = "../../tmp/";
-				if(!file_exists($destination_dir.$folder."/")){
-					mkdir($destination_dir.$folder."/");
-				
-					// extract the zip
-					$archive = new PclZip($destination_dir.$folder.".zip");
-					if ($archive->extract(PCLZIP_OPT_PATH, $destination_dir.$folder."/") == 0){
-						// give error
-						$a = array(
-							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_plugincorrupt
-						);
-						json($a);
-						exit;
-					}
-				}
-				//INCLUDE MANIFEST AMBIL NAMA FOLDER
-				if(file_exists($destination_dir.$folder."/ElybinManifest.php")){
-					include($destination_dir.$folder."/ElybinManifest.php");
-					$app_folder_ok = $app_alias; 
-
-					if(file_exists("../".$app_folder_ok)){
-						// give error plugin already installed
-						$a = array(
-							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_pluginalreadyinstalled
-						);
-						json($a);
-						exit;
-					}else{
-						mkdir("../".$app_folder_ok);
-				
-						$archive = new PclZip($destination_dir.$folder.".zip");
-						if ($archive->extract(PCLZIP_OPT_PATH, "../".$app_folder_ok) == 0){
-							// give error
-							$a = array(
-								'status' => 'error',
-								'title' => $lg_error,
-								'isi' => $lg_plugincorrupt
-							);
-							json($a);
-							exit;
-						}
-
-						// write to database
-						$tbl = new ElybinTable('elybin_plugins');
-						$plugin2 = $tbl->SelectLimit('plugin_id','DESC','0,1');
-						$plugin_id = 1;
-						foreach ($plugin2 as $ps) {
-							$plugin_id = $ps->plugin_id + 1;
-						}
-
-						// get all usergroup
-						$tblug = new ElybinTable('elybin_usergroup');
-						$tblug = $tblug->Select('','');
-						$usergroup_all = '';
-						foreach ($tblug as $ugal) {
-							$usergroup_all = "$usergroup_all,$ugal->usergroup_id";
-						}
-						$usergroup_all = ltrim($usergroup_all, ",");
-
-						$data = array(
-							'plugin_id' => $plugin_id,
-							'name' => $app_name,
-							'alias' => $app_alias,
-							'icon' => $app_icon,
-							'notification' => '',
-							'version' => $app_version,
-							'description' => $app_description,
-							'author' => $app_author,
-							'url' => $app_url,
-							'usergroup' => $usergroup_all,
-							'table_name' => $app_table,
-							'type' => $app_type,
-							'status' => 'install'
-						);
-						$tbl->Insert($data);
-
-						//remove temp dir
-						deleteDir($destination_dir.$folder."/");
-						if(file_exists($destination_dir.$folder.".zip")){
-							unlink($destination_dir.$folder.".zip");
-						}
-					}
-				}
-				//Done 
+		// create temp folder
+		$destination_dir = "../../tmp/";		
+		if(!file_exists($destination_dir.$folder."/")){
+			mkdir($destination_dir.$folder."/");
+		}	
+		
+		if(file_exists($destination_dir.$folder."/")){			
+			// extract the zip
+			$archive = new PclZip("../../../elybin-file/ext/com.$folder.zip");
+			if ($archive->extract(PCLZIP_OPT_BY_NAME, 'ElybinManifest.php', PCLZIP_OPT_PATH, $destination_dir.$folder."/") == 0){
+				// give error
 				$a = array(
-					'status' => 'ok',
-					'title' => $lg_success,
-					'isi' => $lg_pluginuploaded,
-					'plugin_id' => $plugin_id
+					'status' => 'error',
+					'title' => lg('Error'),
+					'isi' => lg('Plugin Corrupt.')." (Err.Can't unzip package)"
 				);
-				json($a);
-				//header('location:../../admin.php?mod='.$mod.'&next=install&id='.$plugin_id);
+				echo json_encode($a);
+				exit;
 			}
 		}
+
+		//check ElybinManifest
+		if(!file_exists($destination_dir.$folder."/ElybinManifest.php")){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'isi' => lg('Plugin Corrupt.')." (Err.ElybinManifest Missing)"
+			);
+			echo json_encode($a);
+			exit;
+		}
+		
+		// get plguin info
+		include($destination_dir.$folder."/ElybinManifest.php");
+		// already installed
+		$tbl = new ElybinTable('elybin_plugins');
+		$cplg = $tbl->GetRowAnd('alias', $app_alias,'version', $app_version);
+		if($cplg > 0){
+			// give error plugin already installed
+			$a = array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'isi' => $lg_pluginalreadyinstalled
+			);
+			echo json_encode($a);
+			deleteDir($destination_dir.$folder."/");
+			exit;
+		}
+				
+		// copy to targetdir
+		@mkdir("../".$app_alias);
+		$archive = new PclZip("../../../elybin-file/ext/com.$folder.zip");
+		if ($archive->extract(PCLZIP_OPT_PATH, "../".$app_alias) == 0){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'isi' => lg('Plugin Corrupt.')." (Err.Can't unzip package)"
+			);
+			echo json_encode($a);
+			exit;
+		}
+	
+		// get all usergroup
+		$tblug = new ElybinTable('elybin_usergroup');
+		$tblug = $tblug->Select('','');
+		$usergroup_all = '';
+		foreach ($tblug as $ugal) {
+			$usergroup_all = "$usergroup_all,$ugal->usergroup_id";
+		}
+		$usergroup_all = ltrim($usergroup_all, ",");
+		
+		// write to database
+		$data = array(
+			'name' => $app_name,
+			'alias' => $app_alias,
+			'icon' => $app_icon,
+			'notification' => '',
+			'version' => $app_version,
+			'description' => $app_description,
+			'author' => $app_author,
+			'url' => $app_url,
+			'usergroup' => $usergroup_all,
+			'table_name' => $app_table,
+			'type' => $app_type,
+			'status' => 'install'
+		);
+		$tbl->Insert($data);
+
+		//remove temp dir
+		deleteDir($destination_dir.$folder."/");
+		if(file_exists($destination_dir.$folder.".zip")){
+			unlink($destination_dir.$folder.".zip");
+		}
+		// Get plugin id
+		$plugin_id = $tbl->SelectWhere('alias',$app_alias,'plugin_id', 'DESC')->current()->plugin_id;
+		
+		//Done 
+		$a = array(
+			'status' => 'ok',
+			'title' => lg('Success'),
+			'isi' => lg('Please wait...'),
+			'plugin_id' => $plugin_id
+		);
+		echo json_encode($a);
 	}
 	//INSTALL
 	elseif ($mod=='plugin' AND $act=='install'){
@@ -165,7 +175,7 @@ if($usergroup == 0){
 		$cplug = $tb->SelectWhere('plugin_id',$plugin_id,'','');
 		$cplug = $cplug->current();
 
-		// execute installer
+		// sql installer
 		$sql_contents = "";
 		$fp = fopen("../".$cplug->alias."/db/install.sql","r");
 		while(! feof($fp))
@@ -199,7 +209,13 @@ if($usergroup == 0){
 				deleteDir("../".$cplug->alias."/db/install.sql");
 			}
 		}
-		header('location:../../admin.php?mod='.$mod);
+		
+		// execute installer
+		if(file_exists("../".$cplug->alias."/ElybinInstall.php")){
+			include("../".$cplug->alias."/ElybinInstall.php");
+		}
+		
+		//header('location:../../admin.php?mod='.$mod);
 	}
 	//DEL
 	elseif ($mod=='plugin' AND $act=='del'){
@@ -252,12 +268,13 @@ if($usergroup == 0){
 			// give error
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
+				'title' => lg('Error'),
 				'isi' => $lg_pluginremovefailed
 			);
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
+		
 		header('location:../../admin.php?mod='.$mod);
 	}
 	//404

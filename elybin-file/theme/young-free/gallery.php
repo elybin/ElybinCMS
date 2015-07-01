@@ -30,7 +30,7 @@ $callfoto = $tbgl->GetRow('', '');
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">PHOTOS</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+                    <h3 class="section-subheading text-muted">Koleksi foto kami</h3>
 					<hr> 
 			   </div>
             </div>

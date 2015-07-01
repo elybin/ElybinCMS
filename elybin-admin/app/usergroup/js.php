@@ -3,30 +3,24 @@
  * Module: Usergroup
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location: index.php');
 }else{	
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
 	
-	// get user privilages
-	$tbus = new ElybinTable('elybin_users');
-	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-	$level = $tbus->current()->level; // getting level from curent user
-
-	$tbug = new ElybinTable('elybin_usergroup');
-	$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-	$usergroup = $tbug->current()->setting;
+	// get usergroup privilage/access from current user to this module
+	$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	header('location:../403.php');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 	exit;
 }else{
 	switch (@$_GET['act']) {
@@ -36,37 +30,43 @@ if($usergroup == 0){
 <script>
 init.push(function () {
 	$('#tooltip a').tooltip();
-
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-		$('#form').hide();
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				console.log(data);
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
+	// on submit
+	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+		// start ajax
+	    $.ajax({
+	      url: $(this).attr('action') + '?result=json',
+	      type: 'POST',
+	      data: $(this).serialize(),
+	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
+	      		console.log(data);
+				// decode json
+				try {
+					var data = $.parseJSON(data);
+				}
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "<?php echo lg('Failed to decode response')?>", message: e + "<br/><br/>" + data, duration: 10000 });
+				}
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.isi });
 					window.location.href="?mod=usergroup";
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.isi });
 				}
-				
-
-			}
-		})
-		return false;
-	});	
+		   }
+	    });
+	    e.preventDefault();
+	    return false;
+  	});
 
 	ElybinCheckAll();
 });
@@ -82,37 +82,44 @@ init.push(function () {
 <script>
 init.push(function () {
 	$('#tooltip a, #tooltipl').tooltip();
-	
 
-	$().ajaxStart(function() {
-		$.growl({ title: "Loading", message: "Writing..." });
-		$('#form').hide();
-	}).ajaxStop(function() {
-		$.growl({ title: "Success", message: "Success" });
-	});
-
-	//ajax
-	$('#form').submit(function() {
-		$.ajax({
-			type: 'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			success: function(data) {
-				data = explode(",",data);
-
-				if(data[0] == "ok"){
-					$.growl.notice({ title: data[1], message: data[2] });
+	// on submit
+	$('#form').submit(function(e){
+		// disable button and growl!
+		$('#form .btn-success').addClass('disabled');
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
+		// start ajax
+	    $.ajax({
+	      url: $(this).attr('action'),
+	      type: 'POST',
+	      data: $(this).serialize(),
+	      success: function(data) {
+				// enable button
+				$("#growls .growl-default").hide();
+				$('#form .btn-success').removeClass('disabled');
+	      		console.log(data);
+				// decode json
+				try {
+					var data = $.parseJSON(data);
+				}
+				catch(e){
+					// if failed to decode json
+					$.growl.error({ title: "<?php echo lg('Failed to decode response')?>", message: e + "<br/><br/>" + data, duration: 10000 });
+				}
+				if(data.status == "ok"){
+					// ok growl
+					$.growl.notice({ title: data.title, message: data.isi });
 					window.location.href="?mod=usergroup";
 				}
-				else if(data[0] == "error"){
-					$.growl.warning({ title: data[1], message: data[2] });
+				else if(data.status == "error"){
+					// error growl
+					$.growl.warning({ title: data.title, message: data.isi });
 				}
-				
-
-			}
-		})
-		return false;
-	});
+		   }
+	    });
+	    e.preventDefault();
+	    return false;
+  	});
 	
 	ElybinCheckAll();
 });

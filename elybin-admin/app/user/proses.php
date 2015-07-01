@@ -1,127 +1,244 @@
 <?php
 /* Short description for file
- * [ Module: User Proccess
+ * Module 	: User
+ * File  	: proses.php
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
+	include_once('../../../elybin-core/lib/password.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
 
-	settzone();
-
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','')->current();
-$level = $tbus->level; // getting level from curent user
-
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->user;
+	// get user privilages
+	$ug = _ug()->user;
 
 // give error if no have privilage
-if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+if($ug == 0){
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to access this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 	// start here
 	$v = new ElybinValidasi;
-	$mod = $_POST['mod'];
-	$act = $_POST['act'];
+	$mod = @$_POST['mod'];
+	$act = @$_POST['act'];
 
 	//ADD
 	if ($mod=='user' AND $act=='add'){
-		$username = $v->xss($_POST['username']);
-		$password = md5($_POST['password']);
-		$fullname = $v->xss($_POST['fullname']);
-		$email 	= $v->xss($_POST['email']);
-		$phone = $v->xss($_POST['phone']);
-		$level = $v->xss($_POST['level']);
-		$avatar = "default/no-ava.png";
-		$reg = now();
+		$username = $v->xss(@$_POST['username']);
+		$password = @$_POST['password'];
+		$password_c = @$_POST['password_confrim'];
+		$email 	= $v->xss(@$_POST['email']);
+		$level = $v->xss(@$_POST['level']);
 
-		//if field empty
-		if(empty($username) || empty($password) || empty($fullname) || empty($email) || empty($level)){
-			//echo "{,$lg_pleasefillimportant}";
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
-			);
+		// set to session
+		$_SESSION['s_username'] = $username;
+		$_SESSION['s_email'] = $email;
+		$_SESSION['s_level'] = $level;
 
-			json($a);
-			exit;
+		// 1.1.3 - more specific error
+		if(empty($username)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Please fill "Username" field.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=fill_username');
+			}
 		}
-		elseif(empty($phone)){
-			$phone = "-";
-		}	
+
+		if(empty($password)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Please fill "Password" field.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=fill_password');
+			}
+		}
+
+		if(empty($password_c)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Please type password again in "Password Confirm" field.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=fill_password');
+			}
+		}
+
+		if(empty($email)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Please fill "E-mail" field.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=fill_email');
+			}
+		}
+
+		if(empty($email)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Please select user "Level".')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=fill_level');
+			}
+		}
+		// pass != pass_c
+		if($password !== $password_c){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('"Password Confirm" didn\'t match with Password.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=pass_mismatch');
+			}
+		}
+		// check username length
+		if(strlen($username) > 12){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Maximum username character is 12 letter.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=username_too_long');
+			}
+		}
+		if(strlen($username) < 3){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Minimum username character is 3 letter.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=username_too_short');
+			}
+		}
+
+		$pat_un = "/^[a-z0-9_]+$/";
+		if(!preg_match($pat_un, $username)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Allowed character for Username is letter(a-z), number(0-9) and underscore (_)')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=username_invalid');
+			}
+		}
+
+		// validate email
+		// http://stackoverflow.com/questions/13447539/php-preg-match-with-email-validation-issue
+		$pat_em = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/";
+		if(!preg_match($pat_em, $email)){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Invalid e-mail, the format is xxx@xxx.xxx.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=email_invalid');
+			}
+		}
+
+		// check username availability
+		$tb = new ElybinTable('elybin_users');
+		$cou = $tb->GetRow('user_account_login', $username);
+		if($cou > 0){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('Username already taken, pick new one.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=username_taken');
+			}
+		}
+
+		// check email availability
+		$cou = $tb->GetRow('user_account_email', $email);
+		if($cou > 0){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('E-mail already used by other user.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=email_taken');
+			}
+		}
+
+		// get current active user
+		$u = _u();
+
+		// olny root user can create new su/ad user
+		if($u->user_id != 1 AND $level == 1){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('You are not allowed to perform this action.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=add&err=action_denied');
+			}
+		}
 		
-		// olny root user can make new su/ad user
-		if($tbus->user_id != 1 AND $level == 1){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
-			);
+		// since 1.1.3, we use new password hasing function
+		$password_hash = password_hash($password, PASSWORD_BCRYPT);
 
-			json($a);
-			exit;
-		}
-		
-		//check username available
-		$tbl = new ElybinTable('elybin_users');
-		$userc = 0;
-		$userc = $tbl->GetRow('user_account_login', $username);
-		//if user already taken
-		if($userc>=1){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_useralreadytaken
-			);
-
-			json($a);
-			exit;
-		}
-		//get lastest id
-		$user3 = $tbl->SelectLimit('user_id','DESC','0,1');
-		$user_id = 1;
-		foreach ($user3 as $usr) {
-			$user_id = $usr->user_id + 1;
-		}
 		//write it
-		$tbl = new ElybinTable('elybin_users');
-		$data = array(
-			'user_id' => $user_id,
+		$d = array(
 			'user_account_login' => $username,
-			'user_account_pass' => $password,
+			'user_account_pass' => $password_hash,
 			'user_account_email' => $email,
-			'fullname' => $fullname,
-			'phone' => $phone,
-			'avatar' => $avatar,
-			'registered' => $reg,
+			'fullname' => strtoupper($username),
+			'phone' => '',
+			'avatar' => 'default/no-ava.png',
+			'registered' => date("Y-m-d H:i:s"),
 			'level' => $level,
+			'email_status' => 'notverified',
 			'session' => 'offline'
 		);
-		$tbl->Insert($data);
+		$tb->Insert($d);
 
-		//get current user session for notification
-		$s = $_SESSION['login'];
-		$tblu = new ElybinTable("elybin_users");
-		$tblu = $tblu->SelectWhere("session","$s","","");
-		$tblu = $tblu->current();
-		//get level 
-		$tblug = new ElybinTable('elybin_usergroup');
-		$tblug = $tblug->SelectWhere('usergroup_id',$level,'','');
-		$level = $tblug->current()->name;
 		
+		// remove to session
+		$_SESSION['s_username'] = '';
+		$_SESSION['s_email'] = '';
+		$_SESSION['s_level'] = '';
+
 		// push notif
+		/*
 		$dpn = array(
 			'code' => 'user_added',
 			'title' => '$lg_user',
@@ -129,279 +246,528 @@ if($usergroup == 0){
 			'type' => 'success',
 			'content' => '[{"content":"'.$tblu->fullname.'", "single":"$lg_newuseraddedby","more":"$lg_newuseradded"}]'
 		);
-		pushnotif($dpn);
+		pushnotif($dpn);*/
 
 		//Done
-		$a = array(
-			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
-		);
-		json($a);
+		if(@$_GET['result'] == 'json'){
+			json(array(
+				'status' => 'ok',
+				'title' => lg('Success'),
+				'msg' => lg('New user successfully registered.')
+			));
+		}else{
+			header('location: ../../admin.php?mod=user&act=add&err=saved');
+		}
 	}
 	//EDIT
 	elseif($mod=='user' AND $act=='edit'){
-		$user_id = $v->sql(@$_POST['user_id']);
-		$username = $v->xss($_POST['username']);
-		$password = @$_POST['newpassword'];
-		$fullname = $v->xss($_POST['fullname']);
-		$email 	= $v->xss($_POST['email']);
-		$phone = $v->xss(@$_POST['phone']);
-		$level = $v->sql($_POST['level']);
-		$bio = $v->xss(@$_POST['bio']);
-		$status = @$_POST['status'];
-		if($status == "on"){
-			$status = "active";
-		}else{
-			$status="deactive";
-		}
-		
-		// olny root user can make new su/ad user
-		if($tbus->user_id != 1 AND $level == 1){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
-			);
+		// hash to uid
+		$uid = $v->sql(epm_decode(@$_POST['hash']));
 
-			json($a);
-			exit;
-		}
-		
-		// check id exist or not
-		$tbluc = new ElybinTable('elybin_users');
-		$couser = $tbluc->GetRow('user_id', $user_id);
-		if(empty($user_id) OR ($couser == 0)){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
-			);
+		// declare 
+		$tb = new ElybinTable('elybin_users');
 
-			json($a);
-			exit;
+		// check existance
+		$cu = $tb->SelectFullCustom("
+			SELECT
+			*,
+			COUNT(`user_id`) as `row`
+			FROM
+			`elybin_users` as `u`
+			WHERE
+			`u`.`user_id` = $uid
+			")->current();
+		if($cu->row < 1){
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'error',
+					'title' => lg('Error'),
+					'msg' => lg('User not exist.')
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=edit&err=not_exsist&hash='.@$_POST['hash']);
+			}
 		}
 
-		//if field empty
-		if(empty($username) || empty($fullname) || empty($email) || empty($level)){
-			//echo "{,$lg_pleasefillimportant}";
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
-			);
+		// 1.1.3
+		// using sub menu
+		if(@$_POST['sub'] == 'account'){
+			// collect data
+			$username = $v->xss($_POST['username']);
+			$password = $v->xss(@$_POST['password']);
+			$password_c = $v->xss(@$_POST['password_c']);
+			$email 	= $v->xss($_POST['email']);
+			$level = $v->sql($_POST['level']);
 
-			json($a);
-			exit;
-		}
-		elseif(empty($phone)){
-			$phone = "";
-		}
-		elseif(empty($bio)){
-			$bio = "- $lg_nobio -";
-		}	
+			// verify
+			// 1.1.3 - more specific error
+			if(empty($username)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Please fill "Username" field.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=fill_username&hash='.@$_POST['hash']);
+				}
+			}		
+			// check username length
+			if(strlen($username) > 12){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum username character is 12 letter.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=username_too_long&hash='.@$_POST['hash']);
+				}
+			}
+			if(strlen($username) < 3){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Minimum username character is 3 letter.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=username_too_short&hash='.@$_POST['hash']);
+				}
+			}
+			$pat_un = "/^[a-z0-9_]+$/";
+			if(!preg_match($pat_un, $username)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Allowed character for Username is letter(a-z), number(0-9) and underscore (_)')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=username_invalid&hash='.@$_POST['hash']);
+				}
+			}
+			// check username availability
+			$tb = new ElybinTable('elybin_users');
+			$cou = $tb->GetRowAndNot('user_account_login',$username,'user_id',$uid);
+			if($cou > 0){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Username already taken, pick new one.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=username_taken&hash='.@$_POST['hash']);
+				}
+			}
 
-		$bio = htmlspecialchars($bio,ENT_QUOTES);
 
-		//check if username already taken
-		$cekuser = $tbluc->GetRowAndNot('user_account_login',$username,'user_id',$user_id);
-		if($cekuser>0){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_useralreadytaken
-			);
+			if(!empty($password) && empty($password_c)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Please type password again in "Password Confirm" field.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=fill_password&hash='.@$_POST['hash']);
+				}
+			}
 
-			json($a);
-			exit;
-		}
-		//check if username already taken
-		$cekemail = $tbluc->GetRowAndNot('user_account_email',$email,'user_id',$user_id);
-		if($cekemail>0){
-			$a = array(
-				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_emailalreadytaken
-			);
+			if(!empty($password) && !empty($password_c) && $password !== $password_c){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Both password didn\'t match, check again.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=check_password&hash='.@$_POST['hash']);
+				}
+			}
 
-			json($a);
-			exit;
-		}
+			if(empty($email)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Please fill "E-mail" field.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=fill_email&hash='.@$_POST['hash']);
+				}
+			}
 
-		//jika mendapat form file kosong
-		if(empty($_FILES['image']['tmp_name'])){
+			// validate email
+			// http://stackoverflow.com/questions/13447539/php-preg-match-with-email-validation-issue
+			$pat_em = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/";
+			if(!preg_match($pat_em, $email)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Invalid e-mail, the format is xxx@xxx.xxx and Lower Case.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=email_invalid&hash='.@$_POST['hash']);
+				}
+			}
+
+			// check email availability
+			$cou = $tb->GetRowAndNot('user_account_email',$email,'user_id',$uid);
+			if($cou > 0){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('E-mail already used by other user.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=email_taken&hash='.@$_POST['hash']);
+				}
+			}
+
+
+			if(empty($level)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Please select user "Level".')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=fill_level&hash='.@$_POST['hash']);
+				}
+			}
+
+			// process
+			// since 1.1.3
+			// nobody can create user with su/1
+			if($level == 1){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('You can\'t perform this action, Access Denied.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&err=denied&hash='.@$_POST['hash']);
+				}
+			}
+
+
 			//jika password baru kosong
-			if (empty($_POST['newpassword'])) {
-				$data = array(
+			if (empty($password)) {
+				$tb->Update(array(
 					'user_account_login' => $username,
 					'user_account_email' => $email,
-					'fullname' => $fullname,
-					'phone' => $phone,
-					'bio' => $bio,
-					'level' => $level,
-					'status' => $status
-				);
-				$tbl = new ElybinTable('elybin_users');
-				$tbl->Update($data,'user_id',$user_id);
+					'level' => $level
+				),'user_id',$uid);
+			}else{ //jika password isi
+				// since 1.1.3, we use new password hasing function
+				$password_hash = password_hash($password, PASSWORD_BCRYPT);
 
-				//Done
-				$a = array(
-					'status' => 'ok',
-					'title' => $lg_success,
-					'isi' => $lg_dataeditsuccessful
-				);
-				json($a);
-			//jika password isi
-			}else{
-				$password = md5($_POST['newpassword']);
-				$data = array(
+				$tb->Update(array(
 					'user_account_login' => $username,
 					'user_account_pass' => $password,
 					'user_account_email' => $email,
-					'fullname' => $fullname,
-					'phone' => $phone,
-					'bio' => $bio,
-					'level' => $level,
-					'status' => $status
-				);
-				$tbl = new ElybinTable('elybin_users');
-				$tbl->Update($data,'user_id',$user_id);
-
-				//Done
-				$a = array(
-					'status' => 'ok',
-					'title' => $lg_success,
-					'isi' => $lg_dataeditsuccessful
-				);
-				json($a);
+					'level' => $level
+				),'user_id',$uid);
 			}
 
-			//renew current session
-			$tbuser = new ElybinTable('elybin_users');
-			$s = $_SESSION['login'];
-			$cuser = $tbuser->SelectWhere('session', $s,'','');
-			$cuser = $cuser->current();
+			// renew current session
+			// since 1.1.3
+			// it removed, and moved to module profile
 
-			// generating new random session
-			$rand = md5(md5(rand(1000,9999).rand(1,9999)));
-			$d = array('session' => $rand);
-			$tbuser->Update($d,'user_id',$cuser->user_id);
-
-			//apply new session
-			$_SESSION['level'] = $cuser->level;
-			$_SESSION['login'] = $rand;
-
-			//Done
-			$a = array(
-				'status' => 'ok',
-				'title' => $lg_success,
-				'isi' => $lg_dataeditsuccessful
-			);
-			json($a);
-
-		//jika file di isi
-		}else{
-			//avatar update
-			$extensionList = array("jpg", "jpeg","png","gif");
-
-			$fileName = $_FILES['image']['name'];
-			$tmpName = $_FILES['image']['tmp_name'];
-			$pecah = explode(".", $fileName);
-			$ekstensi = strtolower(@$pecah[1]);
-			$nama_file_unik = $user_id.'.'.$ekstensi;
-			$avatar = 'user-'.$nama_file_unik;
-
-			if (in_array($ekstensi, $extensionList)){
-				//jika password kosong
-				if (empty($_POST['newpassword'])) {
-					// get previous ava
-					$tbl = new ElybinTable('elybin_users');
-					$avatar_lama = $tbl->SelectWhere('user_id',$user_id,'','');
-					foreach ($avatar_lama as $i) {
-						$avatar_lama = $i->avatar;
-					}
-					//remove previous ava
-					$dir = "../../../elybin-file/avatar/$avatar_lama";
-					if (file_exists("$dir") AND ($avatar_lama!="default/no-ava.png")){
-						unlink("../../../elybin-file/avatar/$avatar_lama");
-						unlink("../../../elybin-file/avatar/medium-$avatar_lama");
-					}
-					//upload avatar
-					UploadImage($avatar,"avatar");
-					$data = array(
-						'user_account_login' => $username,
-						'user_account_email' => $email,
-						'fullname' => $fullname,
-						'phone' => $phone,
-						'bio' => $bio,
-						'avatar' => $avatar,
-						'level' => $level,
-						'status' => $status
-					);
-					$tbl = new ElybinTable('elybin_users');
-					$tbl->Update($data,'user_id',$user_id);
-
-				//jika password diisi
-				}else{
-					// get previous ava
-					$tbl = new ElybinTable('elybin_users');
-					$avatar_lama = $tbl->SelectWhere('user_id',$user_id,'','');
-					foreach ($avatar_lama as $i) {
-						$avatar_lama = $i->avatar;
-					}
-					//remove previous ava
-					$dir = "../../../elybin-file/avatar/$avatar_lama";
-					if (file_exists("$dir") AND ($avatar_lama!="default/no-ava.png")){
-						unlink("../../../elybin-file/avatar/$avatar_lama");
-						unlink("../../../elybin-file/avatar/medium-$avatar_lama");
-					}
-					UploadImage($avatar,"avatar");
-					$password = md5($_POST['newpassword']);
-					$data = array(
-						'user_account_login' => $username,
-						'user_account_pass' => $password,
-						'user_account_email' => $email,
-						'fullname' => $fullname,
-						'phone' => $phone,
-						'bio' => $bio,
-						'avatar' => $avatar,
-						'level' => $level,
-						'status' => $status
-					);
-					$tbl = new ElybinTable('elybin_users');
-					$tbl->Update($data,'user_id',$user_id);
-
-				}
-				//renew current session
-				$tbuser = new ElybinTable('elybin_users');
-				$s = $_SESSION['login'];
-				$cuser = $tbuser->SelectWhere('session', $s,'','');
-				$cuser = $cuser->current();
-
-				// generating new random session
-				$rand = md5(md5(rand(1000,9999).rand(1,9999)));
-				$d = array('session' => $rand);
-				$tbuser->Update($d,'user_id',$cuser->user_id);
-
-				//apply new session
-				$_SESSION['level'] = $cuser->level;
-				$_SESSION['login'] = $rand;
-
-				//Done
-				$a = array(
+			// done
+			if(@$_GET['result'] == 'json'){
+				json(array(
 					'status' => 'ok',
-					'title' => $lg_success,
-					'isi' => $lg_dataeditsuccessful
-				);
-				json($a);
+					'title' => lg('Success'),
+					'msg' => lg('Changes Saved.'),
+					'callback' => 'edit',
+					'callback_hash' => @$_POST['hash'],
+					'callback_msg' => 'updated'
+				));
 			}else{
-				//image extension deny
-				$a = array(
-					'status' => 'error',
-					'title' => $lg_error,
-					'isi' => $lg_fileextensiondeny
-				);
-				json($a);
+				header('location: ../../admin.php?mod=user&act=edit&msg=updated&hash='.@$_POST['hash']);
+			}
+		} 
+
+		// sub = 'personal'
+		else if(@$_POST['sub'] == 'personal'){
+			// collect data
+			$fullname = $v->xss(@$_POST['fullname']);
+			$bio = $v->xss(@$_POST['bio']);
+			$phone = $v->xss(@$_POST['phone']);
+			$facebook_id = $v->xss(@$_POST['facebook_id']);
+			$twitter_id = $v->xss(@$_POST['twitter_id']);
+			$website = $v->xss(@$_POST['website']);
+
+			// verify
+			if(empty($fullname)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Please fill "Fullname" field.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fill_fullname');
+				}
+			}		
+			// check username length
+			if(strlen($fullname) > 50){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum fullname character is 50 letter.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fullname_too_long');
+				}
+			}
+			if(strlen($fullname) < 4){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Minimum fullname character is 4 letter.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fullname_too_short');
+				}
+			}
+			$pat_fn = "/^[A-Za-z-'` ]+$/";
+			if(!preg_match($pat_fn, $fullname)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Fullname must letter only.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fullname_invalid');
+				}
+			}
+			if(!empty($bio) && strlen($bio) > 250){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum character of bio is 250.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=bio_too_long');
+				}
+			}
+			if(!empty($phone) && strlen($phone) > 20){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum character of phone number is 20.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=phone_too_long');
+				}
+			}
+			$pat_ph = "/^[0-9+-]+$/";
+			if(!empty($phone) && !preg_match($pat_ph, $phone)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Phone number invalid, fill with format like +620000000000')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=phone_invalid');
+				}
+			}
+			if(!empty($facebook_id) && strlen($facebook_id) > 20){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum character of Facebook ID number is 20.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fbid_too_long');
+				}
+			}
+			$pat_fbid = "/^[0-9a-zA-Z._-]+$/";
+			if(!empty($facebook_id) && !preg_match($pat_fbid, $facebook_id)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Facebook ID invalid, fill with format like elybincms')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=fbid_invalid');
+				}
+			}
+			if(!empty($twitter_id) && strlen($twitter_id) > 20){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Maximum character of Twitter ID/ Username number is 20.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=twid_too_long');
+				}
+			}
+			if(!empty($twitter_id) && !preg_match("/^[0-9a-zA-Z_@]+$/", $twitter_id)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Twitter ID/Username invalid, fill with format like @elybincms')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=twid_invalid');
+				}
+			}
+			$pat_web = "/^[a-z0-9.-\/]+$/";
+			if(!empty($website) && !preg_match($pat_web, $website)){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Website invalid, fill with format like www.elybin.com')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=website_invalid');
+				}
+			}
+
+			// proccess
+			$tb->Update(array(
+				'fullname' => $fullname,
+				'bio' => $bio,
+				'phone' => $phone,
+				'facebook_id' => $facebook_id,
+				'twitter_id' => $twitter_id,
+				'website' => $website
+				),'user_id',$uid);
+
+			// done
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'ok',
+					'title' => lg('Success'),
+					'msg' => lg('Changes Saved.'),
+					'callback' => 'edit&sub=personal',
+					'callback_hash' => @$_POST['hash'],
+					'callback_msg' => 'updated'
+				));
+			}else{
+				header('location: ../../admin.php?mod=user&act=edit&sub=personal&msg=updated&hash='.@$_POST['hash']);
+			}
+		}
+
+		else if(@$_POST['sub'] == 'avatar'){
+			//jika mendapat form file kosong
+			if(empty($_FILES['file']['tmp_name'])){
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Nothing changed?')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=avatar&err=nothing_changed');
+				}
+			}else{
+				//avatar update
+				$extList = array("jpg", "jpeg","png","gif");
+				$fileName = $_FILES['file']['name'];
+				$tmpName = $_FILES['file']['tmp_name'];
+				$pecah = @explode(".", $fileName);
+				$ext = strtolower(@$pecah[count($pecah)-1]);
+				$date = date("Y-m-d_H-i-s");
+				$rn = rand(1111,9999);
+				$avatar = strtolower("user-$uid-$date-$rn.$ext");
+
+				if (!in_array($ext, $extList)){
+					if(@$_GET['result'] == 'json'){
+						json(array(
+							'status' => 'error',
+							'title' => lg('Error'),
+							'msg' => lg('Image extension not recognized, be sure your image extension is (jpg, jpeg, png or gif)')
+						));
+					}else{
+						header('location: ../../admin.php?mod=user&act=edit&sub=personal&err=ext_denied');
+					}
+				}else{
+					//remove previous ava
+					if (file_exists('../../../elybin-file/avatar/'.$cu->avatar) && ($cu->avatar!=='default/no-ava.png')){
+						@unlink('../../../elybin-file/avatar/'.$cu->avatar);
+						@unlink('../../../elybin-file/avatar/hd-'.$cu->avatar);
+						@unlink('../../../elybin-file/avatar/md-'.$cu->avatar);
+						@unlink('../../../elybin-file/avatar/sm-'.$cu->avatar);
+						@unlink('../../../elybin-file/avatar/xs-'.$cu->avatar);
+					}
+					//upload 
+					UploadImage($avatar,"avatar");
+					// update
+					$tb->Update(array(
+						'avatar' => $avatar
+					),'user_id',$uid);
+				}
+				
+				// done
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'ok',
+						'title' => lg('Success'),
+						'msg' => lg('Changes Saved.'),
+						'callback' => 'edit&sub=avatar',
+						'callback_hash' => @$_POST['hash'],
+						'callback_msg' => 'updated'
+						));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=avatar&msg=updated&hash='.@$_POST['hash']);
+				}
+			}
+		}
+
+		else if(@$_POST['sub'] == 'misc'){
+			$status = $v->xss(@$_POST['status']);
+
+			if($status == 'active' || $status == 'deactive'){
+			}else{
+				if(@$_GET['result'] == 'json'){
+					json(array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'msg' => lg('Input not recognized. This is our mistake or you want another. Access Denied.')
+					));
+				}else{
+					header('location: ../../admin.php?mod=user&act=edit&sub=misc&err=denied');
+				}
+			}
+
+			// proccess
+			$tb->Update(array(
+				'status' => $status
+				),'user_id',$uid);
+
+			// done
+			if(@$_GET['result'] == 'json'){
+				json(array(
+					'status' => 'ok',
+					'title' => lg('Success'),
+					'msg' => lg('Changes Saved.'),
+					'callback' => 'edit&sub=misc',
+					'callback_hash' => @$_POST['hash'],
+					'callback_msg' => 'updated'
+					));
+			}else{
+				header('location: ../../admin.php?mod=user&act=edit&sub=misc&msg=updated&hash='.@$_POST['hash']);
 			}
 		}
 	}

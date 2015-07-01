@@ -3,13 +3,13 @@
  * [ Module: Profile Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');	
+	header('location:../../../403.html');	
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
@@ -31,7 +31,7 @@ if(empty($_SESSION['login'])){
 		$username = $v->xss($_POST['username']);
 		$password = @$_POST['newpassword'];
 		$fullname = $v->xss($_POST['fullname']);
-		$email 	= $v->xss($_POST['email']);
+		$email 	= $v->xss(@$_POST['email']);
 		$phone = $v->xss(@$_POST['phone']);
 		$bio = $v->xss($_POST['bio']);
 
@@ -44,7 +44,7 @@ if(empty($_SESSION['login'])){
 				'isi' => $lg_pleasefillimportant
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		elseif(empty($phone)){
@@ -55,7 +55,7 @@ if(empty($_SESSION['login'])){
 		}
 
 		$bio = htmlspecialchars($bio,ENT_QUOTES);
-
+	
 		//check if username already taken
 		$tbluc = new ElybinTable('elybin_users');
 		$cekuser = $tbluc->GetRowAndNot('user_account_login',$username,'user_id',$user_id);
@@ -66,10 +66,34 @@ if(empty($_SESSION['login'])){
 				'isi' => $lg_useralreadytaken
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
-		//check if username already taken
+		// not allowed character
+		if(strlen(preg_replace("/[a-zA-Z0-9.]/", "", $username)) > 0){
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_characternotallowed." <i>(a-z, A-Z, 0-9, titik(.))</i>"
+			);
+
+			echo json_encode($a);
+			exit;
+		}
+		// check username length
+		if(strlen($username) >= 12){
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_usernametoolong 
+			);
+
+			echo json_encode($a);
+			exit;
+		}
+		
+		
+		//check if email already taken
 		$cekemail = $tbluc->GetRowAndNot('user_account_email',$email,'user_id',$user_id);
 		if($cekemail>0){
 			$a = array(
@@ -78,9 +102,18 @@ if(empty($_SESSION['login'])){
 				'isi' => $lg_emailalreadytaken
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
+		
+		// update 1.1.3
+		// email that has been verified, cannot be chenged
+		$email_status = $tbluc->GetRowAnd('user_account_login', $username, 'email_status', 'verified');
+		if($email_status > 0){
+			$email = $tbluc->SelectWhere('user_account_login', $username)->current()->user_account_email;
+		}
+		
+		
 		
 		//jika mendapat form file kosong
 		if(empty($_FILES['image']['tmp_name'])){
@@ -102,7 +135,7 @@ if(empty($_SESSION['login'])){
 					'title' => $lg_success,
 					'isi' => $lg_yourprofileupdated
 				);
-				json($a);
+				echo json_encode($a);
 			//jika password isi
 			}else{
 				$password = md5($_POST['newpassword']);
@@ -123,7 +156,7 @@ if(empty($_SESSION['login'])){
 					'title' => $lg_success,
 					'isi' => $lg_yourpasswordupdated
 				);
-				json($a);
+				echo json_encode($a);
 			}
 
 
@@ -187,7 +220,7 @@ if(empty($_SESSION['login'])){
 						'title' => $lg_success,
 						'isi' => $lg_yourprofileupdated
 					);
-					json($a);
+					echo json_encode($a);
 				//jika password diisi
 				}else{
 					// get previous ava
@@ -222,7 +255,7 @@ if(empty($_SESSION['login'])){
 						'title' => $lg_success,
 						'isi' => $lg_yourpasswordupdated
 					);
-					json($a);
+					echo json_encode($a);
 				}
 				//renew current session
 				$tbuser = new ElybinTable('elybin_users');
@@ -246,14 +279,14 @@ if(empty($_SESSION['login'])){
 					'title' => $lg_error,
 					'isi' => $lg_fileextensiondeny
 				);
-				json($a);
+				echo json_encode($a);
 			}
 		}
 
 	}
 	//404
 	else{
-		header('location:../../../404.php');
+		header('location:../../../404.html');
 	}
 }	
 ?>

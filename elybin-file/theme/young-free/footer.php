@@ -43,7 +43,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 		<div class="row">
 
 			<div class="col-md-2 col-sm-12">
-				<h4><i class="fa fa-home"></i>&nbsp;Site Links</h4>
+				<h4><i class="fa fa-home"></i>&nbsp;<?php echo lg('Site Links') ?></h4>
                 <ul id="sitelink">
 <?php
     $tbm = new ElybinTable('elybin_menu');
@@ -101,7 +101,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 			</div>
 			<div class="clearfix visible-sm visible-xs form-group-margin" style="margin-top: 20px;"></div><!-- margin -->
 			<div class="col-md-4 visible-md visible-lg">
-				<h4><i class="fa fa-pencil"></i>&nbsp;Recent Posts</h4>
+				<h4><i class="fa fa-pencil"></i>&nbsp;<?php echo lg('Recent Post') ?></h4>
 				<ul>
 					<?php
 					// get post
@@ -111,31 +111,37 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 					foreach($post as $p){
 					?>
 					<li>
-						<a href="post-<?php echo $p->post_id; ?>-<?php echo $p->seotitle; ?>.html"><?php echo $p->title; ?></a>
+						<a href="post-<?php echo $p->post_id; ?>-<?php echo $p->seotitle; ?>.html" class="small"><?php echo $p->title; ?></a>
 					</li>
 					<?php } ?>
 				</ul>
 			</div>
 			<div class="col-md-3 visible-md visible-lg">
-				<h4><i class="fa fa-comment"></i>&nbsp;Last Comments</h4>
+				<h4><i class="fa fa-comment"></i>&nbsp;<?php echo lg('Last Comments') ?></h4>
 				<ul>
 					<?php
 					// get post
-					$tbco = new ElybinTable('elybin_comments');
-					$tbu = new ElybinTable('elybin_users');
-					$comment = $tbco->SelectWhereLimit('status','active','comment_id','DESC',"0,4");
+					$tbc = new ElybinTable('elybin_comments');
+					$lc = $tbc->SelectFullCustom("
+						SELECT
+						*,
+						`c`.`date` as `date_comment`,
+						`c`.`author` as `author_comment`
+						`c`.`content` as `content_comment`
+						FROM
+						`elybin_comments` as `c`,
+						`elybin_posts` as `p`
+						WHERE
+						`c`.`post_id` = `p`.`post_id` &&
+						`c`.`status` = 'active'
+						ORDER BY `c`.`date` DESC
+						LIMIT 0,4
+						");
 								
-					foreach($comment as $co){
-						// post
-						$p = $tbp->SelectWhere('post_id',$co->post_id,'','')->current();
-						
-						if($co->user_id !== ""){
-							// user 
-							$co->author = $tbu->SelectWhere('user_id',$co->user_id,'','')->current()->fullname;
-						}
+					foreach($lc as $cc){
 					?>
 					<li>
-						<a href="post-<?php echo $co->post_id; ?>-<?php echo $p->seotitle; ?>.html#commenti-id-<?php echo $co->comment_id; ?>"><?php echo $co->author; ?> <?php echo time_elapsed_string($co->date." ".$co->time); ?></a>
+						<a href="post-<?php echo $cc->post_id; ?>-<?php echo $cc->seotitle; ?>.html#commenti-id-<?php echo $cc->comment_id; ?>" class="small"><b><?php echo $cc->author_comment; ?></b> <i>&#34;<?php echo substr(strip_tags($cc->content_comment),0,100) ?>...&#34;</i> <span class="text-dash"><?php echo time_elapsed_string($cc->date_comment); ?></span></a>
 					</li>
 					<?php } ?>
 				</ul>

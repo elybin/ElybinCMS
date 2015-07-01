@@ -3,25 +3,26 @@
  * [ Home file of admin panel
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
-session_start();
+@session_start();
 if(!file_exists("../elybin-core/elybin-config.php")){
 	header('location: ../elybin-install/');
 	exit;
 }
-if(empty($_SESSION['login'])){
+
+if(empty($_SESSION['login']) || !isset($_SESSION['login'])){
 	$ref = urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-	$_SESSION['ref']= $ref;
-	header('location:'.$SITE_ADMIN.'login.php');
+	$_SESSION['ref'] = $ref;
+	header('location: index.php?p=login');
+	exit;
 }else{
-include_once('../elybin-core/elybin-function.php');
 include_once('../elybin-core/elybin-oop.php');
+include_once('../elybin-core/elybin-function.php');
 include_once('./lang/main.php');
 include_once('theme.php');
-searchengineseo();
 session_exp();
 
 // session kill if not found in db 

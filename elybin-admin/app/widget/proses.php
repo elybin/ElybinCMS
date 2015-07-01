@@ -3,31 +3,27 @@
  * [ Module: Widget Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{	
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
-	include_once '../../../elybin-core/elybin-pclzip.lib.php';
+	include_once('../../../elybin-core/elybin-pclzip.lib.php');
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
-
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+	// get usergroup privilage/access from current user to this module
+	$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
-	er('<strong>'.$lg_ouch.'!</strong> '.$lg_accessdenied.' 403 <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.$lg_back.'</a>');
+	er('<strong>'.lg('Ouch!').'</strong> '.lg('You don\'t have access to this page. Access Desied 403.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+	theme_foot();
+	exit;
 }else{
 	// start here
 	$v = new ElybinValidasi;
@@ -61,10 +57,10 @@ if($usergroup == 0){
 						// give error
 						$a = array(
 							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_widgetcorrupt
+							'title' => lg('Error'),
+							'isi' => lg('Widget corrupt')
 						);
-						json($a);
+						echo json_encode($a);
 						exit;
 					}
 				}
@@ -77,10 +73,10 @@ if($usergroup == 0){
 						// give error widget already installed
 						$a = array(
 							'status' => 'error',
-							'title' => $lg_error,
-							'isi' => $lg_widgetalreadyinstalled
+							'title' => lg('Error'),
+							'isi' => lg('Widget already installed')
 						);
-						json($a);
+						echo json_encode($a);
 						exit;
 					}else{
 						mkdir("../".$app_folder_ok);
@@ -90,10 +86,10 @@ if($usergroup == 0){
 							// give error
 							$a = array(
 								'status' => 'error',
-								'title' => $lg_error,
-								'isi' => $lg_widgetcorrupt
+								'title' => lg('Error'),
+								'isi' => lg('Widget Corrupt')
 							);
-							json($a);
+							echo json_encode($a);
 							exit;
 						}
 
@@ -141,11 +137,11 @@ if($usergroup == 0){
 				//Done 
 				$a = array(
 					'status' => 'ok',
-					'title' => $lg_success,
-					'isi' => $lg_widgetuploaded,
+					'title' => lg('Success'),
+					'isi' => lg('Widget Uploaded'),
 					'widget_id' => $widget_id
 				);
-				json($a);
+				echo json_encode($a);
 				//header('location:../../admin.php?mod='.$mod.'&next=install&id='.$widget_id);
 			}
 		}
@@ -185,8 +181,8 @@ if($usergroup == 0){
 		}
 		$s = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_changessaved
+			'title' => lg('Success'),
+			'isi' => lg('Changes Saved')
 		);
 		header('location:../../admin.php?mod='.$mod);
 		echo json_encode($s);
@@ -234,8 +230,8 @@ if($usergroup == 0){
 		}
 		$s = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_changessaved
+			'title' => lg('Success'),
+			'isi' => lg('Changes Saved')
 		);
 		header('location:../../admin.php?mod='.$mod);
 		echo json_encode($s);
@@ -270,8 +266,8 @@ if($usergroup == 0){
 		// give feedback
 		$s = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_changessaved
+			'title' => lg('Success'),
+			'isi' => lg('Changes Saved')
 		);
 		header('location:../../admin.php?mod='.$mod);
 		echo json_encode($s);
@@ -320,10 +316,10 @@ if($usergroup == 0){
 			// give error
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_widgetremovefailed
+				'title' => lg('Error'),
+				'isi' => lg('Failed to remove widet')
 			);
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		header('location:../../admin.php?mod='.$mod);

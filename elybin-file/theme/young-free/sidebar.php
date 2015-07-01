@@ -10,7 +10,7 @@ if($cwidget==0){
 ?>
 			<!-- Sidebar -->
 			<div class="col-md-3">
-				<h3 class="text-light-gray text-center">No Widget</h3>
+				<h3 class="text-light-gray text-center"><?php echo lg('No Widget') ?></h3>
 			</div>
 			<!-- .Sidebar -->
 <?php

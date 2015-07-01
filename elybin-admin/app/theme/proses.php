@@ -3,27 +3,21 @@
  * [ Module: Themes Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once '../../../elybin-core/elybin-pclzip.lib.php';
 	include_once('../../lang/main.php');
 
-// get user privilages
-$tbus = new ElybinTable('elybin_users');
-$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-$level = $tbus->current()->level; // getting level from curent user
-
-$tbug = new ElybinTable('elybin_usergroup');
-$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-$usergroup = $tbug->current()->setting;
+	// get usergroup privilage/access from current user to this module
+	$usergroup = _ug()->setting;
 
 // give error if no have privilage
 if($usergroup == 0){
@@ -36,80 +30,115 @@ if($usergroup == 0){
 	
 	//ADD
 	if ($mod=='theme' AND $act=='add'){
-		$extensionList = array("zip");
-		$fileName = $_FILES['theme_file']['name'];
-		$tmpName = $_FILES['theme_file']['tmp_name'];
-		$pecah = explode(".", $fileName);
-		$ekstensi = $pecah[2];
-		$folder = seo_title($pecah[1]);
-
-		if(!empty($tmpName)){
-			if (in_array($ekstensi, $extensionList)){
-				UploadTheme($folder.".zip");
-
-				//EXTRACT SEMENTARA
-				$destination_dir = "../../tmp/";
-				if(!file_exists($destination_dir.$folder."/")){
-					mkdir($destination_dir.$folder."/");
-				
-					$archive = new PclZip($destination_dir.$folder.".zip");
-					if ($archive->extract(PCLZIP_OPT_PATH, $destination_dir.$folder."/") == 0){
-						echo 'File Corrupt';
-						header('location:../../../404.php');
-						exit;
-					}
-				}
-				//INCLUDE MANIFEST AMBIL NAMA FOLDER
-				if(file_exists($destination_dir.$folder."/ElybinManifest.php")){
-					include($destination_dir.$folder."/ElybinManifest.php");
-					$thm_folder_ok = $thm_folder; 
-
-					if(!file_exists("../../../elybin-main/".$thm_folder_ok)){
-						mkdir("../../../elybin-main/".$thm_folder_ok);
-				
-						$archive = new PclZip($destination_dir.$folder.".zip");
-						if ($archive->extract(PCLZIP_OPT_PATH, "../../../elybin-main/".$thm_folder_ok) == 0){
-							echo 'File Corrupt';
-							header('location:../../../404.php');
-							
-							exit;
-						}
-
-						//WRITE DATABASE
-						$tbl = new ElybinTable('elybin_themes');
-						$theme2 = $tbl->SelectLimit('theme_id','DESC','0,1');
-						$theme_id = 1;
-						foreach ($theme2 as $ps) {
-							$theme_id = $ps->theme_id + 1;
-						}
-
-						$data = array(
-							'theme_id' => $theme_id,
-							'name' => $thm_name,
-							'description' => $thm_description,
-							'author' => $thm_author,
-							'url' => $thm_url,
-							'folder' => $thm_folder,
-							'status' => 'deactive'
-						);
-						$tbl->Insert($data);
-
-						//RM TEMP DIR
-						deleteDir($destination_dir.$folder."/");
-						if(file_exists($destination_dir.$folder.".zip")){
-							unlink($destination_dir.$folder.".zip");
-						}
-					}else{
-						echo 'App are already exist';
-					}
-				}
-
-				header('location:../../admin.php?mod='.$mod);
-			}
-		}else{
-			echo '404';
-			header('location:../../../404.php');
+		$file_name = $_POST['file_name'];
+		$ext = substr($file_name, -4);
+		$prefix = substr($file_name, 0, 4);
+		
+		// check file extension
+		if($prefix!=="thm." || $ext!==".zip"){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_themecorrupt." (Err.Invalid filename)"
+			);
+			echo json_encode($a);
+			exit;
 		}
+		// remove prefix and ext
+		$folder = str_replace("thm.", "", $file_name);
+		$folder = str_replace(".zip", "", $folder);
+		
+
+		// create temp folder
+		$destination_dir = "../../tmp/";		
+		if(!file_exists($destination_dir.$folder."/")){
+			mkdir($destination_dir.$folder."/");
+		}	
+		
+		if(file_exists($destination_dir.$folder."/")){			
+			// extract the zip
+			$archive = new PclZip("../../../elybin-file/ext/thm.$folder.zip");
+			if ($archive->extract(PCLZIP_OPT_BY_NAME, 'ElybinManifest.php', PCLZIP_OPT_PATH, $destination_dir.$folder."/") == 0){
+				// give error
+				$a = array(
+					'status' => 'error',
+					'title' => $lg_error,
+					'isi' => $lg_themecorrupt." (Err.Can't unzip package)"
+				);
+				echo json_encode($a);
+				exit;
+			}
+		}
+
+		//check ElybinManifest
+		if(!file_exists($destination_dir.$folder."/ElybinManifest.php")){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_themecorrupt." (Err.ElybinManifest Missing)"
+			);
+			echo json_encode($a);
+			exit;
+		}
+		
+		// get plguin info
+		include($destination_dir.$folder."/ElybinManifest.php");
+		// already installed
+		$tbl = new ElybinTable('elybin_themes');
+		$cpth = $tbl->GetRow('folder', $thm_folder);
+		if($cpth > 0){
+			// give error plugin already installed
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_themealreadyinstalled
+			);
+			echo json_encode($a);
+			deleteDir($destination_dir.$folder."/");
+			exit;
+		}
+				
+		// copy to targetdir
+		@mkdir("../../../elybin-file/theme/".$thm_folder);
+		$archive = new PclZip("../../../elybin-file/ext/thm.$folder.zip");
+		if ($archive->extract(PCLZIP_OPT_PATH, "../../../elybin-file/theme/".$thm_folder) == 0){
+			// give error
+			$a = array(
+				'status' => 'error',
+				'title' => $lg_error,
+				'isi' => $lg_themecorrupt." (Err.Can't unzip package)"
+			);
+			echo json_encode($a);
+			exit;
+		}
+		
+		// write to database
+		$data = array(
+			'name' => $thm_name,
+			'description' => $thm_description,
+			'author' => $thm_author,
+			'url' => $thm_url,
+			'folder' => $thm_folder,
+			'status' => 'deactive'
+		);
+		$tbl->Insert($data);
+
+		//remove temp dir
+		deleteDir($destination_dir.$folder."/");
+		if(file_exists($destination_dir.$folder.".zip")){
+			unlink($destination_dir.$folder.".zip");
+		}
+		
+		//Done 
+		$a = array(
+			'status' => 'ok',
+			'title' => $lg_success,
+			'isi' => $lg_themeuploaded
+		);
+		echo json_encode($a);
+		exit;
 	}
 	//ACTIVE
 	elseif ($mod=='theme' AND $act=='active'){
@@ -167,7 +196,7 @@ if($usergroup == 0){
 		$ctheme = $ctheme->current();
 
 
-		$dir = "../../../elybin-main/".$ctheme->folder."/";
+		$dir = "../../../elybin-file/theme/".$ctheme->folder."/";
 
 		deleteDir($dir);
 
@@ -177,8 +206,7 @@ if($usergroup == 0){
 	}
 	//404
 	else{
-		echo '404';
-		header('location:../../../404.php');
+		header('location: ../../../404.html');
 	}
 }
 }	

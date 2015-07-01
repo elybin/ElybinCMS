@@ -93,7 +93,7 @@ $cpostrec = $tbp->GetRow('','');
 										<h4 style="margin-top: 0px; margin-bottom: 5px"><a href="post-<?php echo $p->post_id; ?>-<?php echo $p->seotitle; ?>.html"><?php echo $p->title; ?></a></h4>
 										<p class="text-sm text-light-gray">
 											<?php echo $lg_postedby; ?> <i><?php echo $user; ?></i><br/>
-											<i><?php echo time_elapsed_string($p->date.$p->time); ?></i>
+											<i><?php echo time_elapsed_string($p->date); ?></i>
 										</p>
 									</div>
 								</div>

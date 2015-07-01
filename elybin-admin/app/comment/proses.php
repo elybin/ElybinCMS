@@ -1,130 +1,208 @@
-<?php
+<?php 
 /* Short description for file
  * [ Module: Comment Proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
-	header('location:../../../403.php');	
+	header('location: ../../../403.html');	
 }else{	
-	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
+	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../lang/main.php');
+	settzone();
 
 	$v = new ElybinValidasi;
 	$mod = $_POST['mod'];
 	$act = $_POST['act'];
-
-	if($mod=='comment' AND $act=='edit'){
-		$comment_id = $v->sql($_POST['comment_id']);
-		$content = htmlspecialchars($_POST['content'],ENT_QUOTES);
-		$status = @$_POST['status'];
-		if($status){
-			$status = "active";
-		}else{
-			$status = "deactive";
-		}
-
+	
+	// REPLY
+	if($mod=='comment' AND $act=='reply'){
+		$cid = $v->sql(epm_decode(@$_POST['hash']));
+		$content = htmlspecialchars(@$_POST['content'],ENT_QUOTES);
+		
 		// check id exist or not
-		$tbl = new ElybinTable('elybin_comments');
-		$cocomment = $tbl->GetRow('comment_id', $comment_id);
-		if(empty($comment_id) OR ($cocomment == 0)){
-			$a = array(
+		// single query
+		$tb = new ElybinTable('elybin_comments');
+		$cc = $tb->SelectFullCustom("
+		SELECT 
+		*,
+		COUNT(*) as `row`
+		FROM
+		`elybin_comments` as `c` 
+		LEFT JOIN 
+			`elybin_users` as `u` ON `c`.`user_id` = `u`.`user_id`
+		WHERE
+		`c`.`comment_id` = '$cid'
+		LIMIT 0,1
+		")->current();
+		
+		if($cc->row < 1){
+			json(array(
 				'status' => 'error',
 				'title' => $lg_error,
 				'isi' => $lg_iderrorpleasereloadpage
-			);
-
-			json($a);
-			exit;
+			));
 		}
-
+		
+		// get current user
+		$cu = _u();
+		
 		//if field empty
 		if(empty($content)){
 			//fill important
-			$a = array(
+			json(array(
 				'status' => 'error',
 				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
-			);
+				'isi' => lg('Please fill our reply first.')
+			));
+		}
+		
+		
+		// insert
+		$d = array(
+			'author' => $cu->fullname,
+			'email' => $cu->user_account_email,
+			'content' => @$SESSION['visitor'],
+			'date' => date('Y-m-d H:i:s'),
+			'content' => $content,
+			'parent' => $cid,
+			'user_id' => $cu->user_id,
+			'post_id' => $cc->post_id,
+			'status' => 'active',
+		);
+		$tb->Insert($d);
+		
+		// update comment reply status to yes
+		$ar = array('reply' => 'yes');
+		$tb->Update($ar, 'comment_id', $cid);
 
-			json($a);
+		//Done
+		// check the data result
+		if(@$_GET['result'] == 'json'){
+			// json
+			json(array(
+				'status' => 'ok',
+				'title' => lg('Success'),
+				'isi' => lg('Your reply successfully posted.'),
+				'callback' => 'reply',
+				'callback_hash' => @$_POST['hash'],
+				'callback_msg' => 'posted'
+			));
+		}else{
+			// redirect
+			header('location: ../../admin.php?mod=comment&filter=unread&hash='.@$_POST['hash'].'&msg=posted');
+		}
+	}
+
+	//BLOCK
+	elseif($mod=='comment' AND $act=='block'){
+		//validate id from sqli
+		$cid = $v->sql(epm_decode(@$_POST['hash']));
+		$tb = new ElybinTable('elybin_comments');
+
+		// check id exist or not
+		$cc = $tb->SelectFullCustom("
+		SELECT
+		`c`.`user_id`,
+		COUNT(`comment_id`) as `row`
+		FROM
+		`elybin_comments` as `c`
+		WHERE
+		`c`.`comment_id` = '$cid' &&
+		`c`.`user_id` != '"._u()->user_id."' &&
+		`c`.`status` = 'active'
+		LIMIT 0,1
+		")->current();
+
+		// check row
+		if($cc->row < 1){
+			header('location: ../../../404.html');
+			exit;
+		}
+		
+		// can't do self block
+		if($cc->user_id == _u()->user_id){
+			header('location: ../../../404.html');
 			exit;
 		}
 
-		//get comment information 
-		$getuser = $tbl->SelectWhere('comment_id',$comment_id,'','');
-		$getuser = $getuser->current();
+		// change status to blocked
+		$ar = array('status' => 'blocked');
+		$tb->Update($ar,'comment_id', $cid);
 
-		//if user are exist in table user
-		if($getuser->user_id > 0){
-			//get user id
-			$tbluser = new ElybinTable('elybin_users');
-			$cuser = $tbluser->SelectWhere('user_id',$getuser->user_id,'','');
-			$cuser = $cuser->current();
-			$author = $cuser->fullname;
-			$email = $cuser->user_account_email;
-			$data = array(
-				'author' => $author,
-				'email' => $email,
-				'content' => $content,
-				'status' => $status	
-				);
-		}else{
-			//if anonymous
-			$author = $v->xss($_POST['author']);
-			$email = $v->xss($_POST['email']);
-					//if field empty
-			if(empty($author) AND empty($email)){
-				//please fill important
-				$a = array(
-					'status' => 'error',
-					'title' => $lg_error,
-					'isi' => $lg_pleasefillimportant
-				);
+		//Done
+		header('location:../../admin.php?mod=comment&filter=blocked&hash='.@$_POST['hash'].'&msg=blocked');
+	}	
+	//UNBLOCK
+	elseif($mod=='comment' AND $act=='unblock'){
+		//validate id from sqli
+		$cid = $v->sql(epm_decode(@$_POST['hash']));
+		$tb = new ElybinTable('elybin_comments');
 
-				json($a);
-				exit;
-			}
-			$data = array(
-				'author' => $author,
-				'email' => $email,
-				'content' => $content,
-				'status' => $status	
-				);
+		// check id exist or not
+		$cc = $tb->SelectFullCustom("
+		SELECT
+		`c`.`user_id`,
+		COUNT(`comment_id`) as `row`
+		FROM
+		`elybin_comments` as `c`
+		WHERE
+		`c`.`comment_id` = '$cid' &&
+		`c`.`user_id` != '"._u()->user_id."' &&
+		`c`.`status` = 'blocked'
+		LIMIT 0,1
+		")->current();
+
+		// check row
+		if($cc->row < 1){
+			header('location: ../../../404.html');
+			exit;
+		}
+		
+		// can't do self unblock
+		if($cc->user_id == _u()->user_id){
+			header('location: ../../../404.html');
+			exit;
 		}
 
-		$tbl->Update($data,'comment_id',$comment_id);
-		
+		// change status to blocked
+		$ar = array('status' => 'active');
+		$tb->Update($ar,'comment_id', $cid);
+
 		//Done
-		$a = array(
-			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
-		);
-		json($a);
-	}
+		header('location:../../admin.php?mod=comment&hash='.@$_POST['hash'].'&msg=unblocked');
+	}	
 
 	//DEL
 	elseif($mod=='comment' AND $act=='del'){
 		//validate id from sqli
-		$comment_id = $v->sql($_POST['comment_id']);
-		$tabledel = new ElybinTable('elybin_comments');
+		$cid = $v->sql(epm_decode(@$_POST['hash']));
+		$tb = new ElybinTable('elybin_comments');
 
 		// check id exist or not
-		$cocomment = $tabledel->GetRow('comment_id', $comment_id);
-		if(empty($comment_id) OR ($cocomment == 0)){
+		$cc = $tb->SelectFullCustom("
+		SELECT
+		*,
+		COUNT(`comment_id`) as `row`
+		FROM
+		`elybin_comments` as `c`
+		WHERE
+		`c`.`comment_id` = '$cid'
+		LIMIT 0,1
+		")->current();
+		if($cc->row < 1){
 			header('location: ../../../404.html');
 			exit;
 		}
-		$tabledel->Delete('comment_id', $comment_id);
+		$tb->Delete('comment_id', $cid);
 
 		//Done
-		header('location:../../admin.php?mod='.$mod);
+		header('location:../../admin.php?mod=comment&act=reply&hash='.epm_encode($cc->parent).'&msg=deleted');
 	}	
 	//MULTI DEL
 	elseif($mod=='comment' AND $act=='multidel'){
@@ -148,17 +226,15 @@ if(empty($_SESSION['login'])){
 					exit;
 				}
 
-
 				//Done
 				$tb->Delete('comment_id', $comment_id_fix);
 				header('location:../../admin.php?mod='.$mod);
 			}
 		}
 	}
-
 	//404
 	else{
-		header('location :../../../404.html');
+		header('location: ../../../404.html');
 	}
 }	
 ?>

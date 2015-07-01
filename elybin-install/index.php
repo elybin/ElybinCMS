@@ -1,282 +1,729 @@
 <?php
-/* Short description for file
- * Install : Index
- * this file is agreement page, and installatation progress checker
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
- */
 session_start();
-include('../elybin-admin/lang/main.php');
-include_once('../elybin-core/elybin-function.php');
+// include function
+include 'inc/install.func.php';
 
-// because installation only works in 24hours, check install date
-$f = @fopen("install_date.txt", "r");
-if($f && (@fgets($f) !== date("Y-m-d"))){ 
-	// cancel installation
-	header('location: locked.php');
-	exit;
-}
+// err msg
+$msg = @$_SESSION['msg'];
+@$_SESSION['msg'] = '';
 
-// check setup complete or not
-// if `elybin-config.php` not exsist, continue setup
-if(file_exists("../elybin-core/elybin-config.php")){
+// call install lock
+install_lock();
 
-	// Checking step 1 (Database Connection Config)
-	// checking `.htaccess` 
-	if(!file_exists("../.htaccess")){
-		// redirect to step 1 
-		header('location: step1.php');
-		exit;
-	}
-	// step 1 passed
+// use swtch
+switch (@$_GET['p']) {
 	
-	// Checking step 2 (Information Setup/Writing database)
-	// check table `elybin_config` exist or not
-	@include_once('../elybin-core/elybin-oop.php');
-	$tbop = new ElybinTable("elybin_options");
-	$coop = $tbop->GetRow('','');
-	// if `elybin_options` row empty 
-	if($coop == 0  || $coop == ''){
-		// step 2 hasn't passed yet, restart step 2 
-		// redirect to step 2
-		header('location: step2.php');
-		exit;
-	}
-	// step 2 passed
-	
-	// Checking step 3 (Administrator Account)
-	// if no user found in table `elybin_users`
-	$tbu = new ElybinTable('elybin_users');
-	$couser = $tbu->GetRow('user_id','1');
-	if($couser == 0 OR $couser = ''){
-		// redirect to step 3
-		header('location: step3.php');
-		exit;
-	}
-	// step 3 passed
-	
-	// Redirect to last step (finish)
-	header('location: ../elybin-admin/index.php');
-	exit; 
-}else{
-	// please agree
-	$err = @$_GET['err'];
-	switch($err){
-		case 'pleaseagree':
-		$msg_type = "warning";
-		$msg = "<strong>$lg_ouch!</strong> $lg_pleasereadandagree";
+	default:
+	// allowed if status 0,1,2
+	switch(install_status()){
+		case 0:
+			//header('location: index.php');
+			break;
+		case 1:
+			header('location: ?p=step1');exit;
+			break;
+		case 2:
+			header('location: ?p=step1');exit;
+			break;
+		case 3:
+			header('location: ?p=step2');exit;
+			break;
+		case 4:
+			header('location: ?p=step3');exit;
+			break;
+		case 5:
+			header('location: ?p=finish');exit;
+			break;
+		case -1:
+			header('location: ?p=locked');exit;
 			break;
 		default:
+			header('location: ?p=404');
 			break;
 	}
-	
-	// check previous version
-	if(file_exists("../elybin-file/backup/elybin-config_backup.php")){
-		$backup_available = true;
-	}else{
-		$backup_available = false;
-	}
-	
-	// minify html
-	ob_start('minify_html');
 ?>
 <!DOCTYPE html>
-<!--[if IE 8]>         
-	<html class="ie8"> 
-<![endif]-->
-<!--[if IE 9]>         
-	<html class="ie9 gt-ie8"> 
-<![endif]-->
-<!--[if gt IE 9]>--> 
-	<html class="gt-ie8 gt-ie9 not-ie"> 
-<!--<![endif]-->
+<html lang="en">
 <head>
-	<meta charset="utf-8"/>
-	<title>Elybin CMS</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
-	
-	<!-- Favicons -->
-    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" />
-	
-	<link href="../elybin-admin/assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css"/>
-	<link href="../elybin-admin/assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-	<link href="../elybin-admin/assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css"/>
-	<link href="../elybin-admin/assets/stylesheets/primary.min.css" rel="stylesheet" type="text/css"/>
-	<link href="../elybin-admin/assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css"/>
-	<link href="../elybin-admin/assets/stylesheets/default.min.css" rel="stylesheet" type="text/css"/>
-	
-	<meta name="robots" content="nofollow"/>
-	
-	<!--[if lt IE 9]>
-		<script src="assets/javascripts/ie.min.js"></script>
-	<![endif]-->
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Quick Install')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<link rel='stylesheet' href='assets/stylesheets/fontawesome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
 </head>
-<body class="theme-default no-main-menu">
-<div id="main-wrapper">
-	<div id="main-navbar" class="navbar navbar-inverse" role="navigation">
-		<div class="navbar-inner">
-			<!-- Main navbar header -->
-			<div class="navbar-header">
-				<!-- Logo -->
-				<a href="http://elybin.com" class="navbar-brand" target="_blank">
-					<div class="demo-logo bg-primary" style="background-color: rgba(0,0,0,0) !important"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" alt="" style="width: 20px; height: 20px"></div>&nbsp;Elybin<em><strong>CMS</strong></em>
-				</a>
-			</div> <!-- / .navbar-header -->
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
 
-			<div id="main-navbar-collapse" class="collapse navbar-collapse main-navbar-collapse"></div> <!-- / #main-navbar-collapse -->
-		</div> <!-- / .navbar-inner -->
-	</div> <!-- / #main-navbar -->
-	
-	<div id="content-wrapper">
-		<!-- Page Header -->
-		<div class="page-header">
-			<div class="row">
-				<h1 class="col-xs-12 col-sm-6 col-md-6 text-center text-left-sm">
-					<i class="fa fa-magic"></i>&nbsp;&nbsp;<?php echo $lg_install ?>
-				</h1>
+		<div class="pb" style="width: 0%"><span>0%</span></div>
+		<div class="box">
+			<div class="cen">
+				<h2><?php echo lg('Welcome!') ?></h2><br/>
+				<i class="fa fa-5x fa-magic"></i><br/>
+				<i><?php echo lg('This is magic! your site will up in a second.') ?></i><br/>
+				<i><?php echo lg('Are you ready?') ?></i><br/>
 			</div>
-		</div> <!-- ./Page Header -->
-		
-		<!-- Content here -->
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-2">
-				<div class="panel">
-					<div class="panel-heading">
-						<span class="panel-title"><i class="fa fa-download"></i>&nbsp;&nbsp;<?php echo $lg_quickinstall ?></span>
-					</div> <!-- / .panel-heading -->
-					<div class="panel-body no-padding no-border">
-						<div class="wizard ui-wizard-example">
-							<div class="wizard-content panel no-border-hr no-border-b no-padding-b">
-								<!-- Database -->
-								<div class="text-center col-md-8 col-md-offset-2">
-									<h2><?php echo $lg_welcome ?></h2>
-									<h4 class="text-muted"><?php echo $lg_areyouready ?>?</h4>
-									<br/>
-									<p><i class="fa fa-5x  fa-magic"></i></p>
-									<br/>
-									<p><?php echo $lg_installstarthint ?>?</p>
-									<hr class="clearfix no-border"/>
-								</div>
-								<div class="text-left col-md-12">
-									<?php
-									if($backup_available){
-									?>
-									<div class="note note-warning">
-										<h4 class="note-title">Elybin CMS versi sebelumnya terdeteksi</h4>
-										Sistem kami mendeteksi adanya backup data dari versi sebelimnya, <br/>sistem akan secara otomatis mengupgrade ke versi terbaru.
-									</div>
-									<?php } ?>
-									<pre style="max-height: 300px;">
-SYARAT DAN KETENTUAN - http://docs.elybin.com/syarat-dan-ketentuan.html
-=========================================
-Ada beberapa syarat dan ketentuan yang anda harus ketahui selama anda menggunakan produk ini.<br/><br/>
-
-<b>A. OPEN SOURCE & TIDAK MENGHAPUS CREDIT</b><br/>
-Diperbolehkan untuk digunakan oleh siapa saja baik itu perorangan maupun kelompok, 
-memperbanyak atau mendistribusikan kepada orang lain, ataupun mendesain ulang/mengubah/menulis 
-ulang script/kode dalam CMS ini. Dengan catatan masih menyertakan link dan tanda pengenal 
-dari pihak pengembang yaitu Elybin CMS. Kami rasa itu tidak terlalu menyulitkan, mengingat 
-link/identitas kami tidak memakan banyak ruang, tidak seberapa memang, namun suatu kebanggaan 
-dan penghargaan bagi kami jika nama kami turut disertakan.<br/><br/>
-
-"Kebebasan adalah hal yang utama dalam menggunakan produk Open Source, kami mungkin tidak 
-mendapat apapun, itu tidak masalah. Nama kami terpampang dengan baik dan benar sebagai bukti 
-kerja keras, itu saja sudah cukup. (Tim Elybin)"<br/><br/>
-
-<b>B. SUPPORT & BANTUAN</b><br/>
-Kami tidak bisa memberikan garansi atas segala kerusakan/error atau merasa merugi saat 
-menggunakan produk kami. Namun, anda dapat meminta bantuan/support dari kami ketika anda
-menemui kesulitan/error dengan menghubungi tim support kami. Sangat di sarankan pula untuk 
-memberikan masukan/kritik/saran jika anda menemukan sebuah kelemahan pada produk kami 
-ataupun anda bisa meminta fitur baru kepada kami, karena kami menyadari bahawa produk 
-kami masih membutuhkan masukan dari anda.<br/><br/>
-
-<b>C. SISTEM DONASI, BUKAN BERBAYAR</b><br/>
-Dalam menggunakan produk ini, anda tidak diperlukan untuk membayar kepada kami, karena 
-produk ini bersifat gratis dan open source. Kecuali beberapa plugin dan tema yang memang 
-dikembangkan oleh beberapa developer, namun perlu ditegaskan bahwa kami tidak menetapkan 
-sistem membayar melaikan sistem donasi untuk beberapa kegiatan sosial, seperti yang ada 
-pada misi kami. Perlu anda ketahui juga bahwa sistem donasi berbeda dengan sistem bayar, 
-karena pada sistem donasi, anda akan terus mendapat update/pembaharuan seumur hidup selama 
-produk kami terus digunakan dan dikembangkan.<br/><br/>
-
-<b>D. MISI KAMI UNTUK ANDA</b><br/>
-Saat pertama kali kami memulai Elybin CMS kami memiliki misi yang cukup sederhana dan 
-kami sangat antusias untuk mewujudkan misi tersebut bersama anda. Atas dasar tersebut 
-kami sadar bahwa anda bukanlah sebuah produk ataupun konsumen, tapi anda adalah mitra 
-satu tim dengan kami. Karena itu kami mengundang anda untuk turut mengembangkan bersama 
-termasuk dalam bentuk menggunakan dengan baik produk kami ataupun sebagai tim developer.<br/><br/>
-
-Dengan penggunaan produk ini anda menyetujui Syarat dan Ketentuan dari Elybin CMS.
-Terimakasih telah menggunakan produk kami, 
-bantu kami mewujudkan misi kami, 
-tetap cintai produk asli Indonesia ini.
-									</pre>
-										
-									<hr class="clearfix no-border"/>
-									<form action="include/agree.php" method="post">
-										<div class="checkbox">
-											<label>
-												<input type="checkbox" class="px" name="agree"/>
-												<span class="lbl">
-												Saya menyetujui syarat dan ketentuan Elybin CMS
-												</span>
-											</label> 
-										</div>
-										<?php
-										if($backup_available){
-										?>
-										<input type="hidden" name="backup" value="true"/>
-										<input class="btn btn-warning"  type="submit" value="<?php echo $lg_startupgrade ?>"/>
-										<?php }else{ ?>
-										<input class="btn btn-success wizard-next-step-btn"  type="submit" value="<?php echo $lg_startinstallation ?>"/>
-										<?php } ?>
-									</form>
-								</div>
-							</div> <!-- / .wizard-content -->
-						</div> <!-- / .wizard -->
-					</div>
-				</div>
-			</div><!-- / .col -->
-		</div><!-- / .row -->
-	</div><!-- / .content -->
-</div><!-- / .main warper -->
-<!-- Javascript -->
-<!-- For Lower than IE 9 -->
-<!--[if lte IE 9]>
- 	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">'+"<"+"/script>"); </script>
-<![endif]-->
-<!-- For all browser except IE -->
-<!--[if !IE]> -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-	<script type="text/javascript">if (!window.jQuery) { document.write('<script src="../elybin-admin/min/?f=assets/javascripts/jquery.min.js"><\/script>'); }</script>
-	<script src="../elybin-admin/assets/javascripts/bootstrap.min.js" type="text/javascript"></script>
-	<script src="../elybin-admin/assets/javascripts/pixel-admin.min.js" type="text/javascript"></script>
-<!-- <![endif]-->
-
-<script><?php ob_start('minify_js'); // minify js ?>
-$(document).ready(function() {  
-<?php
-	if(!empty($msg)){
-?>	setTimeout(function () {
-		options = {
-		type: '<?php echo $msg_type?>',
-		auto_close: 3,// seconds
-		classes: 'alert-dark' // add custom classes
-		}; 
-		PixelAdmin.plugins.alerts.add("<?php echo $msg?>", options);
-	}, 800);
-<?php }?>
-	// Show/Hide password reset form on click
-	window.PixelAdmin.start();
-});<?php ob_end_flush(); // minify_js ?>
-</script>
+			<div class="cen">
+				<a href="?p=step1" class="btn"><?php echo lg('Yes, Start Installation!') ?></a>
+			</div>
+		</div>
+		<div class="cen xs">
+			<i><?php echo lg('Language:') ?><?php echo @$_SESSION['lg']; ?></i><br/>
+			<a href="?p=en"><?php echo lg('English') ?></a> | 
+			<a href="?p=id"><?php echo lg('Bahasa Indonesia') ?></a>
+		</div>
+	</div>
 </body>
 </html>
-<?php 
-	ob_end_flush(); // minify_html
-} 
+<?php
+		break;
+	
+	case 'step1':
+	// allowed if status 0,1,2
+	switch(install_status()){
+		case 0:
+			//header('location: index.php');
+			break;
+		case 1:
+			//header('location: ?p=step1');
+			break;
+		case 2:
+			//header('location: ?p=step1');
+			break;
+		case 3:
+			header('location: ?p=step2');exit;
+			break;
+		case 4:
+			header('location: ?p=step3');exit;
+			break;
+		case 5:
+			header('location: ?p=finish');exit;
+			break;
+		case -1:
+			header('location: ?p=locked');exit;
+			break;
+		default:
+			header('location: ?p=404');exit;
+			break;
+	}
+
+	// check status proses
+	if(install_status() == 1){
+		unset($_SESSION['config_template']);
+		// call
+		if(!write_htaccess()){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Failed writing &#34;.htaccess&#34;. Copy the script below, and create file manually.'),
+				'msg_ses' => 'failed_htaccess',
+				'red' => '?p=step1'
+			), @$_GET['r']);
+		}
+	}
+
+	if(install_status() == 2){
+		unset($_SESSION['htaccess_template']);
+
+		// if install with content
+		if(!import_sql(array("mysql/latest_structure.sql","mysql/latest_content.sql"))){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Some query failed to execute, This is our mistake. Please contact us.'),
+				'msg_ses' => 'query_error',
+				'red' => '?p=step1'
+			), @$_GET['r']);
+		}else{
+			// success 
+
+			// rem tmp session
+			@$_SESSION['h'] = '';
+			@$_SESSION['u'] = '';
+			@$_SESSION['p'] = '';
+			@$_SESSION['n'] = '';
+
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Database configuration success!'),
+				'msg_ses' => 'step1_ok',
+				'red' => '?p=step2'
+			), @$_GET['r']);
+
+			// change step
+			$_SESSION['step'] = "2";
+		}
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Quick Install')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'empty_db_host':
+				echo '<div class="al er"><p>'.lg('Enter Database Host.').'</p></div>';
+				break;
+			case 'empty_db_user':
+				echo '<div class="al er"><p>'.lg('Enter Database Username.').'</p></div>';
+				break;
+			case 'empty_db_name':
+				echo '<div class="al er"><p>'.lg('Enter Database Name.').'</p></div>';
+				break;
+			case 'db_notfound':
+				echo '<div class="al er"><p>'.lg('Connection to database error. Database not found.').'</p></div>';
+				break;
+			case 'db_auth_error':
+				echo '<div class="al er"><p>'.lg('Connection error. Check Database Username or Database Password.').'</p></div>';
+				break;
+			case 'failed_config':
+				echo '<div class="al er"><p>'.lg('Failed writing &#34;elybin-config.php&#34;. Copy the script below, and create file manually.').'</p></div>';
+				break;
+			case 'failed_htaccess':
+				echo '<div class="al er"><p>'.lg('Failed writing &#34;.htaccess&#34;. Copy the script below, and create file manually.').'</p></div>';
+				break;
+			case 'query_error':
+				echo '<div class="al er"><p>'.lg('Some query failed to execute, This is our mistake. Please contact us.').'</p></div>';
+				break;
+			case 'unk_error':
+				echo '<div class="al er"><p>'.lg('Unknown error. Please contact us.').'</p></div>';
+				break;
+			case 'step1_ok':
+				echo '<div class="al ok"><p>'.lg('Database configuration success!').'</p></div>';
+				break;
+			
+			default:
+				
+				break;
+		}
+		?>
+
+		<div class="pb" style="width: 12%"><span>12%</span></div>
+		<div class="box">
+			<?php
+
+			if(isset($_SESSION['config_template'])){
+			?>
+			<div class="cen">
+				<h2><?php echo lg('I can\'t, I need your hand.') ?></h2>
+				<i><?php echo lg('Check your directory permissions, or you can create this file manually. After that refresh this page.') ?></i><br/><br/>
+			</div>
+			<div class="lef">
+				<pre class="code"><?php echo htmlspecialchars($_SESSION['config_template']); ?></pre>
+			</div>
+			<?php
+			}
+			elseif(isset($_SESSION['htaccess_template'])){
+			?>
+			<div class="cen">
+				<h2><?php echo lg('Opps, I can\'t do again.') ?></h2>
+				<i><?php echo lg('Check your directory permissions, or you can create this file manually. After that refresh this page.') ?></i><br/><br/>
+			</div>
+			<div class="lef">
+				<pre class="code"><?php echo htmlspecialchars($_SESSION['htaccess_template']); ?></pre>
+			</div>
+			<?php
+			}
+			else{
+			?>
+			<form action="inc/install_step1.php" method="post">
+				<div class="cen">
+					<h2><?php echo lg('Set your Database!') ?></h2><br/>
+				</div>
+				<div class="lef">
+					<div class="group">
+						<input type="text" name="h" placeholder="<?php echo lg('Database Host, I guess localhost') ?>" value="<?php if(isset($_SESSION['h'])){echo $_SESSION['h'];}else{echo 'localhost';}?>"/>
+						<p class="cb"><?php echo lg('Commonly it set localhost') ?></p>
+					</div>
+					<div class="group">
+						<input type="text" name="u" placeholder="<?php echo lg('Database Username, for example: user_db_elybin') ?>" value="<?php if(isset($_SESSION['u'])){echo $_SESSION['u'];}?>"/>
+						<p class="cb"><?php echo lg('Enter username of your Database connection. Ask your hosting provider, if you don\'t know that.') ?></p>
+					</div>
+					<div class="group">
+						<input type="text" name="p" placeholder="<?php echo lg('Database Password, usually are random string.') ?>" value="<?php if(isset($_SESSION['p'])){echo $_SESSION['p'];}?>"/>
+						<p class="cb"><?php echo lg('Enter password to your Database. Ask your hosting provider, if you don\'t know that.')?></p>
+					</div>
+					<div class="group">
+						<input type="text" name="n" placeholder="<?php echo lg('Database Name, for example: db_elybin') ?>" value="<?php if(isset($_SESSION['n'])){echo $_SESSION['n'];}?>"/>
+						<p class="cb"><?php echo lg('Enter name of your Database. Ask your hosting provider, if you don\'t know that.')?></p>
+					</div>
+				</div>
+				<div class="rig">
+					<button type="submit" class="btn p-rig"><?php echo lg('Next') ?></button><br/><br/>
+				</div>
+			</form>
+			<?php } ?>
+		</div>
+		<div class="xs">
+			<i><?php echo lg('Everything inside one Bin, Elybin CMS.') ?></i>
+			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+	
+	case 'step2':
+	// allowed if...
+	switch(install_status()){
+		case 0:
+			header('location: index.php');exit;
+			break;
+		case 1:
+			header('location: index.php');exit;
+			break;
+		case 2:
+			header('location: ?p=step1');exit;
+			break;
+		case 3:
+			//header('location: ?p=step2');
+			break;
+		case 4:
+			header('location: ?p=step3');exit;
+			break;
+		case 5:
+			header('location: ?p=finish');exit;
+			break;
+		case -1:
+			header('location: ?p=locked');exit;
+			break;
+		default:
+			header('location: ?p=404');exit;
+			break;
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Quick Install')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'fill_fullname':
+				echo '<div class="al er"><p>'.lg('You don\'t have a name?').'</p></div>';
+				break;
+			case 'fill_username':
+				echo '<div class="al er"><p>'.lg('Please fill Nickname first.').'</p></div>';
+				break;
+			case 'fill_email':
+				echo '<div class="al er"><p>'.lg('Please fill E-mail.').'</p></div>';
+				break;
+			case 'fill_password':
+				echo '<div class="al er"><p>'.lg('Please fill Password.').'</p></div>';
+				break;
+			case 'fill_both':
+				echo '<div class="al er"><p>'.lg('Don\'t forget to fill Password in both field.').'</p></div>';
+				break;
+			case 'invalid_email':
+				echo '<div class="al er"><p>'.lg('E-mail format not recognized. Example format is xxx@xxx.xxx.').'</p></div>';
+				break;
+			case 'invalid_username':
+				echo '<div class="al er"><p>'.lg('Nickname format not recognized. Allowed character is letter(a-z), number(0-9) and underscore (_)').'</p></div>';
+				break;
+			case 'username_too_long':
+				echo '<div class="al er"><p>'.lg('Maximum nickname character is 12 letter.').'</p></div>';
+				break;
+			case 'username_too_short':
+				echo '<div class="al er"><p>'.lg('Minimum nickname character is 3 letter.').'</p></div>';
+				break;
+			case 'password_not_match':
+				echo '<div class="al er"><p>'.lg('Both password didn\'t match each other, Please check.').'</p></div>';
+				break;
+			case 'password_too_short':
+				echo '<div class="al er"><p>'.lg('Your password is too weak, try to use more combination.').'</p></div>';
+				break;
+			case 'db_auth_error':
+				echo '<div class="al er"><p>'.lg('Connection error. Check Database Username or Database Password.').'</p></div>';
+				break;
+			case 'db_auth_error':
+				echo '<div class="al er"><p>'.lg('Connection error. Check Database Username or Database Password.').'</p></div>';
+				break;
+			case 'register_user_failed':
+				echo '<div class="al er"><p>'.lg('Failed to register new user.').'</p></div>';
+				break;
+			
+			default:
+				
+				break;
+		}
+		?>
+
+		<div class="pb" style="width: 36%"><span>36%</span></div>
+		<div class="box">
+			<form action="inc/install_step2.php" method="post">
+				<div class="cen">
+					<h2><?php echo lg('Hi bro! Introduce your self') ?></h2><br/>
+				</div>
+				<div class="lef">
+					<div class="group">
+						<input type="text" name="fn" placeholder="<?php echo lg('My Name is...') ?>" value="<?php echo @$_SESSION['fn'] ?>"/>
+						<p class="cb"><?php echo lg('Your full name here.') ?></p>
+					</div>
+					<div class="group">
+						<input type="text" name="un" placeholder="<?php echo lg('You can call me...') ?>" value="<?php echo @$_SESSION['un'] ?>"/>
+						<p class="cb"><?php echo lg('Your short name, without space but allowed using underscore and lower case only (letter and number).') ?></p>
+					</div>
+					<div class="group">
+						<input type="text" name="e" placeholder="<?php echo lg('Maybe sometimes you need to E-mail me...') ?>" value="<?php echo @$_SESSION['e'] ?>"/>
+						<p class="cb"><?php echo lg('Enter your active e-mail, it needed when your site in bad situation.') ?></p>
+					</div>
+					<div class="group">
+						<input type="password" name="pu" placeholder="<?php echo lg('My secret word... (Password)') ?>"/>
+						<p class="cb"><?php echo lg('Some combination of letter, number and symbol. Pick one that easy to remember.') ?></p>
+					</div>
+					<div class="group">
+						<input type="password" name="puc" placeholder="<?php echo lg('Secret word once again... (Password Again)') ?>"/>
+						<p class="cb"><?php echo lg('Type again your password. And remember it.') ?></p>
+					</div>
+					
+				</div>
+				<div class="rig">
+					<button type="submit" class="btn p-rig"><?php echo lg('Next') ?></button><br/><br/>
+				</div>
+			</form>
+		</div>
+		<div class="xs">
+			<i><?php echo lg('Everything inside one Bin, Elybin CMS.') ?></i>
+			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+	
+	case 'step3':
+	// allowed if.. 
+	switch(install_status()){
+		case 0:
+			header('location: index.php');exit;
+			break;
+		case 1:
+			header('location: ?p=step1');exit;
+			break;
+		case 2:
+			header('location: ?p=step1');exit;
+			break;
+		case 3:
+			header('location: ?p=step2');exit;
+			break;
+		case 4:
+			//header('location: ?p=step3');
+			break;
+		case 5:
+			header('location: ?p=finish');exit;
+			break;
+		case -1:
+			header('location: ?p=locked');exit;
+			break;
+		default:
+			header('location: ?p=404');exit;
+			break;
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Quick Install')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'fill_sitetitle':
+				echo '<div class="al er"><p>'.lg('Enter your site title.').'</p></div>';
+				break;
+			case 'fill_category':
+				echo '<div class="al er"><p>'.lg('Select site category.').'</p></div>';
+				break;
+			case 'fill_colour':
+				echo '<div class="al er"><p>'.lg('Select your favorite color.').'</p></div>';
+				break;
+			case 'sitename_too_long':
+				echo '<div class="al er"><p>'.lg('Site title too long maybe.').'</p></div>';
+				break;
+			
+			default:
+				break;
+		}
+		?>
+
+		<div class="pb" style="width: 82%"><span>82%</span></div>
+		<div class="box">
+			<div class="cen">
+				<?php
+				// more friendly
+				if(isset($_SESSION['un']) && @$_SESSION['un'] !== ''){
+					echo '<h2>'.ucfirst($_SESSION['un']).', '.lg('How your website will look like?').'</h2><br/>';
+				}else{
+					echo '<h2>'.lg('How your website will look like?').'</h2><br/>';
+				}
+				?>
+			</div>
+			<form action="inc/install_step3.php" method="post">
+				<div class="lef">
+					<div class="group">
+						<?php
+						// more friendly
+						if(isset($_SESSION['un']) && @$_SESSION['un'] !== ''){
+							echo '<input type="text" name="wn" placeholder="'.lg('Enter site title. for example:').' '.ucfirst(strtolower($_SESSION['un'])).'\'s Amazing Story'.'"  value="'.@$_SESSION['wn'].'"/>';
+						}else{
+							echo '<input type="text" name="wn" placeholder="'.lg('Enter site title. for example: Richoo\'s Amazing Story').'"  value="'.@$_SESSION['wn'].'"/>';
+						}
+						?>
+						
+						<p class="cb"><?php echo lg('Enter your site main title, I suggest name that simple but can describe yours.') ?></p>					
+					</div>
+					<div class="group">
+						<select name="wc">
+							<option value="none"<?php if(@$_SESSION['wc']=='none'){ echo ' selected="selected"';} ?>><?php echo lg('It will be...') ?></option>
+							<option value="personal"<?php if(@$_SESSION['wc']=='personal'){ echo ' selected="selected"';} ?>><?php echo lg('Personal Website') ?></option>
+							<option value="community"<?php if(@$_SESSION['wc']=='community'){ echo 's elected="selected"';} ?>><?php echo lg('Community or Organization') ?></option>
+							<option value="business"<?php if(@$_SESSION['wc']=='business'){ echo ' selected="selected"';} ?>><?php echo lg('Company or Business Profile') ?></option>
+							<option value="business"<?php if(@$_SESSION['wc']=='catalogue'){ echo ' selected="selected"';} ?>><?php echo lg('Online Catalogue/Sell and Buy Website') ?></option>
+							<option value="business"<?php if(@$_SESSION['wc']=='gallery'){ echo ' selected="selected"';} ?>><?php echo lg('Photo Gallery/About Art') ?></option>
+							<option value="business"<?php if(@$_SESSION['wc']=='event'){ echo ' selected="selected"';} ?>><?php echo lg('Event Website/RSVP') ?></option>
+							<option value="business"<?php if(@$_SESSION['wc']=='application'){ echo ' selected="selected"';} ?>><?php echo lg('Application/Internal System/Cashier') ?></option>
+							<option value="other"<?php if(@$_SESSION['wc']=='other'){ echo ' selected="selected"';} ?>><?php echo lg('Other...') ?></option>
+						</select>
+					</div>
+					<div class="group">
+						<select name="fc">
+							<option value="none"<?php if(@$_SESSION['fc']=='none'){ echo ' selected="selected"';} ?>><?php echo lg('My favorite color...') ?></option>
+							<option value="red"<?php if(@$_SESSION['fc']=='red'){ echo ' selected="selected"';} ?>><?php echo lg('Red') ?></option>
+							<option value="pink"<?php if(@$_SESSION['fc']=='pink'){ echo ' selected="selected"';} ?>><?php echo lg('Pink') ?></option>
+							<option value="orange"<?php if(@$_SESSION['fc']=='orange'){ echo ' selected="selected"';} ?>><?php echo lg('Orange') ?></option>
+							<option value="yellow"<?php if(@$_SESSION['fc']=='yellow'){ echo ' selected="selected"';} ?>><?php echo lg('Yellow') ?></option>
+							<option value="green"<?php if(@$_SESSION['fc']=='green'){ echo ' selected="selected"';} ?>><?php echo lg('Green') ?></option>
+							<option value="brown"<?php if(@$_SESSION['fc']=='brown'){ echo ' selected="selected"';} ?>><?php echo lg('Brown') ?></option>
+							<option value="blue"<?php if(@$_SESSION['fc']=='blue'){ echo ' selected="selected"';} ?>><?php echo lg('Light Blue') ?></option>
+							<option value="purple"<?php if(@$_SESSION['fc']=='purple'){ echo ' selected="selected"';} ?>><?php echo lg('Purple') ?></option>
+							<option value="black"<?php if(@$_SESSION['fc']=='black'){ echo ' selected="selected"';} ?>><?php echo lg('Black') ?></option>
+							<option value="other"<?php if(@$_SESSION['fc']=='other'){ echo ' selected="selected"';} ?>><?php echo lg('Other...') ?></option>
+						</select>
+					</div>
+				</div>
+				<div class="rig">
+					<button type="submit" class="btn p-rig"><?php echo lg('Next') ?></button><br/><br/>
+				</div>
+			</form>
+		</div>
+		<div class="xs">
+			<i><?php echo lg('Everything inside one Bin, Elybin CMS.') ?></i>
+			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+
+	case 'finish':
+	// allowed if status -1
+	switch(install_status()){
+		case 0:
+			header('location: index.php');exit;
+			break;
+		case 1:
+			header('location: ?p=step1');exit;
+			break;
+		case 2:
+			header('location: ?p=step1');exit;
+			break;
+		case 3:
+			header('location: ?p=step2');exit;
+			break;
+		case 4:
+			header('location: ?p=step3');exit;
+			break;
+		case 5:
+			//header('location: ?p=finish');exit;
+			break;
+		case -1:
+			header('location: ?p=locked');exit;
+			break;
+		default:
+			header('location: ?p=404');exit;
+			break;
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Quick Install')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<link rel='stylesheet' href='assets/stylesheets/fontawesome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+
+		<div class="pb" style="width: 100%"><span>100%</span></div>
+		<div class="box">
+			<div class="cen">
+				<h2><?php echo lg('Hurray! your website already up!') ?></h2><br/>
+				<i class="fa fa-5x fa-rocket"></i><br/><br/>
+				<i><?php echo lg('Let\'s celebrate, don\'t forget to decorate it.') ?></i>
+			</div>
+			<div class="cen">
+				<a href="?p=visit" class="btn"><?php echo lg('Visit your new home') ?></a>
+				<a href="?p=login" class="btn"><?php echo lg('Login as Owner') ?></a>
+			</div>
+		</div>
+		<div class="xs">
+			<i><?php echo lg('Everything inside one Bin, Elybin CMS.') ?></i>
+			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+
+	case 'locked':
+	// allowed if status -1
+	switch(install_status()){
+		case 0:
+			header('location: index.php');exit;
+			break;
+		case 1:
+			header('location: ?p=step1');exit;
+			break;
+		case 2:
+			header('location: ?p=step1');exit;
+			break;
+		case 3:
+			header('location: ?p=step2');exit;
+			break;
+		case 4:
+			header('location: ?p=step3');exit;
+			break;
+		case 5:
+			header('location: ?p=finish');exit;
+			break;
+		case -1:
+			//header('location: ?p=locked');
+			break;
+		default:
+			header('location: ?p=404');exit;
+			break;
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Locked')?> - Elybin CMS</title>
+	<link rel='stylesheet' href='assets/stylesheets/install-welcome.css' type='text/css'/>
+	<link rel='stylesheet' href='assets/stylesheets/fontawesome.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'register_complete':
+				echo '<div class="al ok"><p>'.lg('Registration complete. You can login now.').'</p></div>';
+				break;
+			
+			default:
+				
+				break;
+		}
+		?>
+
+		<div class="box">
+			<div class="cen">
+				<h2><?php echo lg('Installation Locked Temporary') ?></h2><br/>
+				<i class="fa fa-5x fa-lock"></i><br/>
+				<i><?php echo lg('We\'re preventing someone steal your website while installing. So, your install process automatically locked after 2 hours, to continue installaion delete <code>install_date.txt</code> inside <code>elybin-install</code> and refresh this page.') ?></i>
+			</div>
+			<div class="cen">
+				<a href="index.php" class="btn"><?php echo lg('Refresh Page') ?></a>
+			</div>
+		</div>
+		<div class="xs">
+			<i>Everything inside one Bin, Elybin CMS.</i>
+			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+
+	case 'visit':
+	// allowed if status -1
+	switch(install_status()){
+		case 5:
+			//header('location: ?p=finish');exit;
+			break;
+		default:
+			header('location: index.php');exit;
+			break;
+	}
+	// self kill
+	remove_installer();
+	header('location: ../');
+		break;
+
+	case 'login':
+	// allowed if status -1
+	switch(install_status()){
+		case 5:
+			//header('location: ?p=finish');exit;
+			break;
+		default:
+			header('location: index.php');exit;
+			break;
+	}
+	// self kill
+	remove_installer();
+	header('location: ../elybin-admin/index.php?p=login');
+		break;
+
+
+	// change language
+	case 'id':
+		change_language('id-ID');
+		break;
+	// change language
+	case 'en':
+		change_language('en-US');
+		break;
+}
 ?>

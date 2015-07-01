@@ -3,12 +3,13 @@
  * [ Module: Home - Dashboard
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 if(!isset($_SESSION['login'])){
-	header('location:../403.php');
+	header('location: index.php');
+	exit;
 }else{
 	//STATISTIK
 	$date = date("Y-m-d");
@@ -49,7 +50,7 @@ if(!isset($_SESSION['login'])){
 	
 ?>
 		<div class="page-header">
-			<h1>&nbsp;<span class="fa fa-dashboard"></span>&nbsp;&nbsp;<?php echo $lg_dashboard?></h1>
+			<h1>&nbsp;<span class="fa fa-dashboard"></span>&nbsp;&nbsp;<?php echo lg('Dashboard') ?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
 		<div class="row">
@@ -93,37 +94,6 @@ if(!isset($_SESSION['login'])){
 				}
 				?>
 			</div>
-						<!-- View Modal -->
-						<div id="view" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-							<div class="modal-dialog modal-md">
-								<div class="modal-content">
-									<?php echo $lg_loading?>...
-								</div> <!-- / .modal-content -->
-								<!-- Javascript -->
-							</div> <!-- / .modal-dialog -->
-						</div> <!-- / .modal -->
-						<!-- / View Modal -->
-
-						<!-- Edit Modal -->
-						<div id="editmodal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-							<div class="modal-dialog modal-md">
-								<div class="modal-content">
-									<?php echo $lg_loading?>...
-								</div> <!-- / .modal-content -->
-							</div> <!-- / .modal-dialog -->
-						</div> <!-- / .modal -->
-						<!-- / Edit Modal -->
-
-						<!-- Delete Modal -->
-						<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
-							<div class="modal-dialog modal-sm">
-								<div class="modal-content">
-									<?php echo $lg_loading?>...
-								</div> <!-- / .modal-content -->
-							</div> <!-- / .modal-dialog -->
-						</div> <!-- / .modal -->
-						<!-- / Delete Modal -->
-
 		</div><!-- /.row -->
 <?php
 }

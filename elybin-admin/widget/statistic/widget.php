@@ -2,18 +2,10 @@
 if(!isset($_SESSION['login'])){
 	header('location: ../../../404.html');
 }else{
-	// get user privilages
-	$tbus = new ElybinTable('elybin_users');
-	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-	$level = $tbus->current()->level; // getting level from curent user
-
-	$tbug = new ElybinTable('elybin_usergroup');
-	$tbug = $tbug->SelectWhere('usergroup_id', $level,'','')->current();
 	// get priv setting
-	$ugv = $tbug->setting;
-	$ugcom = $tbug->comment;
+	$ug = _ug();
 	// allow if got setting and comment priv 
-	if($ugv == 1 AND $ugcom == 1){
+	if($ug->setting == 1 && $ug->comment == 1){
 		// convert to js
 		function stat_graph(){
 			$yesterday3 = mktime(0,0,0,date("m"),date("d")-3,date("Y"));
@@ -67,7 +59,7 @@ if(!isset($_SESSION['login'])){
 									data: uploads_data,
 									xkey: 'day',
 									ykeys: ['h', 'v'],
-									labels: ['<?php echo $lg_hits?>', '<?php echo $lg_visit?>'],
+									labels: ['<?php echo lg('Hits')?>', '<?php echo lg('Visit')?>'],
 									hideHover: 'auto',
 									lineColors: ['#fff'],
 									fillOpacity: ['0.5'],
@@ -92,20 +84,20 @@ if(!isset($_SESSION['login'])){
 								<!-- Bordered, without right border, top aligned text -->
 								<div class="stat-cell col-xs-12 col-sm-5 col-md-4 bordered no-border-r padding-sm-hr valign-top">
 									<!-- Small padding, without top padding, extra small horizontal padding -->
-									<h4 class="padding-sm no-padding-t padding-xs-hr"><i class="fa fa-bar-chart-o text-primary"></i>&nbsp;&nbsp;<?php echo $lg_dailystatistic?></h4>
+									<h4 class="padding-sm no-padding-t padding-xs-hr"><i class="fa fa-bar-chart-o text-primary"></i>&nbsp;&nbsp;<?php echo lg('Today Statistic')?></h4>
 									<!-- Without margin -->
 									<ul class="list-group no-margin">
 										<!-- Without left and right borders, extra small horizontal padding -->
 										<li class="list-group-item no-border-hr padding-xs-hr">
-											<?php echo $lg_hits?> <span class="label pull-right bg-success"><?php echo $value1; ?></span>
+											<?php echo lg('Hits') ?> <span class="label pull-right bg-success"><?php echo $value1; ?></span>
 										</li> <!-- / .list-group-item -->
 										<!-- Without left and right borders, extra small horizontal padding -->
 										<li class="list-group-item no-border-hr padding-xs-hr">
-											<?php echo $lg_visit?> <span class="label pull-right bg-info"><?php echo $value2; ?></span>
+											<?php echo lg('Visit')?> <span class="label pull-right bg-info"><?php echo $value2; ?></span>
 										</li> <!-- / .list-group-item -->
 										<!-- Without left and right borders, without bottom border, extra small horizontal padding -->
 										<li class="list-group-item no-border-hr no-border-b padding-xs-hr">
-											<?php echo $lg_comment?> <span class="label pull-right bg-danger"><?php echo $value3; ?></span>
+											<?php echo lg('Comment')?> <span class="label pull-right bg-danger"><?php echo $value3; ?></span>
 										</li> <!-- / .list-group-item -->
 									</ul>
 								</div> <!-- /.stat-cell -->

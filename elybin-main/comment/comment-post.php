@@ -6,183 +6,158 @@ include_once('../elybin-infograb.php');
 include_once('../../elybin-admin/lang/main.php');
 
 $v = new ElybinValidasi;
-$tbc = new ElybinTable('elybin_comments');
 settzone();
+
+$op = _op();
 
 //if comment deny
 if($op->default_comment_status=="deny"){
-	header('location: ../../404.html');
-	exit;
+	result(array(
+		'status' => 'error',
+		'title' => lg('Error'),
+		'msg' => lg('Comment Disabled'),
+		'msg_ses' => 'comment_disabled',
+		'red' => 'post-'.$post_id.'-post.html'
+	), @$_GET['r']);
 }
 
-if(empty($_SESSION['login'])){
 
-	$post_id = $v->sql($_POST['post_id']);
-	$name = $v->xss($_POST['name']);
-	$email = $v->xss($_POST['email']);
-	$content = htmlspecialchars($_POST['message']);
-	$ip = $_SERVER['REMOTE_ADDR'];
-	$date = date("Y-m-d");
-	$time = date("H:i:s");
+// get data
+if(empty($_SESSION['login'])){
+	$post_id = $v->sql(@$_POST['post_id']);
+	$name = $v->xss(@$_POST['name']);
+	$email = $v->xss(@$_POST['email']);
+	$content = htmlspecialchars(@$_POST['message']);
 	$avatar = "default/medium-no-ava.png";
-	if($op->default_comment_status=="confrim"){
-		$status = "deactive";
-	}else{
-		$status = "active";
-	}
+	if($op->default_comment_status=="confrim"){ $status = "deactive"; }else{ $status = "active";}
+	$uid = 0;
 
 	//if field empty
 	if(empty($name) OR empty($email) OR empty($content)){
-		//fill important
-		$s = array(
+		result(array(
 			'status' => 'error',
-			'title' => $lg_error,
-			'isi' => $lg_pleasefillimportant
-		);
-		echo json_encode($s);
-		exit;
+			'title' => lg('Error'),
+			'msg' => lg('Please fill important field (*)'),
+			'msg_ses' => 'fill_important',
+			'red' => 'post-'.$post_id.'-post.html'
+		), @$_GET['r']);
 	}
-	
-	// if code wrong
-	if(checkcode(@$_POST['code']) == false){
-		//fill important
-		$s = array(
-			'status' => 'error',
-			'title' => $lg_error,
-			'isi' => $lg_invalidcode
-		);
-		echo json_encode($s);
-		exit;
-	}
-	
-	// prepare data
-	$data = array(
-		'author' => $name,
-		'email' => $email,
-		'ip' => $ip,
-		'date' => $date,
-		'time' => $time,
-		'content' => $content,
-		'status' => $status,
-		'post_id' => $post_id
-	);
-	
-	// push notif
-	$dpn = array(
-		'code' => 'new_comment',
-		'title' => '$lg_comment',
-		'icon' => 'fa-comments',
-		'type' => 'info',
-		'content' => '[{"post_id":"'.$post_id.'", "author":"'.$name.'", "user_id":"", "content":"'.htmlentities($content, ENT_QUOTES).'", "single":"$lg_newcommentfrom","more":"$lg_newcomments"}]'
-	);
-	pushnotif($dpn);
-}else{	
-	// get current active user
-	$s = $_SESSION['login'];
-	$tblu = new ElybinTable("elybin_users");
-	$tblu = $tblu->SelectWhere("session","$s","","");
-	$tblu = $tblu->current();
 
-	$post_id = $v->sql($_POST['post_id']);
-	$name = $tblu->fullname;
-	$email = $tblu->user_account_email;
-	$content = htmlentities($_POST['message'], ENT_QUOTES);
-	$ip = $_SERVER['REMOTE_ADDR'];
-	$date = date("Y-m-d");
-	$time = date("H:i:s");
-	
-	if($tblu->avatar == "default/no-ava.png"){
-		$avatar = "default/medium-no-ava.png";
-	}else{
-		$avatar = "medium-$tblu->avatar";
-	}
-	if($op->default_comment_status=="confrim"){
-		$status = "deactive";
-	}else{
-		$status = "active";
-	}
+	// validate
+	$v->name($name,'post-'.$post_id.'-post.html');
+	$v->mail($email, 'post-'.$post_id.'-post.html');
+
+
+}else{
+	// get current active user
+	$u = _u();
+
+	$post_id = $v->sql(@$_POST['post_id']);
+	$name = $u->fullname;
+	$email = $u->user_account_email;
+	$content = htmlentities(@$_POST['message'], ENT_QUOTES);
+	if($u->avatar == "default/no-ava.png"){ $avatar = "default/medium-no-ava.png"; }else{ $avatar = "md-$u->avatar";}
+	if($op->default_comment_status=="confrim"){ $status = "deactive"; }else{ $status = "active";}
+	$uid = $u->user_id;
 
 	//if field empty
 	if(empty($content)){
 		//fill important
-		$s = array(
+		result(array(
 			'status' => 'error',
-			'title' => $lg_error,
-			'isi' => $lg_pleasefillimportant
-		);
-		echo json_encode($s);
-		exit;
+			'title' => lg('Error'),
+			'msg' => lg('Please fill important field (*)'),
+			'msg_ses' => 'fill_important',
+			'red' => 'post-'.$post_id.'-post.html'
+		), @$_GET['r']);
 	}
-	
-	// if code wrong
-	if(checkcode(@$_POST['code']) == false){
-		//fill important
-		$s = array(
-			'status' => 'error',
-			'title' => $lg_error,
-			'isi' => $lg_invalidcode
-		);
-		echo json_encode($s);
-		exit;
-	}
-
-	// prepare data
-	$data = array(
-		'author' => NULL,
-		'email' => NULL,
-		'ip' => $ip,
-		'date' => $date,
-		'time' => $time,
-		'content' => $content,
-		'status' => $status,
-		'post_id' => $post_id,
-		'user_id' => $tblu->user_id
-	);
-	
-	// push notif
-	$dpn = array(
-		'code' => 'new_comment',
-		'title' => '$lg_comment',
-		'icon' => 'fa-comments',
-		'type' => 'info',
-		'content' => '[{"post_id":"'.$post_id.'", "user_id":"'.$tblu->user_id.'", "content":"'.$tblu->fullname.'", "single":"$lg_newcommentfrom","more":"$lg_newcomments"}]'
-	);
-	pushnotif($dpn);
 }	
-	// if post deny commenting
-	$tbpo = new ElybinTable('elybin_posts');
-	$cpost = $tbpo->SelectWhere('post_id', $post_id, '', '')->current();
-	if($cpost->comment!=='allow'){
-		header('location: ../../404.html');
-		exit;
-	}
+//if overflow
+if(strlen($content) > 500){
+	result(array(
+		'status' => 'error',
+		'title' => lg('Error'),
+		'msg' => lg('Maximum content is 500 character.'),
+		'msg_ses' => 'max_content',
+		'red' => 'post-'.$post_id.'-post.html'
+	), @$_GET['r']);
+}
+// if code wrong
+if(checkcode(@$_POST['code']) == false){
+	result(array(
+		'status' => 'error',
+		'title' => lg('Error'),
+		'msg' => lg('Invalid Code'),
+		'msg_ses' => 'captcha_error',
+		'red' => 'post-'.$post_id.'-post.html'
+	), @$_GET['r']);
+}
+// if post deny commenting
+$p = _p('post_id', $post_id);
+if($p->comment!=='allow'){
+	result(array(
+		'status' => 'error',
+		'title' => lg('Error'),
+		'msg' => lg('Comment Disabled'),
+		'msg_ses' => 'comment_disabled',
+		'red' => 'post-'.$post_id.'-post.html'
+	), @$_GET['r']);
+}
 
-	$tbc->Insert($data);
-	$value_n = "$lg_newcommentfrom <strong>$name</strong>";
-	//notif_push('new_comment', 'comment', $value_n, 'info', 'fa-comments');
+// get visitor id 
+$vi = _vi('visitor_ip', $_SERVER['REMOTE_ADDR']);
+
+// prepare data
+$tbc = new ElybinTable('elybin_comments');
+$tbc->Insert(array(
+	'author' => $name,
+	'email' => $email,
+	'visitor_id' => $vi->visitor_id,
+	'date' => date('Y-m-d H:i:s'),
+	'content' => $content,
+	'status' => $status,
+	'post_id' => $post_id,
+	'user_id' => $uid
+));
+
+// push notif
+pushnotif(array(
+	'module'	=> 'comment',
+	'icon'		=> 'fa-comments',
+	'type'		=> 'info',
+	'code' 		=> 'new_comment',
+	'title'		=> lg('New Comment'),
+	'content'	=> '<b>'.strip_tags($name).'</b> &#34;'.substr(strip_tags($content),0,100).';...&#34<br/>'.substr($p->title,0,20).'...'
+));
 
 	
-	//Done
-	if($op->default_comment_status=="allow"){
-		$s = array(
-			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_commenthasbeenadded,
-			'fullname' => $name,
-			'message' => $content,
-			'avatar' => $avatar
-		);
-	}
-	elseif($op->default_comment_status=="confrim"){
-		$s = array(
-			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_commenthasbeenaddedwaitingadminconfirmation,
-			'fullname' => $name,
-			'message' => $content,
-			'avatar' => $avatar
-		);
-	}
-	echo json_encode($s);
+//Done
+if($op->default_comment_status=="allow"){
+	result(array(
+		'status' => 'ok',
+		'title' => lg('Success'),
+		'msg' => lg('Comment Saved.'),
+		'msg_ses' => 'comment_saved',
+		'red' => 'post-'.$post_id.'-post.html',
+		'fullname' => $name,
+		'message' => $content,
+		'avatar' => $avatar
+	), @$_GET['r']);
+}
+elseif($op->default_comment_status=="confrim"){
+	result(array(
+		'status' => 'ok',
+		'title' => lg('Success'),
+		'msg' => lg('Comment saved, and waiting moderation.'),
+		'msg_ses' => 'comment_saved',
+		'red' => 'post-'.$post_id.'-post.html',
+		'fullname' => $name,
+		'message' => $content,
+		'avatar' => $avatar
+	), @$_GET['r']);
+}
 
+// destroy cp session (still not effective)
+unset(@$_SESSION['cp']); @$_SESSION['cp']='';
+exit;
 ?>

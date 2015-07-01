@@ -3,14 +3,16 @@
  * [ Module: Category proccess
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
+-----------------
+v.1.1.3 
+- Delete Related Comment
  */
 session_start();
 if(empty($_SESSION['login'])){	
-	echo '403';
-	header('location:../../../403.php');
+	header('location:../../../403.html');
 }else{
 
 	include_once('../../../elybin-core/elybin-function.php');
@@ -27,11 +29,11 @@ if(empty($_SESSION['login'])){
 		if(empty($name)){
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		$seotitle =  seo_title($name);
@@ -43,13 +45,14 @@ if(empty($_SESSION['login'])){
 			'status' => 'active'	
 			);
 		$tbl->Insert($data);
-		//header('location:../../admin.php?mod='.$mod);
+		
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_datainputsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Data saved successfully.')
 		);
-		json($a);
+		echo json_encode($a);
+		exit;
 	}
 	//EDIT
 	elseif($mod=='category' AND $act=='edit'){
@@ -62,21 +65,21 @@ if(empty($_SESSION['login'])){
 		if(empty($category_id) OR ($cocat == 0)){
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_iderrorpleasereloadpage
+				'title' => lg('Error'),
+				'isi' => lg('ID mismatch, please reload page')
 			);
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		
 		if(empty($name)){
 			$a = array(
 				'status' => 'error',
-				'title' => $lg_error,
-				'isi' => $lg_pleasefillimportant
+				'title' => lg('Error'),
+				'isi' => lg('Please fill important field (*)')
 			);
 
-			json($a);
+			echo json_encode($a);
 			exit;
 		}
 		
@@ -97,10 +100,11 @@ if(empty($_SESSION['login'])){
 		
 		$a = array(
 			'status' => 'ok',
-			'title' => $lg_success,
-			'isi' => $lg_dataeditsuccessful
+			'title' => lg('Success'),
+			'isi' => lg('Changes saved')
 		);
-		json($a);
+		echo json_encode($a);
+		exit;
 	}
 
 	//DEL
@@ -111,7 +115,7 @@ if(empty($_SESSION['login'])){
 		$tbl 	= new ElybinTable('elybin_category');
 		$cocat = $tbl->GetRow('category_id', $category_id);
 		if(empty($category_id) OR ($cocat == 0)){
-			header('location: ../../../404.html');
+			red('../../../404.html');
 			exit;
 		}
 		
@@ -134,10 +138,35 @@ if(empty($_SESSION['login'])){
 			$tbp 	= new ElybinTable('elybin_posts');
 			$cop = $tbp->GetRow('category_id', $category_id);
 			if($cop > 0){
-				$tbp->Delete('category_id', $category_id);
+				// 1.1.3
+				//get related post
+				$related_post = $tbp->SelectFullCustom("
+				SELECT
+				*
+				FROM
+				`elybin_posts` as `p`
+				WHERE
+				`p`.`category_id` = $category_id
+				");
+				
+				// delete related comment
+				$tbco 	= new ElybinTable('elybin_comments');
+				foreach($related_post as $rp){
+					$coco = $tbco->GetRow('post_id', $rp->post_id);
+					if($coco > 0){
+						$tbco->Delete('post_id', $rp->post_id);
+					}
+						
+					// delete post
+					$tbp->Delete('post_id', $rp->post_id);
+						
+					// delete revision of post
+					$tbp->Delete('parent', $rp->post_id);
+				}
 			}
+			
 		}
-		
+		// delete category
 		$tbl->Delete('category_id', $category_id);
 		header('location: ../../admin.php?mod='.$mod);
 	}	
@@ -178,7 +207,31 @@ if(empty($_SESSION['login'])){
 					$tbp 	= new ElybinTable('elybin_posts');
 					$cop = $tbp->GetRow('category_id', $category_id_fix);
 					if($cop > 0){
-						$tbp->Delete('category_id', $category_id_fix);
+						// 1.1.3
+						//get related post
+						$related_post = $tbp->SelectFullCustom("
+						SELECT
+						*
+						FROM
+						`elybin_posts` as `p`
+						WHERE
+						`p`.`category_id` = $category_id_fix
+						");
+						
+						// delete related comment
+						$tbco 	= new ElybinTable('elybin_comments');
+						foreach($related_post as $rp){
+							$coco = $tbco->GetRow('post_id', $rp->post_id);
+							if($coco > 0){
+								$tbco->Delete('post_id', $rp->post_id);
+							}
+								
+							// delete post
+							$tbp->Delete('post_id', $rp->post_id);
+								
+							// delete revision of post
+							$tbp->Delete('parent', $rp->post_id);
+						}
 					}
 				}
 				

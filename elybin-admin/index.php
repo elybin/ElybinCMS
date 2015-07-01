@@ -1,277 +1,396 @@
 <?php
-/* Short description for file
- * [ Index of admin panel
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
- */
-session_start();
+include '../elybin-core/elybin-oop.php';
+include '../elybin-core/elybin-function.php';
 
-// check instaled or not
-if(!file_exists("../elybin-core/elybin-config.php")){
-	header('location: ../elybin-install/');
-	exit;
-}
-
-include_once('../elybin-core/elybin-function.php');
-include_once('../elybin-core/elybin-oop.php');
-include_once('./lang/main.php');
-
-//act
-$act = @$_GET['act'];
-switch($act){
-	case 'wrong':
-	$msg_type = "warning";
-	$msg = "<strong>$lg_ouch!</strong> $lg_wrongcombination";
-		break;
-		
-	case 'invalidcode':
-	$msg_type = "warning";
-	$msg = "<strong>$lg_ouch!</strong> $lg_invalidcode";
-		break;
-		
-	case 'logout':
-	$msg_type = "info";
-	$msg = "<strong>$lg_cool!</strong> $lg_logoutsuccessful!";
-		break;
-
-	case 'banned':
-	$msg_type = "danger";
-	$msg = "<strong>$lg_hey!</strong> $lg_bannedattempt.";
-		break;
-
-	case 'emailsent':
-	$msg_type = "success";
-	$msg = "<strong>$lg_success!</strong> $lg_emailsentcheckyouremail.";
-		break;
-
-	case 'emailnotfound':
-	$msg_type = "warning";
-	$msg = "<strong>$lg_ouch!</strong> $lg_noaccountwithemailexist.";
-		break;
-
-	case 'urlexpired':
-	$msg_type = "warning";
-	$msg = "<strong>$lg_ouch!</strong> $lg_urlexpired.";
-		break;
-		
-	case 'sessionexpired':
-	$msg_type = "warning";
-	$msg = "<strong>$lg_ouch!</strong> $lg_sessionexpired.";
-		break;
-		
-	case 'resetsuccess':
-	$msg_type = "success";
-	$msg = "<strong>$lg_success!</strong> $lg_yourpasswordupdated.";
-		break;
-
-	default:
-		break;
-}
-
-// count visitor
-$tbv = new ElybinTable("elybin_visitor");
-$ip = str_replace("IP: ","", client_info("yes"));
-$covisitor = $tbv->GetRow('visitor_ip', $ip);
-if($covisitor == 0){
-	// record new
-	$data = array(
-		'visitor_ip' => $ip,
-		'date' => date("Y-m-d"),
-		'hits' => 1,
-		'online' => date("Y-m-d H:i:s")
-	);
-	$tbv->Insert($data);
-}else{
-	// Get prev data
-	$cvisitor = $tbv->SelectWhere('visitor_ip', $ip,'','')->current();
-	$hits = $cvisitor->hits+1;
-	// ban malicious user
-	if($cvisitor->status == "deny"){
-		header('location: ../maintenance.html');
+// redirect to latest url
+if(@$_GET['p'] != 'logout' && @$_GET['p'] != 'logout_modal'){
+	if(isset($_SESSION['login'])){
+		if(isset($_SESSION['ref'])){
+			header('location: '.$ref);
+		}else{
+			header('location: admin.php?mod=home');
+		}
 		exit;
 	}
-		
-	// update exiting
-	$data = array(
-		'hits' => $hits,
-		'online' => date("Y-m-d H:i:s")
-	);
-	$tbv->Update($data,'visitor_ip', $ip);
-}
-	
-//check if already login
-if(isset($_SESSION['login'])){
-	header('location: admin.php');
 }else{
-if(@$_SESSION['loginfail'] >= 6){
-	settzone();
-
-	// push notif
-	$dpn = array(
-		'code' => 'user_attempt',
-		'title' => '$lg_user',
-		'icon' => 'fa-ban',
-		'type' => 'warning',
-		'content' => '[{"author":"Anonymous", "content":"'.client_info("yes").'", "single":"$lg_someonefailedtologin","more":"$lg_userloginattempt"}]'
-	);
-	pushnotif($dpn);
+	// because logout is only for logged user, so force login
+	if(!isset($_SESSION['login'])){
+		header('location: index.php?p=login');
+		exit;
+	}
 }
 
-// minify html
-ob_start('minify_html');
+// get options
+$op = op();
+
+// err msg
+$msg = @$_SESSION['msg'];
+@$_SESSION['msg'] = '';
+
+// use swtch
+switch (@$_GET['p']) {
+	
+	default:
 ?>
 <!DOCTYPE html>
-<!--[if IE 8]>         
-	<html class="ie8"> 
-<![endif]-->
-<!--[if IE 9]>         
-	<html class="ie9 gt-ie8"> 
-<![endif]-->
-<!--[if gt IE 9]>--> 
-	<html class="gt-ie8 gt-ie9 not-ie"> 
-<!--<![endif]-->
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>ElybinCMS - <?php echo $lg_login?></title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
-	<!-- Favicons -->
-    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" />
-
-	<!-- Stylesheets 
-	<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/primary.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/stylesheets/default.css" rel="stylesheet" type="text/css">-->
-	
-	<link href="assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css">
-	<link href="min/?b=assets/stylesheets&amp;f=bootstrap.min.css,pixel-admin.min.css,primary.min.css,pages.min.css,default.min.css" rel="stylesheet" type="text/css">
-	
-	<!--[if lt IE 9]>
-		<script src="assets/javascripts/ie.min.js"></script>
-	<![endif]-->
-
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Login')?> - <?php echo $op->site_name ?></title>
+	<link rel='stylesheet' href='assets/stylesheets/login.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
 </head>
-<body class="theme-default page-signin-alt">
-	<div class="signin-header">
-		<a href="index.php" class="logo">
-			<div class="demo-logo bg-primary" style="background-color: rgba(0,0,0,0) !important"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACkklEQVR42u2W3UtTYRzHDwS9eha0q3Wzuqy/IKi7lRHdWZDQbd304plF3UQoaaQpCVHD0m0SGzpd5s7YKiIpfNk808Cc8w0UphtumM5NdC/ufHueY2k2pM2O3ugXPhzO2/fznJvfcxhmNzsyarX6OMdxWjk4RpK12Ol08pApDofDlpU0X6M5J5LIJaZdGo3m7L+8ewSPpxsLCcT0ZkQqnyNS/XJzkHdjBjNol1vwdNHuDa2FhVev0FVG60qToWsXkuGbBf8F7aBdtJN2b+Q9ODoW9GG2EakvrLjsOpqWA9qF2SaMjAV81JFh5bj7RcAiIJwAOpVAt0oeaJdwknzzErTae7fXSVmWVYbDkYA/1AKX6zw8wmXCJdmgnf6QFdOhuSmFQnFkVVz5pKqcrsjZp4Wt9xb4Xi5HijKw961BO9+TbuqoqHhaJklVKpU6sRCP9E82ocV9He88XAatv1h/rl3HW4JVohgtFKEYzcIdCYtwFybXDXj8ViQWFiPUyVgbTfqBuAgl/x0KfgAKu1eC5X8ziDz7IFjCYbuP3FuBlRiSyCMcIhzgV9jPD0vsW2UEe23DyLMNwZsALG8aXjPpdDo8HU9jYD4Fb2wZ3ugKg39Crn8Ix8E4psDwBPtftPlxUZiBL5Yiz26Mdz6JUCKN2ZmZCSaVSk1mM4Ei8WXkm9ziaX2neMbQtYaxSzxV+1Ws6ZnIepoFg8GxrMUgQ7Td8gm6B69geGyEvtwIA6G+zIDakjqExgNbJCaZn4uhQdeKqof1qHlkxLNSA6pL6tHd/i2n+Z2zmGZpMY6ejn7YLZ/xsa0D46OTOW8cmxLLkR0qJvv0j+0WR6PRAGMymV6YzeZmcrRsB9Sl0+lqdv9sd7Nl+Qlys2tBBC/Z4AAAAABJRU5ErkJggg==" alt="" style="width: 30px"></div>&nbsp;Elybin<em><strong>CMS</strong></em>
-		</a> <!-- / .logo -->
-	</div> <!-- / .header -->
-	<div id="content-wrapper" style="padding-top: 19px !important;"></div>
-	<h1 class="form-header" id="header-title"><?php echo $lg_signintoyouraccount?></h1>
-
-
-	<!-- Form -->
-	<form action="login.php" method="post" id="signin-form_id" class="panel">
-		<div class="form-group">
-			<input type="text" name="elybin_username" id="username_id" class="form-control input-lg" placeholder="<?php echo $lg_username?> <?php echo $lg_or?> <?php echo $lg_email?>">
-		</div> <!-- / Username -->
-
-		<div class="form-group signin-password">
-			<input type="password" name="elybin_password" id="password_id" class="form-control input-lg" placeholder="<?php echo $lg_password?>">
-			<a class="forgot" id="forgot-password-link"><?php echo $lg_forgot?>?</a>
-		</div> <!-- / Password -->
-		
-		<div class="row">
-			<div class="form-group col-xs-6 col-md-8 controls">
-				<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo $lg_code?>" id="code" required data-validation-required-message="Please enter code.">
-				<p class="help-block text-danger"></p>
-			</div>
-			<div class="form-group col-xs-6 col-md-4 controls">
-				<img src="../code.jpg" class="img-rounded img-thumbnail" style="height: 45px">
-			</div>
-		</div> <!-- / Code-->
-		
-		<div class="form-actions">
-			<input type="submit" value="<?php echo $lg_login?>" class="btn btn-primary btn-block btn-lg">
-		</div> <!-- / .form-actions -->
-	</form>
-	<!-- / Form -->
-
-	<!-- Form -->
-
-	<form action="forgot.php" method="post" id="forgot_form_id" class="panel" style="display: none">
-		<div class="alert">
-			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times close"></i></button>
-			<strong><?php echo $lg_forgot?> <?php echo strtolower($lg_password)?>?</strong> <?php echo $lg_forgotemailhint?>.
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
 		</div>
-		<div class="form-group">
-			<input type="email" name="elybin_email" id="email_id" class="form-control input-lg" placeholder="<?php echo $lg_email?>" required="required">
-		</div> <!-- / Username -->
-		<div class="row">
-			<div class="form-group col-xs-6 col-md-8 controls">
-				<input type="text" class="form-control input-lg" name="code" placeholder="<?php echo $lg_code?>" id="code" required data-validation-required-message="Please enter code.">
-				<p class="help-block text-danger"></p>
-			</div>
-			<div class="form-group col-xs-6 col-md-4 controls">
-				<img src="../code.jpg" class="img-rounded img-thumbnail" style="height: 45px">
-			</div>
-		</div> <!-- / Code-->
-		<div class="form-actions">
-			<input type="submit" value="<?php echo $lg_resetpassword?>" class="btn btn-primary btn-block btn-lg">
-		</div> <!-- / .form-actions -->
-	</form>
-	<!-- / Form -->
+		<?php
+		switch ($msg) {
+			case 'logout_success':
+				echo '<div class="al ok"><p>'.lg('Logout Successful.').'</p></div>';
+				break;
+			case 'password_changed':
+				echo '<div class="al ok"><p>'.lg('Changes saved! Login with new password.').'</p></div>';
+				break;
+			case 'wrong_combination':
+				echo '<div class="al er"><p>'.lg('The Username or Password is incorrect.').'</p></div>';
+				break;
+			case 'invalid_code':
+				echo '<div class="al er"><p>'.lg('Wrong captcha code. Please try again.').'</p></div>';
+				break;
+			case 'login_blocked':
+				echo '<div class="al er"><p>'.lg('You have exceeded the number of allowed login attempts. Please try again later.').'</p></div>';
+				break;
+			case 'fill_username':
+				echo '<div class="al er"><p>'.lg('We need something to identify you, like Username or E-mail.').'</p></div>';
+				break;
+			case 'invalid_char':
+				echo '<div class="al er"><p>'.lg('Username or E-mail format not recognized. Double check please.').'</p></div>';
+				break;
+			case 'invalid_link':
+				echo '<div class="al er"><p>'.lg('You try to access invalid link. Please contact Administrator.').'</p></div>';
+				break;
+			case 'expired_link':
+				echo '<div class="al er"><p>'.lg('You try to access expired link. Try to do forgot password again.').'</p></div>';
+				break;
+			case 'not_found':
+				echo '<div class="al er"><p>'.lg('Page not found. (404)').'</p></div>';
+				break;
+			case 'session_expired':
+				echo '<div class="al er"><p>'.lg('Session Expired, Please login again').'</p></div>';
+				break;
+			case 'register_complete':
+				echo '<div class="al ok"><p>'.lg('Registration complete. You can login now.').'</p></div>';
+				break;
+			
+			default:
+				
+				break;
+		}
+		?>
 
-
-	<div class="signin-with">
-		<div class="header"><?php echo $lg_followus?></div>
-		<a href="http://facebook.com/elybincms" class="btn btn-lg btn-facebook rounded" target="_blank"><i class="fa fa-facebook"></i></a>&nbsp;&nbsp;
-		<a href="https://twitter.com/@elybincms" class="btn btn-lg btn-info rounded" target="_blank"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
-		<a href="https://plus.google.com/+Elybin" class="btn btn-lg btn-danger rounded" target="_blank"><i class="fa fa-google-plus"></i></a>
+		<form action="login-process.php?p=login" method="POST">
+			<div class="group">
+				<input type="text" name="u" placeholder="<?php echo lg('Username or E-mail') ?>" required/>
+			</div>
+			<div class="group">
+				<input type="password" name="p" placeholder="<?php echo lg('Password') ?>" required/>
+			</div>
+			<div class="group">
+				<input type="text" name="c" class="w-50" placeholder="<?php echo lg('Right code here') ?>" required/>
+				<img src="../elybin-core/elybin-captcha.php" class="w-45">
+			</div>
+			<button class="btn"><?php echo lg('Sign in') ?></button>
+		</form>
+		<div class="cen">
+			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=forgot"><?php echo lg('Forgot password?') ?></a>
+			<br/>
+			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
+		</div>
 	</div>
-
-<!-- For Lower than IE 9 -->
-<!--[if lte IE 9]>
- 	<script type="text/javascript"> window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">'+"<"+"/script>"); </script>
-<![endif]-->
-<!-- For all browser except IE -->
-<!--[if !IE]> -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-	<script type="text/javascript">if (!window.jQuery) { document.write('<script src="min/?f=assets/javascripts/jquery.min.js"><\/script>'); }</script>
-	<script src="min/?b=assets/javascripts&amp;f=bootstrap.min.js,pixel-admin.min.js" type="text/javascript"></script>
-<!-- <![endif]-->
-
-
-<script><?php ob_start('minify_js'); // minify js ?>
-$(document).ready(function() {  
-<?php
-	if(!empty($msg)){
-?>	setTimeout(function () {
-		options = {
-		type: '<?php echo $msg_type?>',
-		auto_close: 3,// seconds
-		classes: 'alert-dark' // add custom classes
-		}; 
-		PixelAdmin.plugins.alerts.add("<?php echo $msg?>", options);
-	}, 800);
-<?php }?>
-	// Show/Hide password reset form on click
-	
-	$('#forgot-password-link').click(function () {
-		$('#signin-form_id').hide();
-		$('#forgot_form_id').fadeIn(400);
-		$('#header-title').html("<?php echo $lg_resetpassword?>");
-		return false;
-	});
-	$('#forgot_form_id .close').click(function () {
-		$('#forgot_form_id').hide();
-		$('#signin-form_id').fadeIn(400);
-		$('#header-title').html("<?php echo $lg_signintoyouraccount?>");
-		return false;
-	});	
-	window.PixelAdmin.start();
-});<?php ob_end_flush(); // minify_js ?>
-</script>
 </body>
 </html>
 <?php
-ob_end_flush(); // minify_html
+		break;
+	case 'register':	
+		// get temp session
+		$ses_u = @$_SESSION['ses_u'];
+		$ses_e = @$_SESSION['ses_e'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Register')?> - <?php echo $op->site_name ?></title>
+	<link rel='stylesheet' href='assets/stylesheets/login.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'fill_username':
+				echo '<div class="al er"><p>'.lg('Please fill Username first.').'</p></div>';
+				break;
+			case 'fill_email':
+				echo '<div class="al er"><p>'.lg('Please fill E-mail.').'</p></div>';
+				break;
+			case 'fill_password':
+				echo '<div class="al er"><p>'.lg('Please fill Password.').'</p></div>';
+				break;
+			case 'fill_both':
+				echo '<div class="al er"><p>'.lg('Don\'t forget to fill Password in both field.').'</p></div>';
+				break;
+			case 'invalid_email':
+				echo '<div class="al er"><p>'.lg('E-mail format not recognized. Example format is xxx@xxx.xxx.').'</p></div>';
+				break;
+			case 'invalid_username':
+				echo '<div class="al er"><p>'.lg('Username format not recognized. Allowed character for Username is letter(a-z), number(0-9) and underscore (_)').'</p></div>';
+				break;
+			case 'username_too_long':
+				echo '<div class="al er"><p>'.lg('Maximum username character is 12 letter.').'</p></div>';
+				break;
+			case 'username_too_short':
+				echo '<div class="al er"><p>'.lg('Minimum username character is 3 letter.').'</p></div>';
+				break;
+			case 'password_not_match':
+				echo '<div class="al er"><p>'.lg('Both password din\'t match each other, Please check.').'</p></div>';
+				break;
+			case 'username_taken':
+				echo '<div class="al er"><p>'.lg('Username already taken, pick new one.').'</p></div>';
+				break;
+			case 'email_used':
+				echo '<div class="al er"><p>'.lg('E-mail already used by another account.').'</p></div>';
+				break;
+			case 'invalid_code':
+				echo '<div class="al er"><p>'.lg('Oops, wrong captcha code. Please try again.').'</p></div>';
+				break;
+			case 'password_too_short':
+				echo '<div class="al er"><p>'.lg('Your password is too weak, try to use more combination.').'</p></div>';
+				break;
+			
+			default:
+				echo '<div class="al if"><p>'.lg('To complete registration fill this form.').'</p></div>';
+				break;
+		}
+		?>
+		
+		<form action="login-process.php?p=register" method="POST">
+			<div class="group">
+				<input type="text" name="u" placeholder="<?php echo lg('Username') ?>" value="<?php echo $ses_u ?>" required/>
+			</div>
+			<div class="group">
+				<input type="text" name="e" placeholder="<?php echo lg('E-mail') ?>" value="<?php echo $ses_e ?>" required/>
+			</div>
+			<div class="group">
+				<input type="password" name="p" placeholder="<?php echo lg('Password') ?>" required/>
+			</div>
+			<div class="group">
+				<input type="password" name="pc" placeholder="<?php echo lg('Type Password Again') ?>" required/>
+			</div>
+			<div class="group">
+				<input type="text" name="c" class="w-50" placeholder="<?php echo lg('Right code here') ?>"/>
+				<img src="../elybin-core/elybin-captcha.php" class="w-45">
+			</div>
+			<button class="btn"><?php echo lg('Register') ?></button>
+		</form>
+		<div class="cen">
+			<a href="?p=login"><?php echo lg('Login') ?></a> | 
+			<a href="?p=forgot"><?php echo lg('Forgot password?') ?></a>
+			<br/>
+			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+	
+	case 'recover':
+		// grab parameter
+		$get_k = @$_GET['k'];
+		// filter input & never let them empty
+		if(!preg_match("/^[a-z0-9]+$/", $get_k) || empty($get_k) || strlen($get_k) > 32 || strlen($get_k) < 32){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('You try to access invalid link. Please contact Administrator.'),
+				'msg_ses' => 'invalid_link',
+				'red' => 'index.php?p=login'
+			), @$_GET['r']);
+		}
+
+		// counting day from reset to access this link (using lastlogin)
+		$tb = new ElybinTable('elybin_users');
+		$cu = $tb->SelectFullCustom("
+			SELECT
+			*,
+			COUNT(`user_id`) as `row`
+			from
+			`elybin_users` as `u`
+			WHERE 
+			`u`.`user_account_forgetkey` = '$get_k'
+			LIMIT 0,1
+			")->current();
+
+		// if link expired in 24 hour
+		if($cu->row < 1 || diff_date(date('Y-m-d H:i:s'), $cu->forget_date, 'hour') > 24){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('You try to access expired link. Try to do forgot password again.'),
+				'msg_ses' => 'expired_link',
+				'red' => 'index.php?p=login'
+			), @$_GET['r']);
+		}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Reset Password')?> - <?php echo $op->site_name ?></title>
+	<link rel='stylesheet' href='assets/stylesheets/login.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'password_not_match':
+				echo '<div class="al er"><p>'.lg('Both password din\'t match each other, Please check.').'</p></div>';
+				break;
+			case 'password_too_short':
+				echo '<div class="al er"><p>'.lg('Your password is too weak, try to use more combination.').'</p></div>';
+				break;
+			default:
+				echo '<div class="al if"><p>'.lg('Okay! Enter your new password for your account.').'</p></div>';
+				break;
+		}
+		?>
+		<form action="login-process.php?p=recover" method="POST">
+			<div class="group">
+				<input type="password" name="p" placeholder="<?php echo lg('Password') ?>"/>
+			</div>
+			<div class="group">
+				<input type="password" name="pc" placeholder="<?php echo lg('Type Password Again') ?>" required/>
+			</div>
+			<input type="hidden" name="k" value="<?php echo $get_k ?>"/>
+			<button class="btn"><?php echo lg('Reset Password') ?></button>
+		</form>
+		<div class="cen">
+			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=login"><?php echo lg('Login') ?></a>
+			<br/>
+			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+	
+	case 'forgot':
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><?php echo lg('Reset Password')?> - <?php echo $op->site_name ?></title>
+	<link rel='stylesheet' href='assets/stylesheets/login.css' type='text/css'/>
+	<meta name='robots' content='noindex,follow' />
+</head>
+<body>
+	<div class="in">
+		<div class="lo">
+			<img src="assets/images/logo.svg">
+		</div>
+		<?php
+		switch ($msg) {
+			case 'enter':
+				echo '<div class="al er"><p>'.lg('Please enter E-mail of your account.').'</p></div>';
+				break;
+			case 'invalid_char':
+				echo '<div class="al er"><p>'.lg('Username or E-mail format not recognized. Double check please.').'</p></div>';
+				break;
+			case 'email_notfound':
+				echo '<div class="al er"><p>'.lg('E-mail not found inside our database. Try to register new account.').'</p></div>';
+				break;
+			case 'email_limit':
+				echo '<div class="al er"><p>'.lg('We can\'t complete your request right now. Our mailing server very busy & reaching daily limit.').'</p></div>';
+				break;
+			case 'reset_sent':
+				echo '<div class="al ok"><p>'.lg('Instruction was sent into your E-mail. Please check your E-mail.').'</p></div>';
+				break;
+			
+			default:
+				echo '<div class="al if"><p>'.lg('Enter your E-mail of your account. And follow the next step.').'</p></div>';
+				break;
+		}
+		?>
+		<form action="login-process.php?p=forgot" method="POST">
+			<div class="group">
+				<input type="text" name="e" placeholder="<?php echo lg('E-mail') ?>" required/>
+			</div>
+			<button class="btn"><?php echo lg('Send my Password') ?></button>
+		</form>
+		<div class="cen">
+			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=login"><?php echo lg('Login') ?></a>
+			<br/>
+			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
+		</div>
+	</div>
+</body>
+</html>
+<?php
+		break;
+	
+	case 'logout_modal':
+?>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+					<h4 class="modal-title"><i class="fa fa-power-off"></i>&nbsp;&nbsp;<?php echo lg('Logout')?></h4>
+				</div>
+				<div class="modal-body"><?php echo lg('Are you sure to leave current session?')?>
+					<hr/>
+					<a href="index.php?p=logout" class="btn btn-danger"><i class="fa fa-power-off"></i>&nbsp;<?php echo lg('Yes, Exit')?></a>
+					<button class="btn pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Cancel')?></button>
+				</div>
+<?php
+		break;
+	
+	case 'logout':
+		// logout
+		if(!isset($_SESSION['login'])){
+			header('location: index.php');
+		}else{
+			// set session to offline
+			$tb = new ElybinTable('elybin_users');
+			$tb->Update(array('session' => 'offline'), 'session', @$_SESSION['login']);
+		  
+			session_unset();
+			session_destroy();
+			unset($_SESSION['login']);
+			unset($_SESSION['last_activity']);
+			unset($_SESSION['activity_created']);
+
+			// result
+			result(array(
+				'status' => 'ok',
+				'title' => lg('Success'),
+				'msg' => lg('Logout Successful.'),
+				'msg_ses' => 'logout_success',
+				'red' => 'index.php?p=login'
+				), @$_GET['r']);
+		}
+		break;
 }
 ?>

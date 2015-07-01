@@ -1,0 +1,101 @@
+body{
+	background-color: #eee;
+	margin: 0px;
+	font-family: "Open Sans",sans-serif;
+	color: #666;
+}
+a, a:visited, a:link{
+	color: #888;
+	text-decoration: none;
+	font-size: 14px;
+}
+a:hover{
+	color: #49bdce;
+	text-shadow: 1px 1px 1px rgba(0,0,0,.05);
+}
+.in{
+	margin: auto;
+	display: block;
+	width: 320px;
+	height: 100%;
+	padding: 10px;
+	margin-top: 4%;
+	margin-bottom: 2%;
+}
+.in .lo{
+	margin-bottom: 20px;
+	text-align: center;
+}
+.in .lo img{
+	margin: auto;
+	display: block;
+	width: 100px;
+}
+.in form{
+	background-color: #fff;
+	height: auto;
+	padding: 25px 25px;
+	box-shadow: 1px 1px 3px rgba(0,0,0,.05);
+	margin-bottom: 20px;
+}
+.in form .group label{
+	width: 100%;
+	display: block;
+	font-size: 14px;
+	color: #777;
+	margin: 4px 0px;
+}
+.in form .group input{
+	width: 93%;
+	padding: 12px 9px;
+	font-size: 14px;
+	border:1px solid #eaeaea;
+	margin-bottom: 10px;
+	background-color: #fafafa;
+	box-shadow: 1px 1px 3px rgba(0,0,0,.02) inset;
+}
+.in form .group input.w-50{
+	width: 45%;
+}
+.in form .group img.w-45{
+	width: 45%;
+	float: right;
+	height: 40px;
+}
+.in form button.btn{
+	width: 100%;
+	height: 43px;
+	margin-bottom: 5px;
+	background-color: #50c5d6;
+	border: 1px solid #49bdce;
+	color: #fff;
+	font-size: 15px;
+	box-shadow: 1px 1px 4px rgba(0,0,0,.08);
+	text-shadow: 1px 1px 2px rgba(0,0,0,.1);
+	border-radius: 2px;
+}
+.al{
+	padding: 5px 25px;
+	margin-bottom: 5px;
+	color: #fff;
+	box-shadow: 1px 1px 3px rgba(0,0,0,.05);
+	font-size: 14px;
+	text-align: center;
+}
+.er{
+	background-color: #e74c3c;
+}
+.ok{
+	background-color: #2ecc71;
+}
+.if{
+	background-color: #3498db;
+}
+.cen{
+	text-align: center;
+}
+.gry{
+	color: #ddd;
+}
+.blk{
+	color: #333;

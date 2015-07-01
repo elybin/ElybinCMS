@@ -3,7 +3,7 @@
  * [ Notification 
  *	
  * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 Elybin.Inc, All rights reserved.
+ * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
@@ -24,91 +24,67 @@ if(!isset($_SESSION['login'])){
 							<li class="nav-icon-btn nav-icon-btn-danger dropdown" id="notificon">
 								<a href="#notifications" class="dropdown-toggle" data-toggle="dropdown">
 									<?php
-										$notif_count = new ElybinTable('elybin_notification');
-										$notif_total = 0;  
-										$notif_total = $notif_count->GetRow('status', 'unread'); 
-										if($notif_total==0){
-											$notif_total = "";
+										$tbn = new ElybinTable('elybin_notification');
+										$notif_count = $tbn->GetRow();
+										$notif_unread = $tbn->GetRow('status','unread');
+
+										if($notif_unread > 0){
+											echo '<span class="label">'.$notif_unread.'</span>';
 										}
 									?>
-									<span class="label"><?php echo $notif_total?></span>
 									<i class="nav-icon fa fa-bell"></i>
-									<span class="small-screen-text"><?php echo $lg_notification?></span>
+									<span class="small-screen-text"><?php echo lg('Notification') ?></span>
 								</a>
 								<!-- NOTIFICATIONS -->
 								<div class="dropdown-menu widget-notifications no-padding" style="width: 300px; min-height: 70px;">
 									<div class="notifications-list" id="main-navbar-notifications">
 										<?php
-										if($notif_total == ""){
+										if($notif_count < 1){
 										?>
 										<div class="form-group-margin" style="margin-top: 30px;"></div>
 										<div class="text-center text-muted panel-padding">
 											<i class="fa fa-5x fa-bell-o"></i>
-											<h3>Yay!</h3>
-											<p><?php echo $lg_nonotification; ?></p>
+											<h3><?php echo lg('Yeah!') ?></h3>
+											<p><?php echo lg('No Notification'); ?></p>
 										</div>
 										<?php 
 										}else{ 
 											// get data
 											$tbns = new ElybinTable('elybin_notification');
-											$notifs	= $tbns->SelectCustom("SELECT * FROM","WHERE `status` = 'unread' GROUP BY `notif_code`");
-										
-											foreach($notifs as $lns){
-												// include custom lang if exist
-												//get current language
-												$default_language = "en";
-												$tbo = new ElybinTable('elybin_options');
-												$clg = $tbo->SelectWhere('name','language','','')->current()->value;
-												$cmod = $lns->module;
-												
-												$lgdir = "./app/$cmod/lang/$clg/$clg.php";										
-												if(file_exists($lgdir)){
-													@include($lgdir);
-												}else{
-													@include_once("./app/$cmod/lang/$default_language/$default_language.php");
-												}
-											
+											$notifs	= $tbns->SelectFullCustom("
+												SELECT
+												*
+												FROM
+												`elybin_notification` as `n`
+												ORDER BY `notif_id` DESC
+												LIMIT 0,3
+											");
+											foreach($notifs as $cn){
+												//var_dump($cn);
 												//check how much notif with same topic
-												$cnotif = $tbns->GetRowAnd('notif_code', $lns->notif_code, 'status', 'unread');
-												
+												/*$cnotif = $tbns->GetRowAnd('notif_code', $lns->notif_code, 'status', 'unread');
+												*/
 												// give diferent color
-												if($lns->status=='read'){
+												if($cn->status=='read'){
 													$status = ' style="background:#efefef;"';
 												}else{
 													$status = "";
 												}
-												
-												// check string or variable
-												if(substr($lns->title,0,1)=='$'){
-													$lns->title = eval('return '.$lns->title.';');
-												}
-												
-												// decode value
-												if(json_decode($lns->value)){
-													$value = json_decode($lns->value);
-			
-													//if more than one, group it
-													if($cnotif > 1){
-														$content = "$cnotif ".eval('return '.$value[0]->more.';');
-													}else{
-														$content = eval('return '.$value[0]->single.';')." <em>".$value[0]->content."</em>";
-													}
-												
+
 										?>
 											<div class="notification" id="notif"<?php echo $status?>>
-												<div class="notification-title text-danger"><?php echo strtoupper($lns->title)?></div>
-												<div class="notification-description"><?php echo html_entity_decode($content); ?></div>
-												<div class="notification-ago"><?php echo time_elapsed_string($lns->date." ".$lns->time)?></div>
-												<div class="notification-icon fa <?php echo $lns->icon?> bg-<?php echo $lns->type?>"></div>
+												<div class="notification-title text-danger"><?php echo $cn->title?></div>
+												<div class="notification-description"><?php echo substr($cn->value,0,1000) ?></div>
+												<div class="notification-ago"><?php echo time_elapsed_string($cn->date)?> - <?php echo ucfirst($cn->status) ?> - <a href="?mod=<?php echo $cn->module ?>" style="line-height:0px;"><?php echo lg('Detail') ?></a></div>
+												<div class="notification-icon fa <?php echo $cn->icon?> bg-<?php echo $cn->type?>"></div>
 											</div> <!-- / .notification -->
 										<?php
-												}
 											}
 										}
 										?>
 
 									</div> <!-- / .notifications-list -->
-									<a href="?mod=notification" class="notifications-link"><?php echo strtoupper($lg_morenotif)?></a>
+									<a href="?mod=notification" class="notifications-link"><?php echo lg('More Notification') ?></a>
 								</div> <!-- / .dropdown-menu -->
 
 							</li>

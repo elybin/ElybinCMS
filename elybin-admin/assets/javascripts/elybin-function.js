@@ -1,5 +1,84 @@
+/*  Elybin CMS - elybin-function.js v.1.0.1 */
+// 1.1.3
+	
+// hide show
+function toggleform(id, type){
+	// catch error
+	try{
+		// get the old value
+		var old = $(id+" select").html();
+		
+		switch(type){
+			case 'select':
+				// link
+				$(id+" #aform").hide();
+				$(id+" span a").click(function(){
+					$(id+" #aform").stop().slideToggle(100);
+						
+				});
+				// cancel
+				$(id+" a#c").click(function(){
+					$(id+" #aform").slideUp(100);
+					$(id+" select").html(old);
+					return false;
+				});
+				// ok
+				$(id+" div#ok").click(function(){
+					$(id+" #aform").slideUp(100);
+					$(id+" span u").html($(id+" select option:selected").html());
+					// renew old
+					old = $(id+" select").html();
+					return false;
+				});
+			break;
+			case 'selectchild':
 
-/*  Elybin CMS - elybin-function.js v.1.0.0 */
+				// link
+				$(id+" #aform").hide();
+				$(id+" span a").click(function(){
+				$(id+" #aform").stop().slideToggle(100);
+						
+					// show default 
+					if($(id+" select option:selected").val() == $(id+" select option#haschild").val()){
+						$(id+" #child").show();
+					}else{
+						$(id+" #child").hide();
+					}
+				});
+				// cancel
+				$(id+" a#c").click(function(){
+					$(id+" #aform").slideUp(100);
+					$(id+" select").html(old);
+					return false;
+				});
+				// oke
+				$(id+" div#ok").click(function(){
+					$(id+" #aform").slideUp(100);
+					$(id+" span u").html($(id+" select option:selected").html());
+					// renew old
+					old = $(id+" select").html();
+					return false;
+				});
+				// changed
+				$(id+" select").change(function(){
+					if($(id+" select option:selected").val() == $(id+" select option#haschild").val()){
+						$(id+" #child").slideDown(100);
+					}else{
+						$(id+" #child").slideUp(100);
+					}
+				});
+			break;
+				
+			default:
+				alert("Kesalahan JS Halaman: Tipe kode '" + id + "' tidak didefinisikan.");
+		}
+	}
+	catch(err){
+		alert("Kesalahan Javascript: Tampaknya kami mengalami masalah. \r\n" + err);
+	}	
+}
+
+
 //ElybinSearch
 function ElybinSearch(){
     $("#notfound").hide();
@@ -56,10 +135,10 @@ function ElybinCheckAll(){
 }
 function checkAll(){
     window.object = "#results thead tr i";
-    window.ob_check = "fa fa-check-square";
-    window.ob_uncheck = "fa fa-square";
-    window.lg_check = "Check All";
-    window.lg_uncheck = "Uncheck All";
+    window.ob_check = "fa fa-square";
+    window.ob_uncheck = "fa fa-check-square";
+    window.lg_check = "Uncheck All";
+    window.lg_uncheck = "Check All";
 
 
     if($(window.object).attr("data-original-title") !== window.lg_uncheck){ 
@@ -295,15 +374,14 @@ function explode(delimiter, string, limit) {
 
 function ElybinView(){
     $(function() {
-    $('#view').on('hidden.bs.modal', function () {
-         $('#view').removeData('bs.modal');
-    });
-       $("#tooltip a#view-link").click(function(event) {
-            event.preventDefault();
-            $("#view").modal({remote: $(this).attr("href")});
-        })
-
-     })
+		$('#view').on('hidden.bs.modal', function () {
+			 $('#view').removeData('bs.modal');
+		});
+		$("a#view-link").click(function(event) {
+			event.preventDefault();
+			$("#view").modal({remote: $(this).attr("href")});
+		})
+	})
 }
   
 function ElybinEditModal(){
