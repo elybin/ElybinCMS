@@ -1,4 +1,4 @@
-Elybin CMS (www.elybin.com) - Open Source Content Management System 
+Elybin CMS (www.elybin.com) - Open Source Content Management System
 @copyright => Copyright (C) 2014 Elybin, Inc, All rights reserved.
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
 @author    => Khakim Assidiqi <hamas182@gmail.com>
@@ -30,22 +30,22 @@ Tim Elybin
 
 PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
 =========================================
-1. Pastikan anda sudah mendownload Elybin CMS yang memiliki ekstensi akhir (.zip). Ekstrak file tersebut ke hosting atau local server anda. 
+1. Pastikan anda sudah mendownload Elybin CMS yang memiliki ekstensi akhir (.zip). Ekstrak file tersebut ke hosting atau local server anda.
 
-2. Buat basis data (database) untuk menyimpan data-data anda nantinya. 
+2. Buat basis data (database) untuk menyimpan data-data anda nantinya.
 
 3. Buka alamat installasi Elybin CMS melalui browser anda. Contoh pada hosting: http://namawebsiteanda.com/
-Setelah membuka alamat, anda akan diarahkan ke tampilan installasi. Pastikan halaman termuat dengan sempurna. 
+Setelah membuka alamat, anda akan diarahkan ke tampilan installasi. Pastikan halaman termuat dengan sempurna.
 
-4. Pada halaman installasi (Konfigurasi Basis data), masukan Host Database, User Database, Sandi Database dan Nama Database pada kolom yang tepat. Klik jika data sudah terisi dengan benar. Tunggu sesaat hingga mucul tahap berikutnya. 
+4. Pada halaman installasi (Konfigurasi Basis data), masukan Host Database, User Database, Sandi Database dan Nama Database pada kolom yang tepat. Klik jika data sudah terisi dengan benar. Tunggu sesaat hingga mucul tahap berikutnya.
 
-5. Jika tahap pertama berhasil maka akan muncul tahap ke-2 (Informasi Situs). Masukan informasi situs anda. Setelah selesai, klik . 
+5. Jika tahap pertama berhasil maka akan muncul tahap ke-2 (Informasi Situs). Masukan informasi situs anda. Setelah selesai, klik .
 
-6. Sampai pada tahap ke-3. Buat akun Administrator anda dengan mengisikan data - data. Klik , jika data sudah terisi dengan benar. 
+6. Sampai pada tahap ke-3. Buat akun Administrator anda dengan mengisikan data - data. Klik , jika data sudah terisi dengan benar.
 
-7. Selesai, Klik untuk masuk ke halaman Administrator. 
+7. Selesai, Klik untuk masuk ke halaman Administrator.
 
-**Untuk panduan instalasi lengkap beserta video bisa dilihat pada situs kami. 
+**Untuk panduan instalasi lengkap beserta video bisa dilihat pada situs kami.
 http://docs.elybin.com/installation.html
 
 
@@ -54,6 +54,28 @@ http://docs.elybin.com/installation.html
 
 CHANGE LOG (PERUBAHAAN) - http://docs.elybin.com/changelog.html
 =========================================
+Version 1.1.3-dev (Developer Preview) - 1 July 2015
+----------------------
+- Penghapusan beberapa table, dan menggabung menjadi satu
+- Penambahan fitur messages, statistic, album, feedback
+- Peningkatan performa SQL
+- Perbaikan install Theme
+- Perbaikan install plguin
+- Redesign Login & Installer
+- Cut down beberapa sctipt
+- Perbaikan bug XSS pada halaman dashboard
+- Peningkatan Keamanan dengan memakai password hasher
+- Penambahan fitur E-mail SMTP (Beta)
+- Penambahan fitur "Daily Mail Limit"
+- Perbaikan Login dan Blocking
+- Perbaikan Bug Spam pada komentar & Contact
+- Merubah Contact menjadi Messages
+- Perbaikan module Post (Tidak bisa mengubah tulisan)
+- Penambahan fitur share media
+- Perbaikan Notifikasi
+- Perbaikan script elybin-function.php
+- Perbaikan fitur upgrade
+
 Versi 1.1.0 (Gasing) - 5 Januari 2015
 -----------------------
 - Peningkatan performa muat halaman dengan mengoptimalkan CDN
