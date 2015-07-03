@@ -7,7 +7,7 @@
 // @author 	: Khakim A. <hamas182@gmail.com>
 function many_trans($sring_result = true){
 	// current dir
-	$cd = @getcwd(); 
+	$cd = @getcwd();
 	$cd = str_replace("\\","/", $cd);
 	// 				  0    1     2     3        4             5          6         7
 	// $cd 			= D:/xampp/htdocs/rsch/percobaan10/elybin-install/include/ <you here>
@@ -15,10 +15,10 @@ function many_trans($sring_result = true){
 	// $many_trans 	= -2
 	// return 		= '../../' (-2)
 	// return 		= 'elybin-install/include/' (2)
-	
+
 	// explode per dir
 	$expcd = explode("/", $cd);
-	
+
 	// seek `elybin-install` dir
 	$ei_dir = array_search("elybin-install", $expcd);
 	// current dir
@@ -51,7 +51,7 @@ function many_trans($sring_result = true){
 			$many_trans_s .= $expcd[$i].'/';
 		}
 	}
-	
+
 	// if result sring_result
 	if($sring_result){
 		return $many_trans_s;
@@ -82,7 +82,7 @@ function result(Array $a, $result = 'r'){
 }
 
 // 1.1.3
-// language function 
+// language function
 function lg($s){
 	// check current session
 	if(!isset($_SESSION['lang'])){
@@ -140,7 +140,7 @@ function import_sql(array $dir){
 	}
 	// execute query per line
 	$ok_query_c = 0;
-	$ok_query = [];
+	$ok_query[] = ''; //fixed (the corrent way to declare array is not $a = []; but $a[] = '')
 	for($i=0; $i < count($arr_query); $i++){
 		$ok_query[$i]['no'] = $i;
 		if(@mysql_query($arr_query[$i])){
@@ -171,7 +171,7 @@ function connect_with_config(){
 	}else{
 
 		$con = mysql_connect(DB_HOST,DB_USER,DB_PASSWD) or die(mysql_error());
-		
+
 		if($con){
 			if(mysql_select_db(DB_NAME,$con)){
 				return true;
@@ -203,7 +203,7 @@ function install_status(){
 	// I don't know...
 	$install_status = 0;
 	// because installation only works in 24hours, check install date
-	if($install_date = @file_get_contents(many_trans().'elybin-install/install_date.txt')){ 
+	if($install_date = @file_get_contents(many_trans().'elybin-install/install_date.txt')){
 		if(diff_date(date("Y-m-d H:i:s"), $install_date, 'hour') > 2){
 			// status is locked = -1
 			$install_status = -1;
@@ -221,15 +221,15 @@ function install_status(){
 				// try to connect to database
 				@include(many_trans()."elybin-core/elybin-config.php");
 				if(connect_with_config() == true){
-					// this is, I'm tries to check `elybin_users` table			
+					// this is, I'm tries to check `elybin_users` table
 					$q = mysql_query("CHECK TABLE `elybin_users`");
 					$f = mysql_fetch_array($q);
-						
-					// if `elybin_options` row not empty 
+
+					// if `elybin_options` row not empty
 					if($f['Msg_text'] == 'OK'){
 						// step 1c successfully passed
 						$install_status = 3;
-							
+
 						// Next, Checking step 2 (Administrator Account)
 						// if user found in table `elybin_users`
 						$q = mysql_query("SELECT * FROM `elybin_users` WHERE `user_id` = 1 LIMIT 0,1");
@@ -308,7 +308,7 @@ function deleteDir($dirname) {
 
 // funtion try connect manual
 // error code 		: 0 => database not found
-//					  1 => connection error 
+//					  1 => connection error
 // 					  2 => success
 function try_connect_manual($db_host, $db_user, $db_pass, $db_name){
 	// try connect
@@ -325,7 +325,7 @@ function try_connect_manual($db_host, $db_user, $db_pass, $db_name){
 			@$_SESSION['u'] = $u;
 			@$_SESSION['p'] = $p;
 			@$_SESSION['n'] = $n;
-		}	
+		}
 	}else{
 		// cannot connect to database host
 		$status = 1;
@@ -354,9 +354,9 @@ function write_config($db_host, $db_user, $db_pass, $db_name){
 	// write to file (elybin-config.php)
 	//SITE CONFIG
 	$config_dir = many_trans().'elybin-core/elybin-config.php';
-	$config_template = 
+	$config_template =
 	'<?php
-# `elybin-config.php` 
+# `elybin-config.php`
 # If you see this error, copy paste script below and manually create this file.
 # Directory: your_root_website/elybin-core/elybin-config.php
 # After that, refresh this page
@@ -394,8 +394,8 @@ $DB_NAME						= "'.$db_name.'";
 	return false;
 }
 
-// function write_htaccess 
-// error code 		: 0 => failed 
+// function write_htaccess
+// error code 		: 0 => failed
 // 					  1 => success
 function write_htaccess(){
 	// Create htaccess (force write not copy to avoid some error in linux server)
@@ -411,8 +411,8 @@ function write_htaccess(){
 		if(@copy(many_trans()."elybin-install/inc/htaccess_template.txt", $htaccess_dir) == false){
 			// write to session
 			@$_SESSION['htaccess_template'] = $htaccess_template;
-			
-			// result 
+
+			// result
 			return false;
 		}else{
 			return true;
@@ -423,8 +423,8 @@ function write_htaccess(){
 	fclose($f);
 }
 
-// function copy_version() 
-// error code 		: 0 => failed 
+// function copy_version()
+// error code 		: 0 => failed
 // 					  1 => success
 function copy_version(){
 	$elybin_version = many_trans().'elybin-core/elybin-version.php';
@@ -432,7 +432,7 @@ function copy_version(){
 	//remove
 	@deleteDir(many_trans().'elybin-core/elybin-version.php');
 
-	// copy 
+	// copy
 	if(@copy(many_trans()."elybin-install/inc/elybin-version.php", $elybin_version) == false){
 		return false;
 	}else{
@@ -477,7 +477,7 @@ function diff_date($date1, $date2, $result = 'day'){
 			$diff = $diff/60/60/24;
 			break;
 	}
-	
+
 	return $diff;
 }
 
