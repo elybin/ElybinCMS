@@ -619,8 +619,20 @@ switch (@$_GET['p']) {
 		<div class="pb" style="width: 100%"><span>100%</span></div>
 		<div class="box">
 			<div class="cen">
-				<h2><?php echo lg('Hurray! your website already up!') ?></h2><br/>
-				<i class="fa fa-5x fa-rocket"></i><br/><br/>
+				<h2><?php echo lg('Hurray! your website already up!') ?></h2>
+				<?php
+				// if
+				if(isset($_SESSION['temp_user'])){
+				?>
+				<code class="text-left">
+				<?php echo lg('Login with this account') ?><br/>
+				<?php echo lg('Username or E-mail:') ?> <?php echo @$_SESSION['temp_user'] ?><br/>
+				<?php echo lg('Password:') ?> <?php echo @$_SESSION['temp_pass'] ?>
+				</code><br/><br/>
+				<?php
+				}else{ ?>
+				<i class="fa fa-rocket fa-5x"></i><br/><br/>
+				<?php } ?>
 				<i><?php echo lg('Let\'s celebrate, don\'t forget to decorate it.') ?></i>
 			</div>
 			<div class="cen">

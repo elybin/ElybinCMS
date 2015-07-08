@@ -445,13 +445,28 @@
 	"i":"index.php"
 },
 {
-	"f":"Don't forget to delete \"elybin-install\" directory.",
-	"t":"Jangan lupa untuk menghapus direktori \"elybin-install\".",
+	"f":"Don't forget to delete &#34;elybin-install&#34; directory.",
+	"t":"Jangan lupa untuk menghapus direktori &#34;elybin-install&#34;.",
 	"i":"index.php"
 },
 {
 	"f":"Hurray! your website already up!",
 	"t":"Hore! website anda sudah jadi!",
+	"i":"index.php"
+},
+{
+	"f":"Login with this account",
+	"t":"Masuk dengan akun ini",
+	"i":"index.php"
+},
+{
+	"f":"Username or E-mail:",
+	"t":"Nama Pengguna atau E-mail:",
+	"i":"index.php"
+},
+{
+	"f":"Password:",
+	"t":"Katasandi:",
 	"i":"index.php"
 },
 {

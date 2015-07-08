@@ -2,8 +2,8 @@
 /* Short description for file
  * Install : Step 2 Process
  * Checking user installation directory, write site information to `elybin_options`
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -54,6 +54,15 @@ $puc = @$_POST['puc'];
 @$_SESSION['e'] = $e;
 @$_SESSION['pu'] = $pu;
 @$_SESSION['puc'] = $puc;
+
+// temp
+$tmpas = strlen($pu);
+$tmpas_o = '';
+for ($i=0; $i < $tmpas ; $i++) {
+	$tmpas_o .= '*';
+}
+@$_SESSION['temp_user'] = substr($un, 0,strlen($un)-3).'*** / ***'.substr($e, 3,strlen($e));
+@$_SESSION['temp_pass'] = $tmpas_o;
 
 // never let em empty
 if(empty($fn)){
@@ -175,7 +184,7 @@ $pu_h = password_hash($pu, PASSWORD_BCRYPT);
 // input user
 if(connect_with_config()){
 	if(!mysql_query("
-		INSERT INTO 
+		INSERT INTO
 		`elybin_users`(
 			`user_id`,
 			`user_account_login`,
@@ -185,7 +194,7 @@ if(connect_with_config()){
 			`fullname`,
 			`registered`,
 			`level`
-		) 
+		)
 		VALUES('1', '$un','$pu_h','$e','verified','$fn','".date('Y-m-d H:i:s')."','1');")){
 		// error
 		result(array(
