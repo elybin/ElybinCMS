@@ -70,15 +70,22 @@ function json(Array $a){
 // 1.1.3
 // mixing json and showing manual redirect if javascript fail to load
 // r = redirect, j = json
-function result(Array $a, $result = 'r'){
+function result(Array $a, $result = 'r', $exit = true){
 	if($result == 'j'){
 		json($a);
 	}else{
 		// set session first
 		@$_SESSION['msg'] = $a['msg_ses'];
-		header('location: '.@$a['red']);
+		// redirect loop bug
+		if($a['red'] !== ''){
+			header('location: '.@$a['red']);
+		}
 	}
-	exit;
+
+	// exit sctipt
+	if($exit){
+		exit;
+	}
 }
 
 // 1.1.3
@@ -119,6 +126,45 @@ function lg($s){
 	}
 }
 
+// 1.1.3  - 7/7/2015
+function chmod_dir(){
+	// try to set directory permissions
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-install')), -4) != '0777'){
+		if(!chmod(many_trans().'elybin-install', 0777)){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg_ses' => 'failed_chmod',
+				'red' => ''
+			), @$_GET['r'], false);
+		}
+	}
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-core')), -4) !='0777'){
+		if(!chmod(many_trans().'elybin-core', 0777)){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg_ses' => 'failed_chmod',
+				'red' => ''
+			), @$_GET['r'], false);
+		}
+	}
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-file')), -4) != '0777'){
+		if(!chmod(many_trans().'elybin-file', 0777)){
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg_ses' => 'failed_chmod',
+				'red' => ''
+			), @$_GET['r'], false);
+		}
+	}
+}
+
+
 // 1.1.3
 // function import_sql(array("sql1.sql","sql2.sql"));
 // error code 		: true => success
@@ -133,7 +179,7 @@ function import_sql(array $dir){
 	$read_sql = rtrim($read_sql, " ;\r\n");
 	$read_sql = rtrim($read_sql, " ;");
 	// explode
-	$arr_query = explode(";\r\n", $read_sql);
+	$arr_query = explode(";", $read_sql); // fixing mistake explode
 	// try connect
 	if(!connect_with_config()){
 		return false;
@@ -143,7 +189,7 @@ function import_sql(array $dir){
 	$ok_query[] = ''; //fixed (the corrent way to declare array is not $a = []; but $a[] = '')
 	for($i=0; $i < count($arr_query); $i++){
 		$ok_query[$i]['no'] = $i;
-		if(@mysql_query($arr_query[$i])){
+		if(mysql_query($arr_query[$i])){
 			// ok
 			$ok_query_c++;
 			$ok_query[$i]['query'] = substr(trim(str_replace("\r\n","",str_replace("--\r\n-- Table structure for table ", "", str_replace("CREATE TABLE IF NOT EXISTS","", $arr_query[$i]))),"\r\n"),0,15).'...';
@@ -152,6 +198,11 @@ function import_sql(array $dir){
 			// fail
 			$ok_query[$i]['query'] = $arr_query[$i];
 			$ok_query[$i]['status'] = 'fail';
+
+			// write error logs
+			$f = fopen(many_trans().'elybin-install/error_logs.txt', "a+");
+			fwrite($f, '# '.date('Y-m-d H:i:s').'==>'.$arr_query[$i]."\r\n");
+			fclose($f);
 		}
 	}
 	// give query result
@@ -340,58 +391,60 @@ function try_connect_manual($db_host, $db_user, $db_pass, $db_name){
 // error code 		: 0 => failed to write, access denied
 // erro
 function write_config($db_host, $db_user, $db_pass, $db_name){
-	// delete `.htaccess` and `elybin-config.php` before installation
-	deleteDir(many_trans().".htaccess");
-	deleteDir(many_trans()."elybin-core/elybin-config.php");
-
-
-	// get cwd (Current Working Directory)
-	$local_dir = @getcwd();
-	$local_dir = str_replace("\\elybin-install\inc","",$local_dir);
-	$local_dir = str_replace("/elybin-install/inc","",$local_dir);
-	$local_dir = str_replace("\\","/", $local_dir);
-
-	// write to file (elybin-config.php)
-	//SITE CONFIG
-	$config_dir = many_trans().'elybin-core/elybin-config.php';
-	$config_template =
-	'<?php
-# `elybin-config.php`
-# If you see this error, copy paste script below and manually create this file.
-# Directory: your_root_website/elybin-core/elybin-config.php
-# After that, refresh this page
-
-// SESSION START
-@session_start();
-
-// SITE CONFIG
-$DIR_ROOT						= "'.$local_dir.'/";
-$DIR_ADMIN						= "{$DIR_ROOT}elybin-admin/";
-$DIR_CORE						= "{$DIR_ROOT}elybin-core/";
-
-$DB_HOST						= "'.$db_host.'";
-$DB_USER						= "'.$db_user.'";
-$DB_PASSWD						= "'.$db_pass.'";
-$DB_NAME						= "'.$db_name.'";
-
-@define("DB_HOST", $DB_HOST);
-@define("DB_USER", $DB_USER);
-@define("DB_PASSWD", $DB_PASSWD);
-@define("DB_NAME", $DB_NAME);
-
-@define("DIR_ROOT", $DIR_ROOT);
-@define("DIR_ADMIN", $DIR_ADMIN);
-?>';
-	// write to file
-	$f = fopen($config_dir, "w");
-	if(fwrite($f, $config_template) == false){
-		return false;
+	// check existace
+	if(file_exists(many_trans()."elybin-core/elybin-config.php")){
+		$r = true;
 	}else{
-		return true;
-	}
-	fclose($f);
+		// get cwd (Current Working Directory)
+		$local_dir = @getcwd();
+		$local_dir = str_replace("\\elybin-install\inc","",$local_dir);
+		$local_dir = str_replace("/elybin-install/inc","",$local_dir);
+		$local_dir = str_replace("\\","/", $local_dir);
 
-	return false;
+		// write to file (elybin-config.php)
+		//SITE CONFIG
+		$config_dir = many_trans().'elybin-core/elybin-config.php';
+		$config_template =
+		'<?php
+	# `elybin-config.php`
+	# If you see this error, copy paste script below and manually create this file.
+	# Directory: your_root_website/elybin-core/elybin-config.php
+	# After that, refresh this page
+
+	// SESSION START
+	@session_start();
+
+	// SITE CONFIG
+	$DIR_ROOT						= "'.$local_dir.'/";
+	$DIR_ADMIN						= "{$DIR_ROOT}elybin-admin/";
+	$DIR_CORE						= "{$DIR_ROOT}elybin-core/";
+
+	$DB_HOST						= "'.$db_host.'";
+	$DB_USER						= "'.$db_user.'";
+	$DB_PASSWD						= "'.$db_pass.'";
+	$DB_NAME						= "'.$db_name.'";
+
+	@define("DB_HOST", $DB_HOST);
+	@define("DB_USER", $DB_USER);
+	@define("DB_PASSWD", $DB_PASSWD);
+	@define("DB_NAME", $DB_NAME);
+
+	@define("DIR_ROOT", $DIR_ROOT);
+	@define("DIR_ADMIN", $DIR_ADMIN);
+	?>';
+		// write to file
+		$f = fopen($config_dir, "w");
+		if(fwrite($f, $config_template) == false){
+			// fixing directory unwriteable (fixed)
+			$r = false;
+			$_SESSION['config_template'] = $config_template;
+		}else{
+			$r = true;
+		}
+		fclose($f);
+	}
+
+	return $r;
 }
 
 // function write_htaccess
@@ -404,23 +457,29 @@ function write_htaccess(){
 	// read `htaccess_template.txt`
 	$htaccess_template = @file_get_contents(many_trans()."elybin-install/inc/htaccess_template.txt");
 
-	// (try 1) write to file
-	$f = fopen($htaccess_dir, "w");
-	if(fwrite($f, $htaccess_template) == false){
-		// (try 2) copy method
-		if(@copy(many_trans()."elybin-install/inc/htaccess_template.txt", $htaccess_dir) == false){
-			// write to session
-			@$_SESSION['htaccess_template'] = $htaccess_template;
-
-			// result
-			return false;
-		}else{
-			return true;
-		}
+	// check existace
+	if(file_exists(many_trans().'.htaccess')){
+		$r = true;
 	}else{
-		return true;
+		// (try 1) write to file
+		$f = fopen($htaccess_dir, "w");
+		if(fwrite($f, $htaccess_template) == true){
+			$r = true;
+		}else{
+			// (try 2) copy method
+			if(@copy(many_trans()."elybin-install/inc/htaccess_template.txt", $htaccess_dir) == true){
+				$r = true;
+			}else{
+				// write to session
+				@$_SESSION['htaccess_template'] = $htaccess_template;
+				// result
+				$r = false;
+			}
+		}
+		fclose($f);
 	}
-	fclose($f);
+
+	return $r;
 }
 
 // function copy_version()
@@ -444,14 +503,26 @@ function copy_version(){
 // create install lock
 function install_lock(){
 	// set session
-	@$_SESSION['ininstall'] = true;
+	$_SESSION['ininstall'] = true;
 
 	// write installation date
 	if(!file_exists(many_trans().'elybin-install/install_date.txt')){
 		$f = fopen(many_trans().'elybin-install/install_date.txt', "w");
-		fwrite($f, date("Y-m-d H:i:s"));
+		if(fwrite($f, date("Y-m-d H:i:s")) == false){
+			$r = false;
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => lg('Failed writing &#34;elybin-install/install_date.txt&#34;. Fix your directory permissions, and try again.'),
+				'msg_ses' => 'failed_locksys',
+				'red' => ''
+			), @$_GET['r'], false);
+		}else{
+			$r = true;
+		}
 		fclose($f);
 	}
+	return $r;
 }
 
 // comparing date

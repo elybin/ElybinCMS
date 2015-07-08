@@ -3,16 +3,19 @@ session_start();
 // include function
 include 'inc/install.func.php';
 
+// call install lock
+install_lock();
+
+// chmod
+chmod_dir();
+
 // err msg
 $msg = @$_SESSION['msg'];
 @$_SESSION['msg'] = '';
 
-// call install lock
-install_lock();
-
 // use swtch
 switch (@$_GET['p']) {
-	
+
 	default:
 	// allowed if status 0,1,2
 	switch(install_status()){
@@ -56,7 +59,21 @@ switch (@$_GET['p']) {
 		<div class="lo">
 			<img src="assets/images/logo.svg">
 		</div>
+		<?php
+		switch ($msg) {
+			// failed chmod
+			case 'failed_chmod':
+				echo '<div class="al if"><p>'.lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".').'</p><p>'.lg('or execute this command line').' <code>sudo chmod 777 elybin-install/ elybin-file/ elybin-core/</code></p></div>';
+				break;
+			// lock system
+			case 'failed_locksys':
+				echo '<div class="al er"><p>'.lg('Failed writing &#34;elybin-install/install_date.txt&#34;. Fix your directory permissions, and try again.').'</p></div>';
+				break;
 
+			default:
+				break;
+		}
+		?>
 		<div class="pb" style="width: 0%"><span>0%</span></div>
 		<div class="box">
 			<div class="cen">
@@ -71,7 +88,7 @@ switch (@$_GET['p']) {
 		</div>
 		<div class="cen xs">
 			<i><?php echo lg('Language:') ?><?php echo @$_SESSION['lg']; ?></i><br/>
-			<a href="?p=en"><?php echo lg('English') ?></a> | 
+			<a href="?p=en"><?php echo lg('English') ?></a> |
 			<a href="?p=id"><?php echo lg('Bahasa Indonesia') ?></a>
 		</div>
 	</div>
@@ -79,7 +96,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'step1':
 	// allowed if status 0,1,2
 	switch(install_status()){
@@ -111,40 +128,48 @@ switch (@$_GET['p']) {
 
 	// check status proses
 	if(install_status() == 1){
+		$_SESSION['msg'] = '';
 		unset($_SESSION['config_template']);
 		// call
-		if(!write_htaccess()){
+		if(write_htaccess() == false){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
 				'msg' => lg('Failed writing &#34;.htaccess&#34;. Copy the script below, and create file manually.'),
 				'msg_ses' => 'failed_htaccess',
-				'red' => '?p=step1'
-			), @$_GET['r']);
+				'red' => ''
+			), @$_GET['r'], false);
 		}
 	}
 
 	if(install_status() == 2){
+		$_SESSION['msg'] = '';
+		unset($_SESSION['msg']);
 		unset($_SESSION['htaccess_template']);
 
+		// success
+
+		// rem tmp session
+		@$_SESSION['h'] = '';
+		@$_SESSION['u'] = '';
+		@$_SESSION['p'] = '';
+		@$_SESSION['n'] = '';
+		@$_SESSION['msg'] = '';
+
+		// change step
+		$_SESSION['step'] = "2";
+
 		// if install with content
-		if(!import_sql(array("mysql/latest_structure.sql","mysql/latest_content.sql"))){
+		if(import_sql(array("mysql/latest_structure.sql", "mysql/latest_content.sql")) == false){
+			//echo lg('Some query failed to execute, This is our mistake. Please contact us.');
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
 				'msg' => lg('Some query failed to execute, This is our mistake. Please contact us.'),
 				'msg_ses' => 'query_error',
-				'red' => '?p=step1'
+				'red' => '?p=step2'
 			), @$_GET['r']);
 		}else{
-			// success 
-
-			// rem tmp session
-			@$_SESSION['h'] = '';
-			@$_SESSION['u'] = '';
-			@$_SESSION['p'] = '';
-			@$_SESSION['n'] = '';
-
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
@@ -152,9 +177,6 @@ switch (@$_GET['p']) {
 				'msg_ses' => 'step1_ok',
 				'red' => '?p=step2'
 			), @$_GET['r']);
-
-			// change step
-			$_SESSION['step'] = "2";
 		}
 	}
 ?>
@@ -194,8 +216,9 @@ switch (@$_GET['p']) {
 			case 'failed_htaccess':
 				echo '<div class="al er"><p>'.lg('Failed writing &#34;.htaccess&#34;. Copy the script below, and create file manually.').'</p></div>';
 				break;
-			case 'query_error':
-				echo '<div class="al er"><p>'.lg('Some query failed to execute, This is our mistake. Please contact us.').'</p></div>';
+			// lock system
+			case 'failed_locksys':
+				echo '<div class="al er"><p>'.lg('Failed writing &#34;elybin-install/install_date.txt&#34;. Fix your directory permissions, and try again.').'</p></div>';
 				break;
 			case 'unk_error':
 				echo '<div class="al er"><p>'.lg('Unknown error. Please contact us.').'</p></div>';
@@ -203,9 +226,8 @@ switch (@$_GET['p']) {
 			case 'step1_ok':
 				echo '<div class="al ok"><p>'.lg('Database configuration success!').'</p></div>';
 				break;
-			
+
 			default:
-				
 				break;
 		}
 		?>
@@ -225,7 +247,7 @@ switch (@$_GET['p']) {
 			</div>
 			<?php
 			}
-			elseif(isset($_SESSION['htaccess_template'])){
+			elseif(isset($_SESSION['htaccess_template']) && install_status() == 1){
 			?>
 			<div class="cen">
 				<h2><?php echo lg('Opps, I can\'t do again.') ?></h2>
@@ -275,7 +297,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'step2':
 	// allowed if...
 	switch(install_status()){
@@ -362,9 +384,12 @@ switch (@$_GET['p']) {
 			case 'register_user_failed':
 				echo '<div class="al er"><p>'.lg('Failed to register new user.').'</p></div>';
 				break;
-			
+			case 'query_error':
+				echo '<div class="al er"><p>'.lg('Some query failed to execute, This is our mistake. Please contact us.').'</p></div>';
+				break;
+
 			default:
-				
+
 				break;
 		}
 		?>
@@ -396,7 +421,7 @@ switch (@$_GET['p']) {
 						<input type="password" name="puc" placeholder="<?php echo lg('Secret word once again... (Password Again)') ?>"/>
 						<p class="cb"><?php echo lg('Type again your password. And remember it.') ?></p>
 					</div>
-					
+
 				</div>
 				<div class="rig">
 					<button type="submit" class="btn p-rig"><?php echo lg('Next') ?></button><br/><br/>
@@ -412,9 +437,9 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'step3':
-	// allowed if.. 
+	// allowed if..
 	switch(install_status()){
 		case 0:
 			header('location: index.php');exit;
@@ -469,7 +494,7 @@ switch (@$_GET['p']) {
 			case 'sitename_too_long':
 				echo '<div class="al er"><p>'.lg('Site title too long maybe.').'</p></div>';
 				break;
-			
+
 			default:
 				break;
 		}
@@ -498,8 +523,8 @@ switch (@$_GET['p']) {
 							echo '<input type="text" name="wn" placeholder="'.lg('Enter site title. for example: Richoo\'s Amazing Story').'"  value="'.@$_SESSION['wn'].'"/>';
 						}
 						?>
-						
-						<p class="cb"><?php echo lg('Enter your site main title, I suggest name that simple but can describe yours.') ?></p>					
+
+						<p class="cb"><?php echo lg('Enter your site main title, I suggest name that simple but can describe yours.') ?></p>
 					</div>
 					<div class="group">
 						<select name="wc">
@@ -588,7 +613,9 @@ switch (@$_GET['p']) {
 		<div class="lo">
 			<img src="assets/images/logo.svg">
 		</div>
-
+		<?php
+			echo '<div class="al if"><p>'.lg('Don\'t forget to delete &#34;elybin-install&#34; directory.').'</p></div>';
+		?>
 		<div class="pb" style="width: 100%"><span>100%</span></div>
 		<div class="box">
 			<div class="cen">
@@ -597,8 +624,8 @@ switch (@$_GET['p']) {
 				<i><?php echo lg('Let\'s celebrate, don\'t forget to decorate it.') ?></i>
 			</div>
 			<div class="cen">
-				<a href="?p=visit" class="btn"><?php echo lg('Visit your new home') ?></a>
-				<a href="?p=login" class="btn"><?php echo lg('Login as Owner') ?></a>
+				<a href="../" class="btn"><?php echo lg('Visit your new home') ?></a>
+				<a href="../elybin-admin/?p=login" class="btn"><?php echo lg('Login as Owner') ?></a>
 			</div>
 		</div>
 		<div class="xs">
@@ -659,9 +686,9 @@ switch (@$_GET['p']) {
 			case 'register_complete':
 				echo '<div class="al ok"><p>'.lg('Registration complete. You can login now.').'</p></div>';
 				break;
-			
+
 			default:
-				
+
 				break;
 		}
 		?>

@@ -2,8 +2,8 @@
 /* Short description for file
  * Install : Step 1 Process
  * After checking connection from information that user input, this file will write data to config file and write .htaccess too
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -89,7 +89,7 @@ if(try_connect_manual($h, $u, $p, $n) == 0){
 		'msg_ses' => 'db_notfound',
 		'red' => '../?p=step1'
 	), @$_GET['r']);
-}else 
+}else
 if(try_connect_manual($h, $u, $p, $n) == 1){
 	// cannot connect to database host
 	result(array(
@@ -102,7 +102,7 @@ if(try_connect_manual($h, $u, $p, $n) == 1){
 }
 else if(try_connect_manual($h, $u, $p, $n) == 2){
 	if(write_config($h, $u, $p, $n) == false){
-		// because failed to write config, 
+		// because failed to write config,
 		// alternative to weite it manually
 		result(array(
 			'status' => 'error',
@@ -132,7 +132,7 @@ else if(try_connect_manual($h, $u, $p, $n) == 2){
 					'red' => '../?p=step1'
 				), @$_GET['r']);
 			}else{
-				// success 
+				// success
 
 				// copy new version
 				copy_version();
@@ -142,6 +142,7 @@ else if(try_connect_manual($h, $u, $p, $n) == 2){
 				@$_SESSION['u'] = '';
 				@$_SESSION['p'] = '';
 				@$_SESSION['n'] = '';
+				$_SESSION['msg'] = '';
 
 				result(array(
 					'status' => 'ok',
@@ -161,7 +162,7 @@ else if(try_connect_manual($h, $u, $p, $n) == 2){
 // unknown error
 result(array(
 	'status' => 'error',
-	'title' => lg('Error'),		
+	'title' => lg('Error'),
 	'msg' => lg('Unknown error. Please contact us.'),
 	'msg_ses' => 'unk_error',
 	'red' => '../?p=step1'
