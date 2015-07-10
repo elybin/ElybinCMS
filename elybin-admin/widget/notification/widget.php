@@ -14,7 +14,7 @@ if(!isset($_SESSION['login'])){
 							</div> <!-- / .panel-heading -->
 							<div class="panel-body padding-sm">
 								<div class="notifications-list">
-										<?php 
+										<?php
 											// get data
 											$tbns = new ElybinTable('elybin_notification');
 											$notifs	= $tbns->SelectFullCustom("
@@ -25,6 +25,7 @@ if(!isset($_SESSION['login'])){
 												ORDER BY `notif_id` DESC
 												LIMIT 0,3
 											");
+											$ii = 0;
 											foreach($notifs as $cn){
 												//var_dump($cn);
 												//check how much notif with same topic
@@ -36,7 +37,6 @@ if(!isset($_SESSION['login'])){
 												}else{
 													$status = "";
 												}
-
 										?>
 											<div class="notification" id="notif"<?php echo $status?>>
 												<div class="notification-title text-danger"><?php echo $cn->title?></div>
@@ -45,8 +45,19 @@ if(!isset($_SESSION['login'])){
 												<div class="notification-icon fa <?php echo $cn->icon?> bg-<?php echo $cn->type?>"></div>
 											</div> <!-- / .notification -->
 										<?php
+												$ii++; // $ii++
 											}
-								
+
+											if($ii < 1){
+											?>
+												<div class="form-group-margin" style="margin-top: 30px;"></div>
+												<div class="text-center text-muted panel-padding">
+													<i class="fa fa-5x fa-bell-o"></i>
+													<h3><?php echo lg('Yeah!') ?></h3>
+													<p><?php echo lg('No Notification'); ?></p>
+												</div>
+												<?php
+											}
 										?>
 								</div>
 							</div> <!-- / .panel-body -->
@@ -61,7 +72,7 @@ if(!isset($_SESSION['login'])){
 					</div><!-- col-12 -->
 				</div> <!-- row -->
 				<!-- ./Notification Widget -->
-<?php 
-	} 
+<?php
+	}
 }
 ?>

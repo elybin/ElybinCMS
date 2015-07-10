@@ -34,12 +34,12 @@ if(!isset($_SESSION['login'])){
 								</ul>
 							</div> <!-- / .panel-heading -->
 							<div class="tab-content">
-								
+
 								<?php
 								if($ugcom == 1){
 								?>
 								<!-- Comments widget -->
-	
+
 								<!-- Without padding -->
 								<div class="widget-comments panel-body tab-pane no-padding fade active in" id="dashboard-recent-comments">
 									<!-- Panel padding, without vertical padding -->
@@ -62,7 +62,7 @@ if(!isset($_SESSION['login'])){
 													}else{
 														$avatar = "medium-$avatar";
 													}
-													
+
 												}else{
 													$avatar = "default/medium-no-ava.png";
 												}
@@ -161,7 +161,7 @@ if(!isset($_SESSION['login'])){
 				</div> <!-- / .modal -->
 				<!-- / Delete Modal -->
 
-				
+
 				<!-- Large modal -->
 				<div id="view" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:2000">
 					<div class="modal-dialog modal-lg">
@@ -171,21 +171,20 @@ if(!isset($_SESSION['login'])){
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
 				<!-- / Large modal -->
-				
+
 							</div>
 						</div> <!-- / .widget-threads -->
 						<!-- Javascript -->
 						<script>
 							init.push(function () {
 								$('#dashboard-recent .panel-body > div').slimScroll({ height: 300, alwaysVisible: true, color: '#888',allowPageScroll: true });
-							})
-							ElybinView();
+							});
 						</script>
 						<!-- / Javascript -->
 					</div><!-- col-12 -->
 				</div> <!-- row -->
 				<!-- ./Recent Widget -->
-<?php 
-	} 
+<?php
+	}
 }
 ?>
