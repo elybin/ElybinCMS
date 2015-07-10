@@ -179,7 +179,7 @@ function import_sql(array $dir){
 	$read_sql = rtrim($read_sql, " ;\r\n");
 	$read_sql = rtrim($read_sql, " ;");
 	// explode
-	$arr_query = explode(";", $read_sql); // fixing mistake explode
+	$arr_query = explode(";\n", $read_sql); // fixing mistake explode, oops something goes wrong again
 	// try connect
 	if(!connect_with_config()){
 		return false;
@@ -405,33 +405,33 @@ function write_config($db_host, $db_user, $db_pass, $db_name){
 		//SITE CONFIG
 		$config_dir = many_trans().'elybin-core/elybin-config.php';
 		$config_template =
-		'<?php
-	# `elybin-config.php`
-	# If you see this error, copy paste script below and manually create this file.
-	# Directory: your_root_website/elybin-core/elybin-config.php
-	# After that, refresh this page
+'<?php
+# `elybin-config.php`
+# If you see this error, copy paste script below and manually create this file.
+# Directory: your_root_website/elybin-core/elybin-config.php
+# After that, refresh this page
 
-	// SESSION START
-	@session_start();
+// SESSION START
+@session_start();
 
-	// SITE CONFIG
-	$DIR_ROOT						= "'.$local_dir.'/";
-	$DIR_ADMIN						= "{$DIR_ROOT}elybin-admin/";
-	$DIR_CORE						= "{$DIR_ROOT}elybin-core/";
+// SITE CONFIG
+$DIR_ROOT						= "'.$local_dir.'/";
+$DIR_ADMIN					= "{$DIR_ROOT}elybin-admin/";
+$DIR_CORE						= "{$DIR_ROOT}elybin-core/";
 
-	$DB_HOST						= "'.$db_host.'";
-	$DB_USER						= "'.$db_user.'";
-	$DB_PASSWD						= "'.$db_pass.'";
-	$DB_NAME						= "'.$db_name.'";
+$DB_HOST						= "'.$db_host.'";
+$DB_USER						= "'.$db_user.'";
+$DB_PASSWD					= "'.$db_pass.'";
+$DB_NAME						= "'.$db_name.'";
 
-	@define("DB_HOST", $DB_HOST);
-	@define("DB_USER", $DB_USER);
-	@define("DB_PASSWD", $DB_PASSWD);
-	@define("DB_NAME", $DB_NAME);
+@define("DB_HOST", $DB_HOST);
+@define("DB_USER", $DB_USER);
+@define("DB_PASSWD", $DB_PASSWD);
+@define("DB_NAME", $DB_NAME);
 
-	@define("DIR_ROOT", $DIR_ROOT);
-	@define("DIR_ADMIN", $DIR_ADMIN);
-	?>';
+@define("DIR_ROOT", $DIR_ROOT);
+@define("DIR_ADMIN", $DIR_ADMIN);
+?>';
 		// write to file
 		$f = fopen($config_dir, "w");
 		if(fwrite($f, $config_template) == false){

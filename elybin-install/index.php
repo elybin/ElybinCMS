@@ -83,7 +83,14 @@ switch (@$_GET['p']) {
 				<i><?php echo lg('Are you ready?') ?></i><br/>
 			</div>
 			<div class="cen">
-				<a href="?p=step1" class="btn"><?php echo lg('Yes, Start Installation!') ?></a>
+				<?php
+				// disabled when directory isn't writeable
+				if($msg == 'failed_chmod'){
+						echo '<a class="btn disabled">'.lg('Yes, Start Installation!').'</a>';
+				}else{
+						echo '<a href="?p=step1" class="btn">'.lg('Yes, Start Installation!').'</a>';
+				}
+				?>
 			</div>
 		</div>
 		<div class="cen xs">
