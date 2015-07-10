@@ -130,7 +130,7 @@ function lg($s){
 function chmod_dir(){
 	// try to set directory permissions
 	if(substr(sprintf('%o', fileperms(many_trans().'elybin-install')), -4) != '0777'){
-		if(!chmod(many_trans().'elybin-install', 0777)){
+		if(!@chmod(many_trans().'elybin-install', 0777)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
@@ -141,7 +141,7 @@ function chmod_dir(){
 		}
 	}
 	if(substr(sprintf('%o', fileperms(many_trans().'elybin-core')), -4) !='0777'){
-		if(!chmod(many_trans().'elybin-core', 0777)){
+		if(!@chmod(many_trans().'elybin-core', 0777)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
@@ -152,7 +152,7 @@ function chmod_dir(){
 		}
 	}
 	if(substr(sprintf('%o', fileperms(many_trans().'elybin-file')), -4) != '0777'){
-		if(!chmod(many_trans().'elybin-file', 0777)){
+		if(!@chmod(many_trans().'elybin-file', 0777)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
@@ -462,8 +462,8 @@ function write_htaccess(){
 		$r = true;
 	}else{
 		// (try 1) write to file
-		$f = fopen($htaccess_dir, "w");
-		if(fwrite($f, $htaccess_template) == true){
+		$f = @fopen($htaccess_dir, "w");
+		if(@fwrite($f, $htaccess_template) == true){
 			$r = true;
 		}else{
 			// (try 2) copy method
@@ -476,7 +476,7 @@ function write_htaccess(){
 				$r = false;
 			}
 		}
-		fclose($f);
+		@fclose($f);
 	}
 
 	return $r;
@@ -504,11 +504,13 @@ function copy_version(){
 function install_lock(){
 	// set session
 	$_SESSION['ininstall'] = true;
+	// set to false
+	$r = false;
 
 	// write installation date
 	if(!file_exists(many_trans().'elybin-install/install_date.txt')){
-		$f = fopen(many_trans().'elybin-install/install_date.txt', "w");
-		if(fwrite($f, date("Y-m-d H:i:s")) == false){
+		$f = @fopen(many_trans().'elybin-install/install_date.txt', "w");
+		if(@fwrite($f, date("Y-m-d H:i:s")) == false){
 			$r = false;
 			result(array(
 				'status' => 'error',
@@ -520,7 +522,7 @@ function install_lock(){
 		}else{
 			$r = true;
 		}
-		fclose($f);
+		@fclose($f);
 	}
 	return $r;
 }
