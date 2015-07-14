@@ -4,7 +4,7 @@ RewriteEngine on
 # You may need RewriteBase on some servers
 #RewriteBase /min
 
-# rewrite URLs like "/min/f=..." to "/min/?f=..."
+# rewrite URLs like "/min/f=..." to "/..."
 RewriteRule ^([bfg]=.*)  index.php?$1 [L,NE]
 </IfModule>
 <IfModule mod_env.c>

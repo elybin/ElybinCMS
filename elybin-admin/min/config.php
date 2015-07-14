@@ -37,7 +37,7 @@ $min_errorLogger = false;
  * cookie value should match the URIs you'd like to debug. E.g. to debug
  * /min/f=file1.js send the cookie minDebug=file1.js
  * You can manually enable debugging by appending "&debug" to a URI.
- * E.g. /min/?f=script1.js,script2.js&debug
+ * E.g. /script1.js,script2.js&debug
  * 
  * In 'debug' mode, Minify combines files with no minification and adds comments
  * to indicate line #s of the original files.

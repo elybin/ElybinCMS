@@ -129,34 +129,34 @@ function lg($s){
 // 1.1.3  - 7/7/2015
 function chmod_dir(){
 	// try to set directory permissions
-	if(substr(sprintf('%o', fileperms(many_trans().'elybin-install')), -4) != '0777'){
-		if(!@chmod(many_trans().'elybin-install', 0777)){
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-install')), -4) != '0755'){
+		if(!@chmod(many_trans().'elybin-install', 0755)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
-				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg' => lg('Set these directory to writeable (755): "elybin-install/", "elybin-core/", "elybin-file".'),
 				'msg_ses' => 'failed_chmod',
 				'red' => ''
 			), @$_GET['r'], false);
 		}
 	}
-	if(substr(sprintf('%o', fileperms(many_trans().'elybin-core')), -4) !='0777'){
-		if(!@chmod(many_trans().'elybin-core', 0777)){
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-core')), -4) !='0755'){
+		if(!@chmod(many_trans().'elybin-core', 0755)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
-				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg' => lg('Set these directory to writeable (755): "elybin-install/", "elybin-core/", "elybin-file".'),
 				'msg_ses' => 'failed_chmod',
 				'red' => ''
 			), @$_GET['r'], false);
 		}
 	}
-	if(substr(sprintf('%o', fileperms(many_trans().'elybin-file')), -4) != '0777'){
-		if(!@chmod(many_trans().'elybin-file', 0777)){
+	if(substr(sprintf('%o', fileperms(many_trans().'elybin-file')), -4) != '0755'){
+		if(!@chmod(many_trans().'elybin-file', 0755)){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
-				'msg' => lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".'),
+				'msg' => lg('Set these directory to writeable (755): "elybin-install/", "elybin-core/", "elybin-file".'),
 				'msg_ses' => 'failed_chmod',
 				'red' => ''
 			), @$_GET['r'], false);

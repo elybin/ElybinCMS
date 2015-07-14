@@ -20,7 +20,7 @@ if(empty($_SESSION['login'])){
 		$edt = _op()->text_editor;
 		if($edt=='summernote'){
 ?>
-<script src="min/?f=assets/javascripts/summernote.min.js"></script>
+<script src="assets/javascripts/summernote.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	//summernote editor
@@ -45,7 +45,7 @@ init.push(function () {
 	}
 	elseif($edt=='bs-markdown'){
 ?>
-<script src="min/?f=assets/javascripts/bootstrap-markdown.min.js"></script>
+<script src="assets/javascripts/bootstrap-markdown.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	if (! $('html').hasClass('ie8')) {

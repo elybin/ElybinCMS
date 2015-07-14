@@ -10,8 +10,8 @@
 	],
 	"dictionary": [
 {
-	"f":"Set these directory to writeable (777): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
-	"t":"Atur direktori berikut menjadi bisa ditulis (777): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
+	"f":"Set these directory to writeable (755): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
+	"t":"Atur direktori berikut menjadi bisa ditulis (755): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
 	"i":"index.php"
 },
 {
