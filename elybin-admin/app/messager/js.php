@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: Contact
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,17 +10,17 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	switch (@$_GET['act']) {
 		case 'compose': // case 'add'		// getting text_editor
 		$edt = _op()->text_editor;
 		if($edt=='summernote'){
 ?>
-<script src="min/?f=assets/javascripts/summernote.min.js"></script>
+<script src="assets/javascripts/summernote.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	//summernote editor
@@ -41,11 +41,11 @@ init.push(function () {
 	}
 })<?php ob_end_flush(); ?>
 </script>
-<?php 
+<?php
 	}
 	elseif($edt=='bs-markdown'){
 ?>
-<script src="min/?f=assets/javascripts/bootstrap-markdown.min.js"></script>
+<script src="assets/javascripts/bootstrap-markdown.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	if (! $('html').hasClass('ie8')) {
@@ -55,7 +55,9 @@ init.push(function () {
 </script>
 <?php } ?>
 ?>
-<script src="min/?b=assets/javascripts&amp;f=elybin-function.min.js,jquery.tagsinput.min.js,jquery-ui.min.js"></script>
+<script src="assets/javascripts/elybin-function.min.js"></script>
+<script src="assets/javascripts/jquery.tagsinput.min.js"></script>
+<script src="assets/javascripts/jquery-ui.min.js"></script>
 <script type="text/javascript">
 init.push(function () {
 	// tags pick
@@ -63,7 +65,7 @@ init.push(function () {
         width: 'auto',
         height: 'auto',
 		defaultText:'<?php echo lg('Type E-mail or Name of recipient...')?>',
-        autocomplete_url:'app/messager/ajax/recipient_auto.php', 
+        autocomplete_url:'app/messager/ajax/recipient_auto.php',
 		autocomplete:{selectFirst:true,width:'300px',height:'80px',autoFill:true}
     });
 
@@ -95,7 +97,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.msg });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -152,7 +154,7 @@ init.push(function () {
 	}
 })<?php ob_end_flush(); ?>
 </script>
-<?php 
+<?php
 	}
 	elseif($edt=='bs-markdown'){
 ?>
@@ -197,7 +199,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.msg });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -229,7 +231,7 @@ init.push(function () {
 </script>
 <?php
 			break;
-			
+
 		default: // case default
 ?>
 <script type="text/javascript">
@@ -240,7 +242,7 @@ ElybinView();
 ElybinCheckAll();
 countDelData();
 </script>
-<?php		
+<?php
 			break;
 	}
   }

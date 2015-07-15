@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: Post
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,24 +10,24 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	_red('index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	// shutdown at 1.1.3
 	// get user privilages
-	/* 
+	/*
 	$tbus = _u();
 	$level = $tbus->level; // getting level from curent user
 
 	$tbug = new ElybinTable('elybin_usergroup');
 	$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
 	$usergroup = $tbug->current()->post; */
-	
+
 	// simple way :)
 	$usergroup = _ug()->post;
-	
+
 // give error if no have privilage
 if($usergroup == 0){
 	// simple red
@@ -41,7 +41,7 @@ if($usergroup == 0){
 		$edt = _op()->text_editor;
 		if($edt=='summernote'){
 ?>
-<script src="min/?f=assets/javascripts/summernote.min.js"></script>
+<script src="assets/javascripts/summernote.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	//summernote editor
@@ -62,7 +62,7 @@ init.push(function () {
 	}
 })<?php ob_end_flush(); ?>
 </script>
-<?php 
+<?php
 	}
 	elseif($edt=='bs-markdown'){
 ?>
@@ -85,31 +85,31 @@ init.push(function () {
  	$("#multiselect-style").select2({
 		allowClear: false,
 		placeholder: "<?php echo lg('Category')?>"
-	}); 
+	});
 	$('#switcher-style').switcher({
 		theme: 'square',
 		on_state_content: '<span class="fa fa-check"></span>',
 		off_state_content: '<span class="fa fa-times"></span>'
 	});
-	$('#tooltip a').tooltip();	
+	$('#tooltip a').tooltip();
 	// multiselect tag
-	
+
  	$("#select-multiple").select2({
 		placeholder: "<?php echo lg('Tag')?>"
-	}); 
+	});
 
-	
+
 	// test
 	toggleform("#hidden_toggle","select");
 	toggleform("#hidden_toggle2","selectchild");
 	toggleform("#hidden_toggle3","selectchild");
-	
+
 	// tags pick
 	$('#tags_pick').tagsInput({
         width: 'auto',
         height: 'auto',
 		defaultText:'<?php echo lg('Type tag...')?>',
-        autocomplete_url:'app/post/ajax/tags_auto.php', 
+        autocomplete_url:'app/post/ajax/tags_auto.php',
 		autocomplete:{selectFirst:true,width:'100px',autoFill:true}
     });
 	// on submit
@@ -140,7 +140,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.isi });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -168,7 +168,7 @@ init.push(function () {
 	    e.preventDefault();
 	    return false;
   	});
-	
+
 	// 1.1.3
 	// auto save
 	function autoSave(t){
@@ -196,7 +196,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					//$.growl.notice({ title: data.title, message: data.isi });
-					$('#autosave').html(data.isi); 
+					$('#autosave').html(data.isi);
 				}
 				else if(data.status == "error"){
 					// error growl
@@ -215,11 +215,11 @@ init.push(function () {
 	textchange = 0;
 	// fungsi trigger uto save
 	function triggerAS(t){
-		
+
 		// trigger auto save on change
 		$("#form input[name='title']").change(function(){
 			textchange = textchange + 395;
-		});	
+		});
 		$("#form .note-editable").keypress(function(){
 			textchange = textchange + 1;
 		});
@@ -228,11 +228,11 @@ init.push(function () {
 			if(textchange > 400){
 				// trigger autoSave
 				autoSave(t);
-				$('#autosave').fadeIn().html('<?php echo lg('Sedang menyimpan...') ?>'); 
+				$('#autosave').fadeIn().html('<?php echo lg('Sedang menyimpan...') ?>');
 				// set back to zero
 				textchange = 0;
 			}
-			
+
 			// console
 			if(textchange%50 == 0){
 				console.log(textchange);
@@ -241,12 +241,12 @@ init.push(function () {
 	}
 	// trigger triggerAS
 	triggerAS($('#form'));
-	
+
 })<?php ob_end_flush(); ?>
 </script>
 <?php
 			break;
-			
+
 		// case 'edit'
 		case 'edit':
 
@@ -254,7 +254,7 @@ init.push(function () {
 		$edt = _op()->text_editor;
 		if($edt=='summernote'){
 ?>
-<script src="min/?f=assets/javascripts/summernote.min.js"></script>
+<script src="assets/javascripts/summernote.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	//summernote editor
@@ -276,11 +276,11 @@ init.push(function () {
 	}
 })<?php ob_end_flush(); ?>
 </script>
-<?php 
+<?php
 	}
 	elseif($edt=='bs-markdown'){
 ?>
-<script src="min/?f=assets/javascripts/bootstrap-markdown.min.js"></script>
+<script src="assets/javascripts/bootstrap-markdown.min.js"></script>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	if (! $('html').hasClass('ie8')) {
@@ -299,28 +299,28 @@ init.push(function () {
 	$("#multiselect-style").select2({
 		allowClear: false,
 		placeholder: "<?php echo lg('Category')?>"
-	}); 
+	});
 
 	$('#tooltip a').tooltip();
 	$("#select-multiple").select2({
 		placeholder: "<?php echo lg('Tag')?>"
 	});
-	
+
 	// test
 	toggleform("#hidden_toggle","select");
 	toggleform("#hidden_toggle2","selectchild");
 	toggleform("#hidden_toggle3","select");
 	toggleform("#hidden_toggle4","selectchild");
-	
+
 	// tags picker
 	$('#tags_pick').tagsInput({
         width: 'auto',
         height: 'auto',
 		defaultText:'<?php echo lg('Type tag...')?>',
-        autocomplete_url:'app/post/ajax/tags_auto.php', 
+        autocomplete_url:'app/post/ajax/tags_auto.php',
 		autocomplete:{selectFirst:true,width:'100px',autoFill:true}
     });
-	
+
 	// on submit
 	$('#form').submit(function(e){
 		// disable button and growl!
@@ -349,7 +349,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.isi });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -378,8 +378,8 @@ init.push(function () {
 	    return false;
   	});
 
-	
-	
+
+
 	// 1.1.3
 	// auto save
 	function autoSave(t){
@@ -407,7 +407,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					//$.growl.notice({ title: data.title, message: data.isi });
-					$('#autosave').html(data.isi); 
+					$('#autosave').html(data.isi);
 				}
 				else if(data.status == "error"){
 					// error growl
@@ -426,11 +426,11 @@ init.push(function () {
 	textchange = 0;
 	// fungsi trigger uto save
 	function triggerAS(t){
-		
+
 		// trigger auto save on change
 		$("#form input[name='title']").change(function(){
 			textchange = textchange + 395;
-		});	
+		});
 		$("#form .note-editable").keypress(function(){
 			textchange = textchange + 1;
 		});
@@ -439,11 +439,11 @@ init.push(function () {
 			if(textchange > 400){
 				// trigger autoSave
 				autoSave(t);
-				$('#autosave').fadeIn().html('<?php echo lg('Sedang menyimpan...') ?>'); 
+				$('#autosave').fadeIn().html('<?php echo lg('Sedang menyimpan...') ?>');
 				// set back to zero
 				textchange = 0;
 			}
-			
+
 			// console
 			if(textchange%50 == 0){
 				console.log(textchange);
@@ -455,7 +455,7 @@ init.push(function () {
 });<?php ob_end_flush(); ?>
 </script>
 <?php
-			break;	
+			break;
 		case 'editquick';
 ?>
 <script src="assets/javascripts/select2.min.js"></script>
@@ -466,19 +466,19 @@ init.push(function () {
 </script>
 <?php
 			break;
-			
+
 		default: // case default
 ?>
 <script><?php ob_start('minify_js'); ?>
 init.push(function () {
-	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();	
+	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();
 });
-	
+
 ElybinView();
 ElybinCheckAll();
 countDelData();<?php ob_end_flush(); ?>
 </script>
-<?php		
+<?php
 			break;
 	} // switch
   } // else ug

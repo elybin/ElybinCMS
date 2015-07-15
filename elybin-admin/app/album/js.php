@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: -
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,7 +10,7 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
@@ -29,7 +29,10 @@ if($usergroup == 0){
 	switch (@$_GET['act']) {
 		case 'add': // case 'add'
 ?>
-<script src="min/?b=assets/javascripts&amp;f=select2.min.js,bootstrap-datepicker.min.js,jquery.maskedinput.min.js,jquery.lazyload.js"></script>
+<script src="assets/javascripts/select2.min.js"></script>
+<script src="assets/javascripts/bootstrap-datepicker.min.js"></script>
+<script src="assets/javascripts/jquery.maskedinput.min.js"></script>
+<script src="assets/javascripts/jquery.lazyload.js"></script>
 <script><?php ob_start('minify_js'); ?>
 // endless scrolling
 $(window).scroll(function() {
@@ -44,10 +47,10 @@ $(document).ready(function () {
 	$("img.lazy").lazyload();
 });
 init.push(function () {
-	$('#tooltip a').tooltip();	
+	$('#tooltip a').tooltip();
 	$('#date-pick').datepicker();
-	$("#date-input").mask("99/99/9999");		
-		
+	$("#date-input").mask("99/99/9999");
+
 	// on submit
 	$('#form').submit(function(e){
 		// disable button and growl!
@@ -74,7 +77,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.isi });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -105,12 +108,15 @@ init.push(function () {
 });<?php ob_end_flush(); ?>
 </script>
 <!-- / Javascript -->
-<?php 
+<?php
 			break;
 
 		case 'edit':
 ?>
-<script src="min/?b=assets/javascripts&amp;f=select2.min.js,bootstrap-datepicker.min.js,jquery.maskedinput.min.js,jquery.lazyload.js"></script>
+<script src="assets/javascripts/select2.min.js"></script>
+<script src="assets/javascripts/bootstrap-datepicker.min.js"></script>
+<script src="assets/javascripts/jquery.maskedinput.min.js"></script>
+<script src="assets/javascripts/jquery.lazyload.js"></script>
 <script><?php ob_start('minify_js'); ?>
 // endless scrolling
 $(window).scroll(function() {
@@ -125,7 +131,7 @@ $(document).ready(function () {
 	$("img.lazy").lazyload();
 });
 init.push(function () {
-	$('#tooltip a').tooltip();	
+	$('#tooltip a').tooltip();
 	$('#date-pick').datepicker();
 	$("#date-input").mask("99/99/9999");
 	$('#switcher-style').switcher({
@@ -160,7 +166,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.isi });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -191,9 +197,9 @@ init.push(function () {
 });<?php ob_end_flush(); ?>
 </script>
 <!-- / Javascript -->
-<?php 
-			break;	
-			
+<?php
+			break;
+
 	default: // case default
 ?>
 <script src="assets/javascripts/jquery.lazyload.js"></script>
@@ -210,7 +216,7 @@ $(document).ready(function () {
 });
 <?php ob_end_flush(); ?>
 </script>
-<?php		
+<?php
 			break;
 	}
   }

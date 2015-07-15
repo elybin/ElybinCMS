@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: -
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,11 +10,11 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	// get user privilages
 	$tbus = new ElybinTable('elybin_users');
 	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
@@ -33,9 +33,9 @@ if($usergroup == 0){
 		case 'add': // case 'add'
 ?>
 <!-- Javascript -->
-<script>
+<script><?php ob_start('minify_js'); ?>
 init.push(function () {
-	$('#tooltip a').tooltip();	
+	$('#tooltip a').tooltip();
 
 	// on submit
 	$('#form').submit(function(e){
@@ -74,7 +74,7 @@ init.push(function () {
 	    e.preventDefault();
 	    return false;
   	});
-});
+});<?php ob_end_flush(); ?>
 </script>
 <!-- / Javascript -->
 <?php
@@ -83,7 +83,7 @@ init.push(function () {
 		case 'edit': // case 'edit'
  ?>
 <!-- Javascript -->
-<script>
+<script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	$('#switcher-style').switcher({
 		theme: 'square',
@@ -129,12 +129,12 @@ init.push(function () {
 	    e.preventDefault();
 	    return false;
   	});
-});
+});<?php ob_end_flush(); ?>
 </script>
 <!-- / Javascript -->
 <?php
-			break;	
-			
+			break;
+
 	default: // case default
 ?>
 <script type="text/javascript">
@@ -144,7 +144,7 @@ init.push(function () {
 ElybinCheckAll();
 countDelData();
 </script>
-<?php		
+<?php
 			break;
 	}
   }

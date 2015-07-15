@@ -1,8 +1,8 @@
 <?php
 /* Short description for file
  * [ Module: Media
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -41,7 +41,7 @@ if($usergroup == 0){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=media"><?php echo lg('Library') ?></a></li>
 			<li class="active"><a href="?mod=media&amp;act=add"><?php echo lg('Uplaod to Library') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -51,7 +51,7 @@ if($usergroup == 0){
 			<a href="?mod=media" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Library') ?></a>
 			<h1><?php echo lg('Upload to Library') ?></h1>
 		</div> <!-- / .page-header -->
-				
+
 		<form action="<?php echo $action ?>" method="post" id="form" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-sm-12">
@@ -65,7 +65,7 @@ if($usergroup == 0){
 								<p class="help-block"><?php echo lg('Allowed file type:')?> (jpg, jpeg, png, svg, xls, xlsx, ppt, pptx, txt, doc, docx, pdf, rar, zip, mp3)</p>
 							  </div>
 							</div> <!-- / .form-group -->
-						</div>	
+						</div>
 						<div class="panel-footer">
 							<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Data')?></button>
 							<a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
@@ -78,7 +78,7 @@ if($usergroup == 0){
 		</form>
 <?php
 			break;
-			
+
 		case 'addmulti':
 ?>
 		<!-- help -->
@@ -90,7 +90,7 @@ if($usergroup == 0){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=media"><?php echo lg('Library') ?></a></li>
 			<li class="active"><a href="?mod=media&amp;act=addmulti"><?php echo lg('Multiple Upload') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -100,7 +100,7 @@ if($usergroup == 0){
 			<a href="?mod=media" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Library') ?></a>
 			<h1><?php echo lg('Multiple Upload') ?></h1>
 		</div> <!-- / .page-header -->
-				
+
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="form-horizontal panel-wide depth-panel">
@@ -110,15 +110,15 @@ if($usergroup == 0){
 							.dz-message span{font-size:20px;line-height:5;content:'dd'}
 							</style>
 							<form action="app/media/proses.php?addmulti" class="dropzone" id="my-dropzone"></form>
-						
-						</div>	
+
+						</div>
 					</div>
 				</div><!-- / .col -->
 			</div>
 <?php
 			break;
 
-	case 'del':		
+	case 'del':
 		$id 	= $v->sql(epm_decode($_GET['hash']));
 
 		// check id exist or not
@@ -129,7 +129,7 @@ if($usergroup == 0){
 			theme_foot();
 			exit;
 		}
-		
+
 		$cm	= $tb->SelectWhere('media_id',$id)->current();
 ?>
 							<div class="modal-header">
@@ -139,15 +139,15 @@ if($usergroup == 0){
 							<div class="modal-body">
 								<p class="text-danger"><?php echo lg('Are you sure you want delete permanently this item. This action cannot be undone.')?></p>
 								<br/>
-								<table class="table">		
+								<table class="table">
 									<tr>
 										<td width="20%"><i><?php echo lg('File Name') ?></i></td>
 										<td><?php echo $cm->title?></td>
-									</tr>				
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Size') ?></i></td>
 										<td><?php echo human_filesize($cm->size)?></td>
-									</tr>	
+									</tr>
 								</table>
 								<hr/>
 								<form action="<?php echo $action?>" method="post">
@@ -176,12 +176,12 @@ if($usergroup == 0){
 			er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
 			exit;
 		}
-		
+
 		$cm	= $tb->SelectWhere('hash',$hash)->current();
 		header('Content-Type: ');
 		readfile('../elybin-file/media/'.$cm->filename);
 		break;
-		
+
 	case 'view':
 		$id 	= $v->sql(epm_decode($_GET['hash']));
 
@@ -193,7 +193,7 @@ if($usergroup == 0){
 			theme_foot();
 			exit;
 		}
-		
+
 		$cm	= $tb->SelectWhere('media_id',$id)->current();
 ?>
 
@@ -214,7 +214,7 @@ if($usergroup == 0){
 								elseif($cm->type == 'image'){
 								?>
 								<div class="col-sm-12 text-center">
-									<img src="../elybin-file/media/medium-<?php echo $cm->filename?>" alt="<?php echo lg('Preview')?>" class="img-thumbnail grid-gutter-margin-b" style="max-height: 250px"/>
+									<img src="../elybin-file/media/hd-<?php echo $cm->filename?>" alt="<?php echo lg('Preview')?>" class="img-thumbnail grid-gutter-margin-b" style="max-height: 450px"/>
 								</div>
 								<?php
 								}
@@ -222,10 +222,10 @@ if($usergroup == 0){
 								<table class="table">
 									<tr>
 										<td width="20%"><i><?php echo lg('File Name') ?></i></td>
-										<td><?php 
+										<td><?php
 											echo $cm->title.' (<i>';
-											
-												
+
+
 											//file icon
 											if($cm->type=='image'){
 												$cm->type = lg('Image');
@@ -238,19 +238,19 @@ if($usergroup == 0){
 											}
 											echo $cm->type
 											?></i>)</td>
-									</tr>					
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Size') ?></i></td>
 										<td><?php echo human_filesize($cm->size)?></td>
-									</tr>			
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Uploaded Date') ?></i></td>
 										<td><?php echo friendly_date($cm->date)?></td>
-									</tr>		
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Downloaded') ?></i></td>
 										<td><?php echo $cm->download.' '.lg('Times')?></td>
-									</tr>	
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Sharing') ?></i></td>
 										<td><?php
@@ -261,7 +261,7 @@ if($usergroup == 0){
 										}
 										?>
 										</td>
-									</tr>		
+									</tr>
 									<tr>
 										<td><i><?php echo lg('Share to') ?></i></td>
 										<td>
@@ -284,19 +284,19 @@ ElybinView();
 </script>
 <?php
 			break;
-			
+
 	default:
 	$tb 	= new ElybinTable('elybin_media');
-	
-	$search = $v->sql(@$_GET['search']);	
-		
+
+	$search = $v->sql(@$_GET['search']);
+
 	// search
 	if(isset($_GET['search'])){
 		$s_q = " && (`m`.`filename` LIKE '%$search%')";
 	}else{
 		$s_q = "";
 	}
-	
+
 	if(isset($_GET['filter']) && $_GET['filter'] == 'docs'){
 		// normal query
 		$que = "
@@ -305,7 +305,7 @@ ElybinView();
 		FROM
 		`elybin_media` as `m`
 		WHERE
-		`m`.`type` = 'office' 
+		`m`.`type` = 'office'
 		$s_q
 		";
 	}
@@ -329,7 +329,7 @@ ElybinView();
 		FROM
 		`elybin_media` as `m`
 		WHERE
-		`m`.`type` = 'audio' ||  `m`.`type` = 'video' 
+		`m`.`type` = 'audio' ||  `m`.`type` = 'video'
 		$s_q
 		";
 	}else{
@@ -339,12 +339,12 @@ ElybinView();
 		`m`.*
 		FROM
 		`elybin_media` as `m`
-		WHERE 
+		WHERE
 		1=1
 		$s_q
 		";
 	}
-	
+
 	$com = $tb->GetRowFullCustom($que);
 	// modify query to pageable & shortable
 	$oarr = array(
@@ -366,7 +366,7 @@ ElybinView();
 			<div class="breadcrumb-label text-light-gray"><?php echo lg('You are here:') ?></div>
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li class="active"><a href="?mod=media"><?php echo lg('Library') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -382,7 +382,7 @@ ElybinView();
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
+						<div class="pull-right col-xs-12 col-sm-6 col-md-4">
 							<a href="?mod=media&amp;act=addmulti" class="pull-right btn btn-success btn-labeled" style="width: 100%">
 							<span class="btn-label icon fa fa-upload"></span>&nbsp;&nbsp;<?php echo lg('Multiple Upload')?></a>
 						</div>
@@ -390,23 +390,23 @@ ElybinView();
 				</div>
 			</div>
 		</div> <!-- ./Page Header -->
-		
+
 		<?php
 			// 1.1.3
 			// msg
 			if(@$_GET['msg'] == 'uploaded'){
 				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Uploaded Successfully.') . '</div>';
 			}
-			
+
 		?>
-		
+
 		<!-- Content here -->
 		<div class="row">
-			<div class="col-sm-12">	
+			<div class="col-sm-12">
 				<!-- Tabs -->
 				<ul class="nav nav-tabs nav-tabs-xs">
 					<li<?php if(!isset($_GET['filter'])){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totallmedia = $tb->GetRowFullCustom("
 						SELECT
@@ -418,7 +418,7 @@ ElybinView();
 						<a href="?mod=media"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallmedia ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='docs'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totdoc = $tb->GetRowFullCustom("
 						SELECT
@@ -432,7 +432,7 @@ ElybinView();
 						<a href="?mod=media&amp;filter=docs"><?php echo lg('Documets') ?> <span class="badge badge-success"><?php echo $totdoc ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='image'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totgrap = $tb->GetRowFullCustom("
 						SELECT
@@ -440,13 +440,13 @@ ElybinView();
 						FROM
 						`elybin_media` as `m`
 						WHERE
-						`m`.`type` = 'image' 
+						`m`.`type` = 'image'
 						");
-						?>		
+						?>
 						<a href="?mod=media&amp;filter=image"><?php echo lg('Image') ?> <span class="badge badge-info"><?php echo $totgrap ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='multi'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totmulti = $tb->GetRowFullCustom("
 						SELECT
@@ -465,11 +465,11 @@ ElybinView();
 					<!-- ./Panel Heading -->
 					<div class="panel-body">
 					  <div class="table-primary table-responsive">
-						
+
 						<?php
 						$orb = array(
 							'type' => lg('File Type'),
-							'size' => lg('File Size'),		
+							'size' => lg('File Size'),
 							'filename' => lg('File Name')
 						);
 						showOrder($orb);
@@ -479,14 +479,14 @@ ElybinView();
 						<form action="<?php echo $action?>" method="post">
 						<input type="hidden" name="act" value="multidel" />
 						<input type="hidden" name="mod" value="media" />
-						
+
 						<table class="table table-bordered table-striped" id="results">
 						 <thead>
 						   <tr>
 						    <th width="2%"><i class="fa fa-square" id="tooltip-ck" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Check All')?>"></i></th>
 							<th width="35%"><?php echo lg('File Name') ?></th>
 						    <th width="5%"><?php echo lg('Type') ?></th>
-						    <th><?php echo lg('Size')?></th>						    
+						    <th><?php echo lg('Size')?></th>
 							<th><?php echo lg('Date') ?></th>
 						    <th><?php echo lg('Action')?></th>
 						   </tr>
@@ -495,7 +495,7 @@ ElybinView();
 						<?php
 
 						$no = 0;
-						foreach($lm as $cm){							
+						foreach($lm as $cm){
 							//file icon
 							if($cm->type=='image'){
 								$cm->type = lg('Image');
@@ -522,36 +522,36 @@ ElybinView();
 										echo '<a href="?mod=media&amp;act=view&amp;hash='.epm_encode($cm->media_id).'&amp;clear=yes" class="btn btn-success btn-outline btn-sm" data-toggle="modal" data-target="#view" id="view-link" data-placement="bottom" data-toggle="tooltip" data-original-title="'.lg('Mode Detail').'"><i class="fa fa-external-link-square"></i></a>&nbsp;';
 										echo '<a href="?mod=media&amp;act=del&amp;hash='.epm_encode($cm->media_id).'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="'.lg('Delete Permanently').'"><i class="fa fa-trash-o"></i><i class="fa fa-times"></i></a>';
 									?>
-									
+
 								</div>
 							</td>
 						   </tr>
 						<?php
 							$no++;
 						}
-						
-						
+
+
 						if($no < 1){
 							echo '<tr><td colspan="6"><div class="text-center text-light-gray panel-padding"><i class="fa fa-5x fa-file"></i><br/>'. lg('Nothing can be shown.').'</div></td></tr>';
 						}
 						?>
 						 </tbody>
 						</table>
-						
-						
+
+
 						<!-- Multi Delete Modal -->
 						<div id="deleteall" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 							<div class="modal-dialog modal-sm">
 								<div class="modal-content">
 									<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-									<?php 
+									<?php
 									echo '<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;'.lg('Delete Permanently').'</h4>';
 									?>
-									
+
 									</div>
 									<div class="modal-body">
-										<?php 
+										<?php
 											echo lg('Are you sure you want delete permanently this item?');
 										?>
 										<div id="deltext"></div>
@@ -568,10 +568,10 @@ ElybinView();
 						</div>
 						</form>
 						<?php showPagging($com) ?>
-						
+
 					</div> <!-- /.table-responsive -->
 					<!-- start -->
-					 		
+
 					<form action="app/media/proses.php" method="post" id="form" enctype="multipart/form-data">
 						<div class="row">
 							<div class="col-sm-12">
@@ -588,7 +588,7 @@ ElybinView();
 										<p class="help-block"><?php echo lg('Allowed file type:')?> (jpg, jpeg, png, svg, xls, xlsx, ppt, pptx, txt, doc, docx, pdf, rar, zip, mp3)</p>
 									</div>
 								</div> <!-- / .form-group -->
-							
+
 								<input type="hidden" name="act" value="add" />
 								<input type="hidden" name="mod" value="media" />
 							</div><!-- / .col -->
@@ -606,7 +606,7 @@ ElybinView();
 					</div> <!-- / .modal-dialog -->
 				</div> <!-- / .modal -->
 				<!-- / Delete Modal -->
-				
+
 				<!-- share Modal -->
 				<div id="share" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:3000">
 					<div class="modal-dialog modal-sm">
@@ -617,7 +617,7 @@ ElybinView();
 				</div> <!-- / .modal -->
 				<!-- / share Modal -->
 
-				
+
 				<!-- Large modal -->
 				<div id="view" class="modal fade hide-light" tabindex="-1" role="dialog" style="z-index:2000">
 					<div class="modal-dialog modal-lg">

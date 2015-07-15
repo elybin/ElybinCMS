@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: Menu Manager
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,11 +10,11 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	// get usergroup privilage/access from current user to this module
 	$usergroup = _ug()->setting;
 
@@ -83,7 +83,8 @@ init.push(function () {
 		case 'edit': // case 'edit'
 ?>
 <!-- Javascript -->
-<script src="min/?f=assets/javascripts/select2.min.js,assets/javascripts/sortable.min.js"></script>
+<script src="assets/javascripts/select2.min.js"></script>
+<script src="assets/javascripts/sortable.min.js"></script>
 <script>
 init.push(function () {
 	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg("Select file")?>...' });
@@ -136,7 +137,7 @@ init.push(function () {
 		update : function () {
 			var neworder = new Array();
 
-			$('#sortable-list .task span').each(function() {    	
+			$('#sortable-list .task span').each(function() {
 				//get the id
 				var id  = $(this).attr("id");
 				neworder.push(id);
@@ -177,22 +178,23 @@ init.push(function () {
 </script>
 <!-- / Javascript -->
 <?php
-			break;	
-			
+			break;
+
 		default: // case default
 ?>
 <!-- Javascript -->
-<script src="min/?f=assets/javascripts/select2.min.js,assets/javascripts/sortable.min.js"></script>
+<script src="assets/javascripts/select2.min.js"></script>
+<script src="assets/javascripts/sortable.min.js"></script>
 <script>
 init.push(function () {
-	$('#tooltip a, #tooltip-ck').tooltip();	
+	$('#tooltip a, #tooltip-ck').tooltip();
 
 
 	$('#sortable-list').sortable({
 		update : function () {
 			var neworder = new Array();
 
-			$('#sortable-list .task span').each(function() {    	
+			$('#sortable-list .task span').each(function() {
 				//get the id
 				var id  = $(this).attr("id");
 				neworder.push(id);
@@ -229,12 +231,12 @@ init.push(function () {
 			});
 		}
 	});
-	
+
 });
 ElybinView();
 </script>
 <!-- / Javascript -->
-<?php		
+<?php
 			break;
 	}
   }
