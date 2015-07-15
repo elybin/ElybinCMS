@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: -
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,11 +10,11 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location:  index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	// get user privilages
 	$tbus = new ElybinTable('elybin_users');
 	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
@@ -60,7 +60,7 @@ init.push(function () {
 	}
 })<?php ob_end_flush(); ?>
 </script>
-<?php 
+<?php
 	}
 	elseif($edt=='bs-markdown'){
 ?>
@@ -82,7 +82,7 @@ init.push(function () {
 	$('#form').submit(function(e){
 		// disable button and growl!
 		$('#form .btn-success').addClass('disabled');
-		$.growl({ title: "<?php echo $lg_processing?>", message: "<?php echo $lg_processing?>...", duration: 9999*9999 });
+		$.growl({ title: "<?php echo lg('Processing')?>", message: "<?php echo lg('Processing')?>...", duration: 9999*9999 });
 		// start ajax
 	    $.ajax({
 	      url: $(this).attr('action') + '?result=json',
@@ -106,7 +106,7 @@ init.push(function () {
 				if(data.status == "ok"){
 					// ok growl
 					$.growl.notice({ title: data.title, message: data.isi });
-					
+
 					// 1.1.3
 					// msg
 					if(data.callback_msg == ''){
@@ -139,18 +139,18 @@ init.push(function () {
 </script>
 <?php
 			break;
-			
+
 	default: // case default
 ?>
 <script type="text/javascript">
 init.push(function () {
-	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();	
+	$('#tooltip a, #tooltipc, #tooltip-ck').tooltip();
 });
 ElybinView();
 ElybinCheckAll();
 countDelData();
 </script>
-<?php		
+<?php
 			break;
 	}
   }
