@@ -1,7 +1,7 @@
 Elybin CMS (www.elybin.com) - Open Source Content Management System
 @copyright => Copyright (C) 2014 Elybin, Inc, All rights reserved.
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
-@author    => Khakim Assidiqi <hamas182@gmail.com>
+@author    => Khakim A <kim@elybin.com>
 
 
 
@@ -22,7 +22,7 @@ Saat pertama kali kami memulai Elybin CMS kami memiliki misi yang cukup sederhan
 Dengan penggunaan produk ini anda menyetujui Syarat dan Ketentuan dari Elybin CMS.
 Terimakasih telah menggunakan produk kami, bantu kami mewujudkan misi kami, tetap cintai produk asli Indonesia ini.
 
-Salam Hangat
+Regards
 Tim Elybin
 
 
