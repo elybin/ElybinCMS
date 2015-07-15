@@ -1,8 +1,8 @@
 <?php
 /* Javascript
  * Module: Media
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,19 +10,13 @@
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
-	// get user privilages
-	$tbus = new ElybinTable('elybin_users');
-	$tbus = $tbus->SelectWhere('session',$_SESSION['login'],'','');
-	$level = $tbus->current()->level; // getting level from curent user
 
-	$tbug = new ElybinTable('elybin_usergroup');
-	$tbug = $tbug->SelectWhere('usergroup_id',$level,'','');
-	$usergroup = $tbug->current()->media;
+	// get user privilages
+	$usergroup = _ug()->media;
 
 // give error if no have privilage
 if($usergroup == 0){
@@ -31,12 +25,14 @@ if($usergroup == 0){
 }else{
 	switch (@$_GET['act']) {
 		case 'add': // case 'add'
+		exit;
+		// shut down
 ?>
 <!-- Javascript -->
-<script>
+<script><?php ob_start('minify_js'); ?>
 init.push(function () {
-	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();	
+	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg('Select fiile')?>...' });
+	$('#tooltip a').tooltip();
 
 	// on submit
 	$('#form').submit(function(e){
@@ -77,17 +73,17 @@ init.push(function () {
 	    e.preventDefault();
 	    return false;
   	});
-});
+});<?php ob_end_flush(); ?>
 </script>
 <?php
 			break;
 		case 'addmulti': // case 'add'
 ?>
 <script src="assets/javascripts/dropzone.min.js"></script>
-<script>
+<script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	$('#file-style').pixelFileInput({ placeholder: '<?php echo $lg_nofileselected?>...' });
-	$('#tooltip a').tooltip();	
+	$('#tooltip a').tooltip();
 
 	// on submit
 	$('#form').submit(function(e){
@@ -128,14 +124,14 @@ init.push(function () {
 	    e.preventDefault();
 	    return false;
   	});
-});
+});<?php ob_end_flush(); ?>
 </script>
 <?php
 			break;
 		default: // case default
 ?>
 <!-- Javascript -->
-<script>
+<script><?php ob_start('minify_js'); ?>
 init.push(function () {
 	$('#tooltip a, #tooltip-ck').tooltip();
 });
@@ -149,10 +145,10 @@ init.push(function () {
 		// disable button and growl!
 		$('#form .btn-success').addClass('disabled');
 	});
-});
+});<?php ob_end_flush(); ?>
 </script>
 <!-- / Javascript -->
-<?php		
+<?php
 			break;
 	}
   }

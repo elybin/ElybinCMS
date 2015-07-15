@@ -1,8 +1,8 @@
 <?php
 /* Short description for file
  * [ Module: Album Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,7 +10,7 @@
 session_start();
 if(empty($_SESSION['login'])){
 	header('location:../../../403.php');
-}else{	
+}else{
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
@@ -39,16 +39,16 @@ if($usergroup == 0){
 		if(empty($name)){
 			$name = lg('Untitled');
 		}
-		
+
 		// basic info
  		$tbp = new ElybinTable('elybin_posts');
 		$d1 = array(
 			'title' => $name,
 			'seotitle' => seo_title($name),
 			'status' => 'published'
-			); 
+			);
 		$tbp->Update($d1,'post_id', $aid);
-		
+
 		// relate images to their album
 		$tbr = new ElybinTable('elybin_relation');
 		foreach($image as $iid){
@@ -60,7 +60,7 @@ if($usergroup == 0){
 			);
 			$tbr->Insert($d2);
 		}
-		
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -74,26 +74,31 @@ if($usergroup == 0){
 	}
 	//EDIT
 	elseif($mod=='album' AND $act=='edit'){
-		$aid = $v->sql(epm_decode($_POST['aid']));
-		$name = $v->xss($_POST['name']);
-		$image = $_POST['image'];
+		$aid = $v->sql(epm_decode(@$_POST['aid']));
+		$name = $v->xss(@$_POST['name']);
+		$image = @$_POST['image'];
+
+		// if image empty
+		if(empty($image)){
+			$image = [];
+		}
 
 		//if field empty
 		if(empty($name)){
 			$name = lg('Untitled');
 		}
-		
+
 		// basic info
  		$tbp = new ElybinTable('elybin_posts');
 		$d1 = array(
 			'title' => $name,
 			'seotitle' => seo_title($name)
-			); 
+			);
 		$tbp->Update($d1,'post_id', $aid);
-		
+
 		// relate images to their album
 		$tbr = new ElybinTable('elybin_relation');
-		// delete all related relation 
+		// delete all related relation
 		$tbr->DeleteAnd('type', 'album','first_id',$aid);
 		foreach($image as $iid){
 			$d2 = array(
@@ -116,11 +121,11 @@ if($usergroup == 0){
 		echo json_encode($a);
 	}
 
-	//DEL 
+	//DEL
 	// 1.1.3 - updated
 	elseif($mod=='album' AND $act=='del'){
 		$aid = $v->sql(epm_decode($_POST['hash']));
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$cop= $tb->GetRowAnd('post_id', $aid,'type','album');
@@ -130,7 +135,7 @@ if($usergroup == 0){
 		}
 		// delete album
 		$tb->DeleteAnd('post_id', $aid,'type','album');
-		
+
 		// delete relaiton
 		$tbr = new ElybinTable('elybin_relation');
 		$tbr->Delete('first_id',$aid);
@@ -146,7 +151,7 @@ if($usergroup == 0){
 				$pecah = explode("|",$tg);
 				$pecah = $pecah[0];
 				$album_id_fix = $v->sql($pecah);
-				
+
 				// check id exist or not
 				$tabledel = new ElybinTable('elybin_album');//del album
 				$coalbum = $tabledel->GetRow('album_id', $album_id_fix);
@@ -154,7 +159,7 @@ if($usergroup == 0){
 					header('location: ../../../404.html');
 					exit;
 				}
-		
+
 				$tablegal = new ElybinTable('elybin_gallery'); //del foto
 				$cimg = $tablegal->SelectWhere('album_id',$album_id_fix,'','');
 				foreach($cimg as $i){
@@ -168,18 +173,18 @@ if($usergroup == 0){
 				}
 
 				//del album
-				$tabledel->Delete('album_id', $album_id_fix); 
+				$tabledel->Delete('album_id', $album_id_fix);
 
 				$tbgal= new ElybinTable('elybin_gallery');
 				$delgal = $tbgal->Delete('album_id',$album_id_fix);
 				header('location:../../admin.php?mod='.$mod);
 			}
 		} // > foreach
-	}	
+	}
 	//404
 	else{
 		header('location: ../../../404.php');
 	}
-}	
+}
 }
 ?>
