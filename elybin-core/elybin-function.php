@@ -24,12 +24,12 @@ function result(Array $a, $result = 'r'){
 function ElybinRedirect($url)
 {
     if (!headers_sent())
-    {    
+    {
         header('Location: '.$url);
         exit;
         }
     else
-        {  
+        {
         echo '<script type="text/javascript">';
         echo 'window.location.href="'.$url.'";';
         echo '</script>';
@@ -51,10 +51,10 @@ class ElybinValidasi{
 		$str = htmlspecialchars($str);
 		return $str;
 	}
-	function sql($str){	
+	function sql($str){
 		$rms = array("'","`","=",'"',"@","<",">","*");
 		$str = str_replace($rms, '', $str);
-		$str = stripcslashes($str);	
+		$str = stripcslashes($str);
 		$str = htmlspecialchars($str);
 		return $str;
 	}
@@ -149,7 +149,7 @@ class ElybinValidasi{
 				'msg_ses' => 'fullname_too_short',
 				'red' => $red
 			), @$_GET['r']);
-		}		
+		}
 		if(!preg_match("/^[a-zA-Z \']+$/", $str)){
 			// woops! not matched anything, I given up! give 'em result!
 			result(array(
@@ -251,7 +251,7 @@ function showOrder(array $orba){
 	$or = @$_GET['order'];
 	$fil = @$_GET['filter'];
 	$search = @$_GET['search'];
-	
+
 	$o = '
 	<!-- order -->
 	<form action="" method="get" class="pull-left" style="margin-bottom: 5px">';
@@ -285,10 +285,10 @@ function showOrder(array $orba){
 			$o .= '<option value="'.$val.'">'.$cap.'</option>';
 		}
 	}
-	$o .= '	
-	</select>&nbsp;	
+	$o .= '
+	</select>&nbsp;
 		<select name="order" class="form-control input-sm" style="margin-bottom: 0; display: inline; width: auto">';
-		
+
 		// if order selecred
 		if($or=='desc'){
 			$o .= '<option value="desc" selected="selected">'.lg('Descanding').'</option>';
@@ -300,8 +300,8 @@ function showOrder(array $orba){
 		}else{
 			$o .= '<option value="asc">'.lg('Ascending').'</option>';
 		}
-	$o .= '	
-		</select>&nbsp;	
+	$o .= '
+		</select>&nbsp;
 		<input type="submit" value="'.lg('Sort').'" class="btn">
 	</form>
 	';
@@ -319,25 +319,25 @@ function showSearch(){
 		$search = "";
 	}
 
-	// collect data 
+	// collect data
 	$mod = @$_GET['mod'];
 	$o = '
 	<form action="" method="get" class="input-group input-group-sm pull-right col-md-3" style="margin-bottom: 5px">
 		<input type="hidden" name="mod" value="'.$mod.'"/>';
-		
+
 	// jika act di set
 	if(isset($act)){
 		$o .= '<input type="hidden" name="act" value="'.$act.'" />';
 	}
-	
+
 	// jika filter di set
 	if(isset($fil)){
 		$o .= '<input type="hidden" name="filter" value="'.$fil.'" />';
 	}
-	
+
 	$o .= '
 		<input type="text" name="search" value="'.$search.'" placeholder="'.lg('Search Keywords..').'" class="form-control"/>
-			
+
 		<span class="input-group-btn">
 			<button type="submit" class="btn" type="button">'.lg('Search').'</button>
 		</span>
@@ -350,15 +350,15 @@ function showSearch(){
 function showPagging($totalrow, $aid = false){
 	// if total row > 0
 	if($totalrow > 0){
-		// collect data 
+		// collect data
 		$act = @$_GET['act'];
 		$mod = @$_GET['mod'];
-		
+
 		// if act isset
 		if(isset($act)){
 			$mod .= '&amp;act='.$act;
 		}
-		
+
 		$orb = @$_GET['orderby'];
 		$or = @$_GET['order'];
 		$fil = @$_GET['filter'];
@@ -366,7 +366,7 @@ function showPagging($totalrow, $aid = false){
 		// pagg
 		$pr = _op()->pagging_row;
 		$mp = ceil($totalrow/$pr);
-		// get 
+		// get
 		if(isset($_GET['page'])){
 			$cpag = $_GET['page'];
 		}else{
@@ -393,11 +393,11 @@ function showPagging($totalrow, $aid = false){
 		if(isset($search)){
 			$pfx .= '&amp;search='.$search;
 		}
-		
+
 		$o = '<i class="text-light-gray text-xs">'.$totalrow.' '.lg('Entry').'</i>&nbsp;&nbsp;&nbsp;';
-		
+
 		// first
-		$o .= '<a href="?mod='.$mod.$pfx.'&amp;page=1" class="btn btn-sm btn-default"><i class="fa fa-angle-double-left"></i></a>&nbsp;';	
+		$o .= '<a href="?mod='.$mod.$pfx.'&amp;page=1" class="btn btn-sm btn-default"><i class="fa fa-angle-double-left"></i></a>&nbsp;';
 		// pref
 		if($cpag > 1){
 			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.($cpag-1).'" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i></a>&nbsp;';
@@ -410,7 +410,7 @@ function showPagging($totalrow, $aid = false){
 			function pageDD(pfx){
 				window.location = pfx + '&page=' + $(\"select#pagging option:selected\").val();
 			}
-		</script>";	
+		</script>";
 		$o .= '<select id="pagging" onchange="pageDD(\'?mod='.$mod.$pfx.'\')">';
 		for($i=1; $i <= $mp; $i++){
 			// jika halamana sama
@@ -420,7 +420,7 @@ function showPagging($totalrow, $aid = false){
 				$o .= '<option value="'.$i.'">'.$i.'</option>';
 			}
 		}
-		$o .= '</select>&nbsp;';		
+		$o .= '</select>&nbsp;';
 		// next
 		if($cpag < $mp){
 			$o .= '<a href="?mod='.$mod.$pfx.'&amp;page='.($cpag+1).'" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i></a>&nbsp;';
@@ -437,20 +437,20 @@ function showPagging($totalrow, $aid = false){
 }
 // 1.1.3
 // pagging (query)
-// "numer of total data", "array of order data", "query want to modify" 
+// "numer of total data", "array of order data", "query want to modify"
 function _PageOrder(array $orderArr, $query, $limstart = 0){
 
 	// pagg
 	$pr = _op()->pagging_row;
 	//$mp = ceil($count/$pr);
-	// get 
+	// get
 	if(isset($_GET['page'])){
 		$cpag = $_GET['page'];
 	}else{
 		$cpag = 1;
 	}
 
-	// order get 
+	// order get
 	$orb = @$_GET['orderby'];
 	$or = @$_GET['order'];
 	// order
@@ -503,7 +503,7 @@ function keyword_filter($w){
     return $wj;
 }
 function cutword($s, $len = 200){
-	
+
 	if(strlen($s) > $len){
 		$s = substr($s, 0, strpos($s, ' ', $len));
 		$s = trim($s);
@@ -511,19 +511,30 @@ function cutword($s, $len = 200){
 	return $s;
 }
 function UploadImage($fupload_name,$mod){
-	//include  lang 
-	include('../../../elybin-admin/lang/main.php');
-
-	$vdir_upload = "../../../elybin-file/$mod/";
+	// update for directory transversal
+	if(stristr($mod, 'elybin-file')){
+		$vdir_upload = "../../../$mod";
+	}else{
+		$vdir_upload = "../../../elybin-file/$mod/";
+	}
 	$vfile_upload = $vdir_upload . $fupload_name;
-	
-	@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,Error,Failed Processing Image");
+
+	if(!@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload)){
+		// new result function
+		result(array(
+			'status' => 'error',
+			'title' => lg('Error'),
+			'msg' => lg('Failed to processing uploaded image. Contact adminisitrator.'),
+			'msg_ses' => 'failed_processing',
+			'red' => ''
+		), 'j');
+	};
 	// 1280px ~ 90%
-	resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);		
+	resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);
 	// 300px ~ 80%
-	resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);		
+	resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);
 	// 100px  ~ 40%
-	resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+	resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
 	// 50px ~ 30%
 	resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 30);
 /* 	if($_FILES["file"]["type"]=="image/jpeg"){
@@ -542,25 +553,25 @@ function UploadImage($fupload_name,$mod){
 
 		imagedestroy($im_src);
 		imagedestroy($im);
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
 		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
 		// 50px
 		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
 	}
 	elseif($_FILES["file"]["type"]=="image/png"){
 		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
 		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
 		// 50px
 		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
 	}
 	elseif($_FILES["file"]["type"]=="image/gif"){
 		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);		
+		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
 		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);		
+		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
 		// 50px
 		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
 	} */
@@ -589,7 +600,7 @@ function resize($newWidth, $targetFile, $originalFile, $quality) {
                     $new_image_ext = 'gif';
                     break;
 
-            default: 
+            default:
                     throw Exception('Unknown image type.');
     }
 
@@ -701,7 +712,7 @@ function diff_date($date1, $date2, $result = 'day'){
 			$diff = $diff/60/60/24;
 			break;
 	}
-	
+
 	return $diff;
 }
 function time_elapsed_string($datetime, $full = false) {
@@ -709,7 +720,7 @@ function time_elapsed_string($datetime, $full = false) {
     $now = new DateTime;
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
-	
+
     $diff->w = floor($diff->d / 7);
 	$diff->d -= $diff->w * 7;
 
@@ -752,7 +763,7 @@ function friendly_date($date, $format = 'full'){
 		$date = $datetmp [0];
 		$date = explode("-", $date);
 		$date = date("d F Y",mktime(0,0,0,$date[1],$date[2],$date[0]));
-		
+
 		// format
 		if($format == 'full'){
 			$date = $date.' '.$datetmp[1];
@@ -933,11 +944,11 @@ function notif_push($code, $title, $value, $type, $icon){
 // Push Notification II
 function pushnotif($data){
 	settzone();
-	// generate module 
+	// generate module
 	if(empty($data['module'])){
 		$data['module'] = "home";
 	}
-	
+
 	// check and fix empty data
 	if(empty($data['code']) OR empty($data['icon']) OR empty($data['content'])){
 		exit("Error: Push notification failed, please contact admin.");
@@ -948,7 +959,7 @@ function pushnotif($data){
 	elseif(empty($data['type'])){
 		$data['type'] = 'info';
 	}
-	
+
 	//insert to notification
 	$tbln = new ElybinTable("elybin_notification");
 	$data = array(
@@ -961,7 +972,7 @@ function pushnotif($data){
 		'icon'=> $data['icon']
 	);
 	$result = $tbln->Insert($data);
-	
+
 	return $result;
 }
 // session expired
@@ -972,7 +983,7 @@ function session_exp(){
 		// set session to offline
 		$tbus = new ElybinTable('elybin_users');
 		$tbus->Update(array('session' => 'offline'), 'session',$_SESSION['login']);
-	  
+
 		session_unset();
 		session_destroy();
 		unset($_SESSION['login']);
@@ -1060,22 +1071,22 @@ function minify_html($string)
     $string = preg_replace('/<!--(?!\[if|\<\!\[endif)(.|\s)*?-->/', '', $string);
 
     // Remove tab
-    $string = preg_replace('/\t+/', '', $string);  
+    $string = preg_replace('/\t+/', '', $string);
 
 	// Remove new line
-    $string = preg_replace('/\n+/', '', $string);   
-    $string = preg_replace('/>\r+/', '>', $string);   
-    $string = preg_replace('/\r+</', '<', $string);   
+    $string = preg_replace('/\n+/', '', $string);
+    $string = preg_replace('/>\r+/', '>', $string);
+    $string = preg_replace('/\r+</', '<', $string);
 
     // Remove space between tags. Skip the following if
-    // you want as it will also remove the space 
+    // you want as it will also remove the space
     // between <span>Hello</span> <span>World</span>.
-    $string = preg_replace('/>\s+</', '><', $string);   
+    $string = preg_replace('/>\s+</', '><', $string);
 
 	return $string;
 }
 
-function minify_js($buffer){ 
+function minify_js($buffer){
 	/* remove comments */
 	$buffer = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/", "", $buffer);
 	/* remove tabs, spaces, newlines, etc. */
@@ -1155,20 +1166,20 @@ function _op(){
 	return op();
 }
 
- 
+
 // 1.1.3
 // get user info from session
 function _u($uid = false){
 	//get current user
 	$tbu = new ElybinTable("elybin_users");
-	
+
 	// jika uid di set
 	if($uid){
 		$u = $tbu->SelectWhere('user_id', $uid)->current();
 	}else{
 		$u = $tbu->SelectWhere('session',$_SESSION['login'])->current();
 	}
-	
+
 	return $u;
 }
 // 1.1.3
@@ -1177,10 +1188,10 @@ function _u($uid = false){
 function _p($where = 'post_id', $value = 1){
 	//get current post
 	$tbp = new ElybinTable("elybin_posts");
-	
+
 	// jika id di set
 	$u = $tbp->SelectWhere($where, $value)->current();
-	
+
 	return $u;
 }
 // 1.1.3
@@ -1189,10 +1200,10 @@ function _p($where = 'post_id', $value = 1){
 function _vi($where = 'visitor_id', $value = 1){
 	//get current post
 	$tbv = new ElybinTable("elybin_visitor");
-	
+
 	// jika id di set
 	$vi = $tbv->SelectWhere($where, $value)->current();
-	
+
 	return $vi;
 }
 
@@ -1207,7 +1218,7 @@ function _ug($uid = false){
 	}else{
 		$u = _u();
 	}
-	
+
 	//get current usergroup
 	$tbug = new ElybinTable('elybin_usergroup');
 	$ug = $tbug->SelectWhere('usergroup_id',$u->level,'','')->current();
@@ -1227,7 +1238,7 @@ function human_filesize($bytes, $decimals = 2) {
 // categorize mime type
 function categorize_mime_types($mime)
 {
-	
+
     // Classify mime types into desired categories, key-val pairings
     $mimes = array(
 		"application/pdf"=>"office",
@@ -1285,7 +1296,7 @@ function categorize_mime_types($mime)
         "application/gzip"=>"archive",
         "application/octet-stream"=>"archive"
 	);
-	
+
 	// if data empty
 	if(@$mimes[$mime] == ''){
 		//file extension deny

@@ -63,11 +63,11 @@ switch (@$_GET['p']) {
 		switch ($msg) {
 			// failed chmod
 			case 'failed_chmod':
-				echo '<div class="al if"><p>'.lg('Set these directory to writeable (777): "elybin-install/", "elybin-core/", "elybin-file".').'</p><p>'.lg('or execute this command line').' <code>sudo chmod 777 elybin-install/ elybin-file/ elybin-core/</code></p></div>';
+				echo '<div class="al if"><p>'.lg('Set these directory to writeable (755): "elybin-install/", "elybin-core/", "elybin-file".').'</p><p>'.lg('or execute this command line').' <code>sudo chmod 755 elybin-install/ elybin-file/ elybin-core/</code></p></div>';
 				break;
 			// lock system
 			case 'failed_locksys':
-				echo '<div class="al er"><p>'.lg('Failed writing &#34;elybin-install/install_date.txt&#34;. Fix your directory permissions, and try again.').'</p></div>';
+				echo '<div class="al er"><p>'.lg('Failed writing &#34;elybin-install/install_date.txt&#34;. Fix your directory permissions, and try again.').'</p><p>'.lg('or execute this command line').' <code>sudo chmod 755 elybin-install/ elybin-file/ elybin-core/</code></p></div>';
 				break;
 
 			default:
@@ -85,7 +85,7 @@ switch (@$_GET['p']) {
 			<div class="cen">
 				<?php
 				// disabled when directory isn't writeable
-				if($msg == 'failed_chmod'){
+				if($msg == 'failed_chmod' || $msg == 'failed_locksys'){
 						echo '<a class="btn disabled">'.lg('Yes, Start Installation!').'</a>';
 				}else{
 						echo '<a href="?p=step1" class="btn">'.lg('Yes, Start Installation!').'</a>';
@@ -229,6 +229,9 @@ switch (@$_GET['p']) {
 				break;
 			case 'unk_error':
 				echo '<div class="al er"><p>'.lg('Unknown error. Please contact us.').'</p></div>';
+				break;
+			case 'failed_copy_version':
+				echo '<div class="al er"><p>'.lg('Failed to copy `elybin-version.php`. Copy manually from `elybin-install/inc/elybin-version.php` to `elybin-core/elybin-version.php`.').'</p></div>';
 				break;
 			case 'step1_ok':
 				echo '<div class="al ok"><p>'.lg('Database configuration success!').'</p></div>';

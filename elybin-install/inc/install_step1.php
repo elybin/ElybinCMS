@@ -135,7 +135,15 @@ else if(try_connect_manual($h, $u, $p, $n) == 2){
 				// success
 
 				// copy new version
-				copy_version();
+				if(!copy_version()){
+						result(array(
+								'status' => 'error',
+								'title' => lg('Error'),
+								'msg' => lg('Failed to copy `elybin-version.php`. Copy manually from `elybin-install/inc/elybin-version.php` to `elybin-core/elybin-version.php`.'),
+								'msg_ses' => 'failed_copy_version',
+								'red' => '../?p=step1'
+							), @$_GET['r']);
+				}
 
 				// rem tmp session
 				@$_SESSION['h'] = '';

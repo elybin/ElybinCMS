@@ -6,7 +6,7 @@ include '../elybin-core/elybin-function.php';
 if(@$_GET['p'] != 'logout' && @$_GET['p'] != 'logout_modal'){
 	if(isset($_SESSION['login'])){
 		if(isset($_SESSION['ref'])){
-			header('location: '.$ref);
+			header('location: '.urldecode($_SESSION['ref']));
 		}else{
 			header('location: admin.php?mod=home');
 		}
@@ -29,7 +29,7 @@ $msg = @$_SESSION['msg'];
 
 // use swtch
 switch (@$_GET['p']) {
-	
+
 	default:
 ?>
 <!DOCTYPE html>
@@ -83,9 +83,9 @@ switch (@$_GET['p']) {
 			case 'register_complete':
 				echo '<div class="al ok"><p>'.lg('Registration complete. You can login now.').'</p></div>';
 				break;
-			
+
 			default:
-				
+
 				break;
 		}
 		?>
@@ -104,7 +104,7 @@ switch (@$_GET['p']) {
 			<button class="btn"><?php echo lg('Sign in') ?></button>
 		</form>
 		<div class="cen">
-			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=register"><?php echo lg('Register') ?></a> |
 			<a href="?p=forgot"><?php echo lg('Forgot password?') ?></a>
 			<br/>
 			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
@@ -114,7 +114,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	case 'register':	
+	case 'register':
 		// get temp session
 		$ses_u = @$_SESSION['ses_u'];
 		$ses_e = @$_SESSION['ses_e'];
@@ -173,13 +173,13 @@ switch (@$_GET['p']) {
 			case 'password_too_short':
 				echo '<div class="al er"><p>'.lg('Your password is too weak, try to use more combination.').'</p></div>';
 				break;
-			
+
 			default:
 				echo '<div class="al if"><p>'.lg('To complete registration fill this form.').'</p></div>';
 				break;
 		}
 		?>
-		
+
 		<form action="login-process.php?p=register" method="POST">
 			<div class="group">
 				<input type="text" name="u" placeholder="<?php echo lg('Username') ?>" value="<?php echo $ses_u ?>" required/>
@@ -200,7 +200,7 @@ switch (@$_GET['p']) {
 			<button class="btn"><?php echo lg('Register') ?></button>
 		</form>
 		<div class="cen">
-			<a href="?p=login"><?php echo lg('Login') ?></a> | 
+			<a href="?p=login"><?php echo lg('Login') ?></a> |
 			<a href="?p=forgot"><?php echo lg('Forgot password?') ?></a>
 			<br/>
 			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
@@ -210,7 +210,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'recover':
 		// grab parameter
 		$get_k = @$_GET['k'];
@@ -233,7 +233,7 @@ switch (@$_GET['p']) {
 			COUNT(`user_id`) as `row`
 			from
 			`elybin_users` as `u`
-			WHERE 
+			WHERE
 			`u`.`user_account_forgetkey` = '$get_k'
 			LIMIT 0,1
 			")->current();
@@ -286,7 +286,7 @@ switch (@$_GET['p']) {
 			<button class="btn"><?php echo lg('Reset Password') ?></button>
 		</form>
 		<div class="cen">
-			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=register"><?php echo lg('Register') ?></a> |
 			<a href="?p=login"><?php echo lg('Login') ?></a>
 			<br/>
 			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
@@ -296,7 +296,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'forgot':
 ?>
 <!DOCTYPE html>
@@ -329,7 +329,7 @@ switch (@$_GET['p']) {
 			case 'reset_sent':
 				echo '<div class="al ok"><p>'.lg('Instruction was sent into your E-mail. Please check your E-mail.').'</p></div>';
 				break;
-			
+
 			default:
 				echo '<div class="al if"><p>'.lg('Enter your E-mail of your account. And follow the next step.').'</p></div>';
 				break;
@@ -342,7 +342,7 @@ switch (@$_GET['p']) {
 			<button class="btn"><?php echo lg('Send my Password') ?></button>
 		</form>
 		<div class="cen">
-			<a href="?p=register"><?php echo lg('Register') ?></a> | 
+			<a href="?p=register"><?php echo lg('Register') ?></a> |
 			<a href="?p=login"><?php echo lg('Login') ?></a>
 			<br/>
 			<a href="../">&#8592;&nbsp; <?php echo lg('Back to') ?> <?php echo $op->site_name ?></a>
@@ -352,7 +352,7 @@ switch (@$_GET['p']) {
 </html>
 <?php
 		break;
-	
+
 	case 'logout_modal':
 ?>
 				<div class="modal-header">
@@ -366,7 +366,7 @@ switch (@$_GET['p']) {
 				</div>
 <?php
 		break;
-	
+
 	case 'logout':
 		// logout
 		if(!isset($_SESSION['login'])){
@@ -375,7 +375,7 @@ switch (@$_GET['p']) {
 			// set session to offline
 			$tb = new ElybinTable('elybin_users');
 			$tb->Update(array('session' => 'offline'), 'session', @$_SESSION['login']);
-		  
+
 			session_unset();
 			session_destroy();
 			unset($_SESSION['login']);

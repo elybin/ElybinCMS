@@ -253,7 +253,7 @@ function connect_with_config(){
 function install_status(){
 	// I don't know...
 	$install_status = 0;
-	// because installation only works in 24hours, check install date
+	// because installation only works in couple hours, check install date
 	if($install_date = @file_get_contents(many_trans().'elybin-install/install_date.txt')){
 		if(diff_date(date("Y-m-d H:i:s"), $install_date, 'hour') > 2){
 			// status is locked = -1
@@ -484,20 +484,18 @@ function write_htaccess(){
 
 // function copy_version()
 // error code 		: 0 => failed
-// 					  1 => success
+// 					  		  1 => success
 function copy_version(){
-	$elybin_version = many_trans().'elybin-core/elybin-version.php';
-
-	//remove
-	@deleteDir(many_trans().'elybin-core/elybin-version.php');
+	$new_verfile = many_trans().'elybin-core/elybin-version.php';
 
 	// copy
-	if(@copy(many_trans()."elybin-install/inc/elybin-version.php", $elybin_version) == false){
-		return false;
+	if(!copy(many_trans()."elybin-install/inc/elybin-version.php", $new_verfile)){
+		$r = false;
 	}else{
-		return true;
+		$r = true;
 	}
-	fclose($f);
+
+	return $r;
 }
 
 // create install lock
