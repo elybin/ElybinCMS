@@ -16,9 +16,36 @@ function result(Array $a, $result = 'r'){
 	}else{
 		// set session first
 		@$_SESSION['msg'] = $a['msg_ses'];
+		// update for new message displayed, effective way
+		@$_SESSION['msg_code'] = $a['msg_ses'];
+		@$_SESSION['msg_content'] = $a['msg'];
+		// error code (for bootstrap)
+		if($a['status'] == 'ok'){
+			@$_SESSION['msg_type'] = 'success';
+		}
+		else if($a['status'] == 'error'){
+			@$_SESSION['msg_type'] = 'warning';
+		}
+		else if($a['status'] == 'danger'){
+			@$_SESSION['msg_type'] = 'danger';
+		}
+
 		header('location: '.@$a['red']);
 	}
 	exit;
+}
+
+// 1.1.3-beta-3
+// show alert message
+function showAlert(){
+	// new version : support non javascript browser
+	if(!empty($_SESSION['msg_code'])){
+		echo '<div class="note note-'.$_SESSION['msg_type'].'">'.$_SESSION['msg_content'].'</div>';
+	}
+	// release
+	$_SESSION['msg_code'] = '';
+	$_SESSION['msg_type'] = '';
+	$_SESSION['msg_content'] = '';
 }
 
 function ElybinRedirect($url)
@@ -510,6 +537,32 @@ function cutword($s, $len = 200){
 	}
 	return $s;
 }
+
+// function error handling (beta)
+// handling unknown error
+function custom_error($eno, $estr){
+	// find known error
+	// 403
+	if(stristr($estr, 'Permission denied')){
+		result(array(
+			'status' => 'danger',
+			'title' => lg('Error'),
+			'msg' => lg("We cannot access your directory, please fix your directory permission. Here some error information may useful.").'<br/>-----<br/>'.$estr,
+			'msg_ses' => 'access_denied',
+			'red' => '../../admin.php'
+		), @$_GET['r'], false);
+	}else{
+		result(array(
+			'status' => 'error',
+			'title' => lg('Unknown Error'),
+			'msg' => lg("[$eno] $estr"),
+			'msg_ses' => 'unknown_error',
+			'red' => '../../admin.php'
+		), @$_GET['r'], false);
+	}
+	die();
+}
+
 function UploadImage($fupload_name,$mod){
 	// update for directory transversal
 	if(stristr($mod, 'elybin-file')){
@@ -518,6 +571,9 @@ function UploadImage($fupload_name,$mod){
 		$vdir_upload = "../../../elybin-file/$mod/";
 	}
 	$vfile_upload = $vdir_upload . $fupload_name;
+
+	// set
+	set_error_handler("custom_error");
 
 	if(!@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload)){
 		// new result function

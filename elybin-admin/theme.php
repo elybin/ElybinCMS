@@ -1,24 +1,24 @@
 <?php
 /* Short description for file
  * [ Main theme of admin panel
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
  */
 ?>
-<?php function theme_head(){ 
+<?php function theme_head(){
 define("START_EXEC", microtime());
 include('./lang/main.php');
 
 // grab info
 $op = _op();
 
-// current user 
+// current user
 $u = _u();
 
-// current user 
+// current user
 $ug = _ug();
 
 // get current active user
@@ -64,25 +64,25 @@ if(isset($subtitle)){
 
 ?>
 <!DOCTYPE html>
-<!--[if IE 8]>         
-	<html class="ie8"> 
+<!--[if IE 8]>
+	<html class="ie8">
 <![endif]-->
-<!--[if IE 9]>         
-	<html class="ie9 gt-ie8"> 
+<!--[if IE 9]>
+	<html class="ie9 gt-ie8">
 <![endif]-->
-<!--[if gt IE 9]>--> 
-	<html class="gt-ie8 gt-ie9 not-ie"> 
+<!--[if gt IE 9]>-->
+	<html class="gt-ie8 gt-ie9 not-ie">
 <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Elybin CMS - <?php echo date('H:i:s') ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	
-	
+
+
 	<link href="assets/stylesheets/<?php echo $op->admin_theme?>.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/fontawesome.css" rel="stylesheet" type="text/css">
-	
+
 
 	<link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
@@ -90,7 +90,7 @@ if(isset($subtitle)){
 	<link href="assets/stylesheets/primary.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/ui.css" rel="stylesheet" type="text/css">
-	
+
 </head>
 <body class="theme-<?php echo $op->admin_theme?> main-menu-animated main-navbar-fixed mmc">
 <script>var init = [];</script>
@@ -99,7 +99,7 @@ if(isset($subtitle)){
 	<div id="main-navbar" class="navbar navbar-inverse" role="navigation">
 		<!-- Main menu toggle -->
 		<button type="button" id="main-menu-toggle"><i class="navbar-icon fa fa-bars icon"></i><span class="hide-menu-text"><?php echo lg('Hide Menu') ?></span></button>
-		
+
 		<div class="navbar-inner">
 			<!-- Main navbar header -->
 			<div class="navbar-header">
@@ -167,12 +167,12 @@ if(isset($subtitle)){
 								// show if have privilage
 								if($ug->setting == 1){
 								include "notification.php";
-								} 
+								}
 							?>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle user-menu" data-toggle="dropdown">
 									<?php
-										// avatari
+										// avatar
 										if($u->avatar == "default/no-ava.png"){
 											echo  '<img src="../elybin-file/avatar/default/medium-no-ava.png">';
 										}else{
@@ -458,7 +458,7 @@ if(isset($subtitle)){
 				<?php
 					// show if have privilage
 					if($ug->setting == 1){
-				?>				
+				?>
 				<li class="mm-dropdown">
 					<a href="?mod=option">
 						<i class="menu-icon fa fa-wrench"></i>
@@ -539,8 +539,8 @@ if(isset($subtitle)){
 
 	<div id="content-wrapper">
 <?php } ?>
-<?php 
-function theme_foot(){ 
+<?php
+function theme_foot(){
 ?>
 		<hr class="no-grid-gutter-h"/>
 		<div class="pull-left text-light-gray">
@@ -578,7 +578,7 @@ init.push(function () {
 });
 window.PixelAdmin.start(init);
 </script>
-<?php  
+<?php
 // check if js.php exist
 $mod = @$_GET['mod'];
 if(file_exists('./app/'.$mod.'/js.php')){

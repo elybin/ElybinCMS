@@ -1,8 +1,8 @@
 <?php
 /* Short description for file
  * [ Module: Profile
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
  * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @author		Khakim Assidiqi <hamas182@gmail.com>
@@ -10,25 +10,16 @@
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
 }else{
-$modpath 	= "app/profile/";
-$action		= $modpath."proses.php";
+
 $v 	= new ElybinValidasi();
 
 switch (@$_GET['act']) {
 	default:
-	$s = $_SESSION['login'];
-	$tblu = new ElybinTable("elybin_users");
-	$tblu = $tblu->SelectWhere("session","$s","","");
-	$tblu = $tblu->current();
-
-	$id 	= $tblu->user_id;
-
-	$tb 	= new ElybinTable('elybin_users');
-	$cuser	= $tb->SelectWhere('user_id',$id,'','');
-	$cuser	= $cuser->current();
+	// get users information
+	$cuser	= _u();
 ?>
 		<div class="page-header">
-			<h1><span class="text-light-gray"><?php echo $lg_profile?> / </span><?php echo $lg_editprofile?></h1>
+			<h1><?php echo lg('Edit Profile')?></h1>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
 		<div class="row">
@@ -38,7 +29,7 @@ switch (@$_GET['act']) {
 				if(isset($_GET['msg']) && @$_GET['msg'] == "saved"){
 				?>
 				<div class="note note-success">
-					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo $lg_datachangessuccessfullysaved ?>.
+					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo lg('Data saved successfully.') ?>.
 				</div>
 				<?php
 				}
@@ -46,77 +37,95 @@ switch (@$_GET['act']) {
 				if(isset($_GET['msg']) && @$_GET['msg'] == "email-confrimed"){
 				?>
 				<div class="note note-success">
-					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo $lg_emailconfrimed ?>.
+					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo lg('Email confirmed.') ?>.
 				</div>
 				<?php
 				}
 				?>
-				<form class="panel form-horizontal" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
+				<?php
+					// show messages alert (effective way)
+					showAlert();
+				?>
+				<form class="panel form-horizontal" action="app/profile/proses.php" method="post" enctype="multipart/form-data" id="form">
 					<div class="panel-heading" id="tooltip">
-						<span class="panel-title"><i class="fa fa-users"></i>&nbsp;&nbsp;<?php echo $lg_editmyprofile?></span>
-						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo $lg_help?>"><i class="fa fa-question-circle"></i></a>
+						<span class="panel-title"><i class="fa fa-user"></i>&nbsp;&nbsp;<?php echo lg('Edit My Profile')?></span>
+						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
 
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_username?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Username')?>*</label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="username" value="<?php echo $cuser->user_account_login?>" class="form-control" placeholder="<?php echo $lg_username?>" required/>
+					      	<input type="text" name="username" value="<?php echo $cuser->user_account_login?>" class="form-control" placeholder="<?php echo lg('Username')?>" required/>
 					      </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_password?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Password')?></label>
 					      <div class="col-sm-10">
-					      	<input type="password" name="newpassword" class="form-control" placeholder="<?php echo $lg_password?>"/>
-					      	<p class="help-block"><?php echo $lg_leftpasswordempty?></p>
+					      	<input type="password" name="newpassword" class="form-control" placeholder="<?php echo lg('Password')?>"/>
+					      	<p class="help-block"><?php echo lg('Left empty if you don\'t want to change your password.')?></p>
 					      </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_email?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Confirm Password')?></label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo $lg_email?>"<?php if($cuser->email_status == "verified"){ echo " disabled"; } ?> required/>
+					      	<input type="password" name="newconfirmpassword" class="form-control" placeholder="<?php echo lg('Type your password again.')?>"/>
+					      	<p class="help-block"><?php echo lg('Type your password again. Left empty if you don\'t want to change your password.')?></p>
+					      </div>
+					  </div> <!-- / .form-group -->
+					  <div class="form-group">
+					      <label class="col-sm-2 control-label"><?php echo lg('E-mail')?>*</label>
+					      <div class="col-sm-10">
+					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo lg('E-mail')?>"<?php if($cuser->email_status == "verified"){ echo " disabled"; } ?> required/>
 							<?php
 							// update v1.1.3
 							// show resend link, if email not verified yet
 							if($cuser->email_status == "notverified"){
 							?>
-							<p class="help-block"><span class="text-warning"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo $lg_youremailnotverifiedyet?>, </span><a href="?mod=profile&amp;act=resend&amp;clear=yes"><?php echo $lg_resendconfirmation ?></a>.</p>
+							<p class="help-block"><span class="text-warning"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo lg('Please verify your email')?>, </span><a href="?mod=profile&amp;act=resend&amp;clear=yes"><?php echo lg('Resend E-mail Confirmation.') ?></a>.</p>
 							<?php } ?>
 						  </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_fullname?>*</label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Name')?>*</label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="fullname" value="<?php echo $cuser->fullname?>" class="form-control" placeholder="<?php echo $lg_fullname?>" required/>
+					      	<input type="text" name="fullname" value="<?php echo $cuser->fullname?>" class="form-control" placeholder="<?php echo lg('Your Name')?>" required/>
 					      </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_phone?></label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Phone')?></label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="phone" value="<?php echo $cuser->phone?>" class="form-control" placeholder="<?php echo $lg_phone?>"/>
+					      	<input type="text" name="phone" value="<?php echo $cuser->phone?>" class="form-control" placeholder="<?php echo lg('Phone')?>"/>
 					      </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_bio?></label>
+					      <label class="col-sm-2 control-label"><?php echo lg('Bio')?></label>
 					      <div class="col-sm-10">
-					      	<textarea name="bio" cols="50" rows="5" class="form-control" placeholder="<?php echo $lg_bio?>"><?php echo html_entity_decode($cuser->bio)?></textarea>
+					      	<textarea name="bio" cols="50" rows="5" class="form-control" placeholder="<?php echo lg('Bio')?>"><?php echo html_entity_decode($cuser->bio)?></textarea>
 					      </div>
 					  </div> <!-- / .form-group -->
 					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo $lg_photo?></label>
-					      <div class="col-sm-5">
-					      	<img class="img-thumbnail" alt="<?php echo $lg_photo?>" src="../elybin-file/avatar/<?php echo $cuser->avatar?>">
+					      <label class="col-sm-2 control-label"><?php echo lg('Photo')?></label>
+					      <div class="col-sm-3">
+									<?php
+										// avatar
+										if($cuser->avatar == "default/no-ava.png"){
+											echo  '<img src="../elybin-file/avatar/default/medium-no-ava.png" class="img-thumbnail" width="100%">';
+										}else{
+											echo  '<img src="../elybin-file/avatar/md-'.$cuser->avatar.' " class="img-thumbnail" width="100%">';
+										}
+									?>
 					      </div>
 					      <div class="col-sm-4">
-					      	<input type="file" name="image" id="file-style" class="form-control"/>
-					      	<p class="help-block"><?php echo $lg_leftphotoempty?></p>
+					      	<input type="file" name="file" id="file-style" class="form-control"/>
+					      	<p class="help-block"><?php echo lg('Left empty if you don\'t want to change your avatar.')?></p>
 					      </div>
 					  </div> <!-- / .form-group -->
 					</div><!-- / .panel-body -->
 
 					  <div class="panel-footer">
-						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo $lg_savechanges?></button>
-						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo $lg_back?></a>
+						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Changes')?></button>
+						  <a class="btn btn-default pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></a>
 						  <input type="hidden" name="act" value="edit" />
 						  <input type="hidden" name="mod" value="profile" />
 					  </div> <!-- / .form-footer -->
@@ -127,7 +136,7 @@ switch (@$_GET['act']) {
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-								<h4 class="modal-title"><?php echo $lg_helptitle?></h4>
+								<h4 class="modal-title"><?php echo lg('Help')?></h4>
 							</div>
 							<div class="modal-body">...</div>
 						</div> <!-- / .modal-content -->
@@ -139,11 +148,11 @@ switch (@$_GET['act']) {
 
 <?php
 		break;
-	
+
 	// update 1.1.3
 	// resend email
 	case "resend":
-		
+
 		// redirect
 		header('location: ?mod=profile&msg=email-confrimed');
 		break;
