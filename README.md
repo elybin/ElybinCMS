@@ -3,6 +3,11 @@ Elybin CMS (www.elybin.com) - Open Source Content Management System
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
 @author    => Khakim A <kim@elybin.com>
 
+DONATE
+=======================
+![Image of Donate with Bitcoin](http://www.decentralizeddanceparty.com/wp-content/uploads/2013/04/bitcoin-donation-tab.png)
+Bitcoin: 1MgkUWoj5w5X9MJSx2qZoXXf5of16AMxnZ
+
 ELYBIN CMS - http://docs.elybin.com/about.html
 =========================================
 Elybin CMS adalah sebuah sistem menejemen konten gratis (open source) yang berfokus kepada kegunaan, kecepatan dan kemudahan. Didukung dengan berbagai Komponen & Tema untuk keperluan anda, yang akan memudahkan anda dalam berekspresi dan berbagi informasi.
