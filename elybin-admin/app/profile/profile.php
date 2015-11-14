@@ -3,9 +3,9 @@
  * [ Module: Profile
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -37,7 +37,7 @@ switch (@$_GET['act']) {
 				if(isset($_GET['msg']) && @$_GET['msg'] == "email-confrimed"){
 				?>
 				<div class="note note-success">
-					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo lg('Email confirmed.') ?>.
+					<i class="fa fa-check"></i>&nbsp;&nbsp;<?php echo lg('A confirmation link has been sent to your email.') ?>
 				</div>
 				<?php
 				}
@@ -76,13 +76,16 @@ switch (@$_GET['act']) {
 					  <div class="form-group">
 					      <label class="col-sm-2 control-label"><?php echo lg('E-mail')?>*</label>
 					      <div class="col-sm-10">
-					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo lg('E-mail')?>"<?php if($cuser->email_status == "verified"){ echo " disabled"; } ?> required/>
+					      	<input type="text" name="email" value="<?php echo $cuser->user_account_email?>" class="form-control" placeholder="<?php echo lg('E-mail')?>" required/>
 							<?php
 							// update v1.1.3
 							// show resend link, if email not verified yet
 							if($cuser->email_status == "notverified"){
 							?>
 							<p class="help-block"><span class="text-warning"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;<?php echo lg('Please verify your email')?>, </span><a href="?mod=profile&amp;act=resend&amp;clear=yes"><?php echo lg('Resend E-mail Confirmation.') ?></a>.</p>
+							<?php
+							}else{ ?>
+							<p class="help-block"><span class="text-success"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;<?php echo lg('Email verified.')?></span></p>
 							<?php } ?>
 						  </div>
 					  </div> <!-- / .form-group -->
@@ -110,7 +113,7 @@ switch (@$_GET['act']) {
 									<?php
 										// avatar
 										if($cuser->avatar == "default/no-ava.png"){
-											echo  '<img src="../elybin-file/avatar/default/medium-no-ava.png" class="img-thumbnail" width="100%">';
+											echo  '<img src="../elybin-file/avatar/default/no-ava.png" class="img-thumbnail" width="100%">';
 										}else{
 											echo  '<img src="../elybin-file/avatar/md-'.$cuser->avatar.' " class="img-thumbnail" width="100%">';
 										}
@@ -154,7 +157,7 @@ switch (@$_GET['act']) {
 	case "resend":
 
 		// redirect
-		header('location: ?mod=profile&msg=email-confrimed');
+		redirect('?mod=profile&msg=email-sent');
 		break;
 }
 }

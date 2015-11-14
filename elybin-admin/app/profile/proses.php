@@ -1,6 +1,6 @@
 <?php
 // Elybin CMS (www.elybin.com) - Open Source Content Management System
-// @copyright	Copyright (C) 2014 - 2015 Elybin, All rights reserved.
+// @copyright	Copyright (C) 2015 Elybin, All rights reserved.
 // @license		GNU General Public License version 2 or later; see LICENSE.txt
 // @author		Khakim A <kim@elybin.com>
 // ----
@@ -126,7 +126,7 @@ if(empty($_SESSION['login'])){
 		}
 
 		// filter email
-		if(!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/", $email)){
+		if(!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/", $email) ){
 			// woops! not matched anything, I given up! give 'em result!
 			result(array(
 				'status' => 'error',
@@ -166,13 +166,24 @@ if(empty($_SESSION['login'])){
 		// 	$email = $tbl->SelectWhere('user_account_login', $username)->current()->user_account_email;
 		// }
 
+		/**
+		 * If user change their email, email status changed to not verified.
+		 * It means this user can't post a comment or only can do limited features.
+		 * @since 1.1.4
+		 */
+		if($email !== $u->user_account_email){
+			$tbl->Update(array(
+				'user_account_email' => $email,
+				'email_status' => 'notverified'
+			),'user_id',$u->user_id);
+		}
+
 		//jika mendapat form file kosong
 		if(empty($_FILES['file']['tmp_name'])){
 			//jika password baru kosong
 			if(empty($password)) {
 				$tbl->Update(array(
 					'user_account_login' => $username,
-					'user_account_email' => $email,
 					'fullname' => $fullname,
 					'phone' => $phone,
 					'bio' => $bio
@@ -274,7 +285,6 @@ if(empty($_SESSION['login'])){
 					UploadImage($avatar, 'avatar');
 					$tbl->Update(array(
 						'user_account_login' => $username,
-						'user_account_email' => $email,
 						'fullname' => $fullname,
 						'phone' => $phone,
 						'bio' => $bio,
@@ -305,7 +315,6 @@ if(empty($_SESSION['login'])){
 					$tbl->Update(array(
 						'user_account_login' => $username,
 						'user_account_pass' => password_hash($password, PASSWORD_BCRYPT),
-						'user_account_email' => $email,
 						'fullname' => $fullname,
 						'phone' => $phone,
 						'bio' => $bio,

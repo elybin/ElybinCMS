@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Media Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
@@ -14,6 +14,7 @@ if(empty($_SESSION['login'])){
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
+	include_once('inc/module-function.php');
 
 	$v = new ElybinValidasi;
 	$mod = $_POST['mod'];
@@ -29,25 +30,47 @@ if(empty($_SESSION['login'])){
 			$fileType = $_FILES['file']['type'];
 			$fileSize = $_FILES['file']['size'];
 			$category = categorize_mime_types($fileType);
-			$pecah = explode(".", $fileName); 
+			$pecah = explode(".", $fileName);
 			$ekstensi = strtolower(@$pecah[count($pecah)-1]);
 			$seotitle = seo_title($pecah[0]);
 			$tanggal = date("Y-m-d_H-i-s");
 			$acak = rand(1111,9999);
 			$nama_file_unik = "$seotitle-$tanggal-$acak.$ekstensi";
 			$file = strtolower($nama_file_unik);
+
+			/**
+			 * Filter seotitle
+			 * @since 1.1.4
+			 */
+			// checking seo title
+ 			if(!check_seotitle($seotitle, 0)){
+ 				$seotitle = suggest_unique($seotitle, 0);
+ 			}
+
 			//filter extension
 			if (in_array($ekstensi, $extensionList)){
 				if($category == 'image'){
 					//upload file if has image mime
-					UploadImage($file,'media');
+					$up = UploadImage($file,'media');
+					if(empty($up['ok'])){
+						// return error
+						//image extension deny
+						$a = array(
+							'status' => 'error',
+							'title' => lg('Error'),
+							'isi' => $up['error']['message']
+						);
+						echo json_encode($a);
+						exit;
+					}
 				}else{
 					//upload file if has non-image mime
 					UploadFile($file,'media');
 				}
 				$table = new ElybinTable('elybin_media');
-				$data = array( 
+				$data = array(
 					'title' => $fileName,
+					'seotitle' => $seotitle,
 					'filename' => $file,
 					'description' => '',
 					'metadata' => json_encode(@exif_read_data("../../../elybin-file/media/".$file)),
@@ -71,13 +94,6 @@ if(empty($_SESSION['login'])){
 					exit;
 				}
 
-				//Done
-				/* $a = array(
-					'status' => 'ok',
-					'title' => lg('Success'),
-					'isi' => lg('Saved Successfully')
-				);
-				echo json_encode($a); */
 				_red('../../admin.php?mod=media&msg=uploaded');
 				exit;
 			}else{
@@ -119,7 +135,7 @@ if(empty($_SESSION['login'])){
 			header('location: ../../../404.html');
 			exit;
 		}
-		
+
 		$gfile = $tabledel->SelectWhere('media_id',$media_id,'','');
 		foreach($gfile as $i){
 			$file = $i->filename;
@@ -144,14 +160,14 @@ if(empty($_SESSION['login'])){
 				$pecah = explode("|",$tg);
 				$pecah = $pecah[0];
 				$media_id_fix = $v->sql(epm_decode($pecah));
-				
+
 				// check id exist or not
 				$comedia = $getfile->GetRow('media_id', $media_id_fix);
 				if(empty($media_id_fix) OR ($comedia == 0)){
 					header('location: ../../../404.html');
 					exit;
 				}
-				
+
 				$gfile = $getfile->SelectWhere('media_id',$media_id_fix,'','');
 				$gfile = $gfile->current();
 				$filename = $gfile->filename;
@@ -165,10 +181,10 @@ if(empty($_SESSION['login'])){
 				header('location:../../admin.php?mod='.$mod);
 			}
 		}
-	}		
+	}
 	//404
 	else{
 		header('location: ../../../404.html');
 	}
-}	
+}
 ?>

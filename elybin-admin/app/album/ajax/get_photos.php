@@ -23,20 +23,20 @@ if($usergroup == 0){
 $startpos = (($page-1)*$limit)+1;
 // get total data to calculate ending
 $com = $tb->GetRowFullCustom("
-SELECT 
-* 
-FROM  
-`elybin_media` AS  `m` 
-LEFT JOIN  
-`elybin_relation` AS  `r` 
-ON  
-`r`.`second_id` =  `m`.`media_id` 
-WHERE  
+SELECT
+*
+FROM
+`elybin_media` AS  `m`
+LEFT JOIN
+`elybin_relation` AS  `r`
+ON
+`r`.`second_id` =  `m`.`media_id`
+WHERE
 `m`.`type` =  'image'
-GROUP BY 
+GROUP BY
 `m`.`media_id`
-ORDER BY 
-`r`.`rel_id` DESC,  
+ORDER BY
+`r`.`rel_id` DESC,
 `r`.`second_id` DESC,
 `m`.`media_id` DESC
 LIMIT $startpos,$limit
@@ -49,28 +49,28 @@ if($com < $limit){
 }
 
 
-// get cuurret pos 					
+// get cuurret pos
 $lm = $tb->SelectFullCustom("
-SELECT 
-* 
-FROM  
-`elybin_media` AS  `m` 
-LEFT JOIN  
-`elybin_relation` AS  `r` 
-ON  
-`r`.`second_id` =  `m`.`media_id` 
-WHERE  
+SELECT
+*
+FROM
+`elybin_media` AS  `m`
+LEFT JOIN
+`elybin_relation` AS  `r`
+ON
+`r`.`second_id` =  `m`.`media_id`
+WHERE
 `m`.`type` =  'image'
-GROUP BY 
+GROUP BY
 `m`.`media_id`
-ORDER BY 
-`r`.`rel_id` DESC,  
+ORDER BY
+`r`.`rel_id` DESC,
 `r`.`second_id` DESC,
 `m`.`media_id` DESC
 LIMIT $startpos,$limit
 ");
 
-// show 
+// show
 $i = 0;
 foreach($lm as $cm){
 	// checked
@@ -89,13 +89,13 @@ foreach($lm as $cm){
 		@$metadata->COMPUTED->Height = 1;
 		@$metadata->COMPUTED->Width = 1;
 	}
-									
+
 	$ratio = $metadata->COMPUTED->Height/$metadata->COMPUTED->Width;
 	$width = $metadata->COMPUTED->Width/$metadata->COMPUTED->Height*200;
-									
+
 	$arr[$i] = array(
 		'media_id' => $cm->media_id,
-		'img-m'=> 'medium-'.$cm->filename,
+		'img-m'=> 'md-'.$cm->filename,
 		'img-xs'=> 'xs-'.$cm->filename,
 		'epm_media_id' => epm_encode($cm->media_id),
 		'hash' => $cm->hash,

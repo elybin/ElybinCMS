@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Post
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  ---------------------------
  1.1.3-1 (Release 1) - Edited by (@Kim)
  - Redesign List
@@ -17,7 +17,7 @@
  - Add Basic List Order, Search and New Pagging
  - Add Breadcrumb (Secondary Nav link)
  - Update help menu to more easy to access
- - Add Autosave 
+ - Add Autosave
  - Fixing Texteditor (in 1.1.1 only save blank post)
  */
 if(!isset($_SESSION['login'])){
@@ -50,7 +50,7 @@ if($usergroup == 0){
 			theme_foot();
 			exit;
 		}
-		
+
 		// buat auto draf
 		$tbl = new ElybinTable('elybin_posts');
 		$date = date("Y-m-d H:i:s");
@@ -62,7 +62,7 @@ if($usergroup == 0){
 			'category_id' => 0,
 			'seotitle' => '',
 			'tag' => '',
-			'status' => 'prepost',					
+			'status' => 'prepost',
 			'visibility' => '',
 			'post_meta' => '',
 			'post_password' => '',
@@ -72,7 +72,7 @@ if($usergroup == 0){
 		$tbl->Insert($data);
 		// ambil id ini
 		$cp = $tbl->SelectWhereAnd('status', 'prepost', 'date', $date, 'post_id', 'DESC')->current();
-		
+
 ?>		<!-- help -->
 		<div class="page-header hide-light" id="help-panel">
 			<p><?php echo lg('...') ?></p>
@@ -82,7 +82,7 @@ if($usergroup == 0){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=post"><?php echo lg('Post') ?></a></li>
 			<li class="active"><a href="?mod=post&amp;act=add"><?php echo lg('New Post') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -92,7 +92,7 @@ if($usergroup == 0){
 			<a href="?mod=post" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Post') ?></a>
 			<h1><?php echo lg('New Post') ?></h1>
 		</div> <!-- / .page-header -->
-		
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery-ui.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery.tagsinput.min.css"); ?></style>
@@ -116,8 +116,8 @@ if($usergroup == 0){
 								}
 								else if($op->text_editor == 'bs-markdown'){
 									echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
-								} 
-								?>	
+								}
+								?>
 								<div id="summernote-progress" style="display: none">
 									<p><?php echo lg('Uploading images...') ?> - <span>1%</span></p>
 									<div class="progress progress-striped">
@@ -131,7 +131,7 @@ if($usergroup == 0){
 						  </div><!-- / .panel-body -->
 					</div>
 				</div><!-- / .col -->
-				
+
 				<div class="col-sm-3">
 					<div class="panel-body" style="box-shadow: 2px 1px 5px rgba(0,0,0,0.1); margin-bottom: 2px;">
 						<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save') ?></button>
@@ -209,14 +209,14 @@ if($usergroup == 0){
 							<div class="form-group">
 							  <label class="col-sm-2 control-label text-sm"><?php echo lg('Photo')?></label>
 							  <div class="col-sm-12">
-								<input type="file" name="image" id="file-style" class="form-control"/>
+								<input type="file" name="file" id="file-style" class="form-control"/>
 								<p class="help-block"><?php echo lg('Allowed extension is')?> (<i>.jpg, .jpeg</i>)</p>
 							  </div>
 							</div> <!-- / .form-group -->
 					</div>
 				</div><!-- / .col -->
-				
-				
+
+
 				<input type="hidden" name="pid" value="<?php echo $cp->post_id ?>" />
 				<input type="hidden" name="act" value="add" />
 				<input type="hidden" name="mod" value="post" />
@@ -228,7 +228,7 @@ if($usergroup == 0){
 		// revision
 		case 'revision':
 			$id 	= $v->sql(@$_GET['id']);
-	
+
 			// check id exist or not
 			$tb 	= new ElybinTable('elybin_posts');
 			$copost = $tb->GetRow('parent', $id);
@@ -237,9 +237,9 @@ if($usergroup == 0){
 				theme_foot();
 				exit;
 			}
-			
+
 			// get data
-			$cp	 = $tb->SelectFullCustom("			
+			$cp	 = $tb->SelectFullCustom("
 			SELECT
 			`p`.*,
 			`u`.`fullname`
@@ -261,17 +261,17 @@ if($usergroup == 0){
 			`elybin_users` as `u`
 			WHERE
 			`p`.`parent` = $id  &&
-			`u`.`user_id` = `p`.`author` 
+			`u`.`user_id` = `p`.`author`
 			";
-			
-			
+
+
 			// query for current state
 			$crsque = "$que
-			ORDER BY `p`.`post_id` DESC 
+			ORDER BY `p`.`post_id` DESC
 			LIMIT 0,1
 			";
 			$crstate = $tb->SelectFullCustom($crsque)->current();
-			
+
 			$cop = $tb->GetRowFullCustom($que);
 			// modify query to pageable & shortable
 			$oarr = array(
@@ -291,7 +291,7 @@ if($usergroup == 0){
 			<li><a href="?mod=post"><?php echo lg('Post') ?></a></li>
 			<li><a href="?mod=post&amp;act=edit&amp;id=<?php echo $id ?>"><?php echo lg('Edit Post') ?></a></li>
 			<li class="active"><a href="?mod=post&amp;act=revision&amp;id=<?php echo $id ?>"><?php echo lg('Revision History') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -302,7 +302,7 @@ if($usergroup == 0){
 			<p><?php echo $copost-1 . ' '. lg('revision') ?><p>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
-		
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<form class="" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 			<div class="row">
@@ -322,7 +322,7 @@ if($usergroup == 0){
 				echo 		'<p>'. substr(htmlspecialchars($crstate->content),0,400).'</p>';
 				echo '	</div><!-- / .panel-body -->';
 				echo '</div>';
-			
+
 				// paggng
 				if(isset($_GET['page'])){
 					echo '<hr/>'.lg('Page').' '.@$_GET['page'];
@@ -330,10 +330,10 @@ if($usergroup == 0){
 					echo '<hr/>'.lg('Page').' 1';
 				}
 				showPagging($copost-1, $id);
-			
+
 				echo '<div class="form-group-margin"></div>';
-				
-				
+
+
 				// daftar revisi
 				foreach($pr as $cpr){
 					echo '<div class="form-horizontal depth-xs">';
@@ -350,7 +350,7 @@ if($usergroup == 0){
 					echo '	</div><!-- / .panel-body -->';
 					echo '</div>';
 					echo '<div class="form-group-margin"></div>';
-				} 
+				}
 				?>
 				</div><!-- / .col -->
 			</form><!-- / .form -->
@@ -362,7 +362,7 @@ if($usergroup == 0){
 	case 'restore':
 		// 1.1.3
 		// restore post
-		
+
 		// jika tidak "clear=yes"
 		if(!isset($_GET['clear'])){
 			er(lg('There are some error inside this page, this is our mistake. Please contact administrator.').'.<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
@@ -371,7 +371,7 @@ if($usergroup == 0){
 		}else{
 			// ambil id nya
 			$rid = $v->sql($_GET['id']);
-			
+
 			// check id exist or not
 			$tbl = new ElybinTable('elybin_posts');
 			$cop = $tbl->GetRow('post_id', $rid);
@@ -379,14 +379,14 @@ if($usergroup == 0){
 				header('location: ?mod=post');
 				exit;
 			}
-			
+
 			// restore post id ini ke post parent
-			
+
 			// get data
 			$cpr = $tbl->SelectWhere('post_id',$rid,'','')->current();
 			$cpp = $tbl->SelectWhere('post_id',$cpr->parent,'','')->current(); // parent
 
-			
+
 			// 1.1.3
 			// post revision logic
 			// ada perubahan?
@@ -400,9 +400,9 @@ if($usergroup == 0){
 					'date' => $cpp->date,
 					'author' => $cpp->author,
 					'category_id' => $cpp->category_id,
-					'seotitle' => $cpp->seotitle,
+					'seotitle' => '',
 					'tag' => $cpp->tag,
-					'status' => 'inherit',					
+					'status' => 'inherit',
 					'visibility' => $cpp->visibility,
 					'parent' => $cpp->post_id,
 					'post_meta' => $cpp->post_meta,
@@ -418,9 +418,9 @@ if($usergroup == 0){
 				'date' => date("Y-m-d H:i:s"),
 				'author' => _u()->user_id,
 				'category_id' => $cpr->category_id,
-				'seotitle' => $cpr->seotitle,
-				'tag' => $cpr->tag,			
-				'status' => 'inherit',		
+				'seotitle' => '',
+				'tag' => $cpr->tag,
+				'status' => 'inherit',
 				'visibility' => $cpr->visibility,
 				'parent' => $cpr->parent,
 				'post_meta' => $cpr->post_meta,
@@ -428,37 +428,36 @@ if($usergroup == 0){
 				'comment' => $cpr->comment
 			);
 			$tbl->Insert($db); // buat copy lagi yang sama dg parent
-			
+
 			// update parent ke data baru (backup nya = `cpr`)
-			$db = array(/* 
+			$db = array(/*
 				'title' => $cpr->title,
 				'content' => $cpr->content,
 				'date' => date("Y-m-d H:i:s"),
 				'author' => $cpr->author,
 				'category_id' => $cpr->category_id,
 				'seotitle' => $cpr->seotitle,
-				'tag' => $cpr->tag,				
+				'tag' => $cpr->tag,
 				'visibility' => $cpr->visibility,
 				'post_meta' => $cpr->post_meta,
 				'image' => $cpr->image,
 				'comment' => $cpr->comment */
 				'title' => $cpr->title,
 				'content' => $cpr->content,
-				'seotitle' => $cpr->seotitle,
 				'image' => $cpr->image
 			);
 			$tbl->Update($db, 'post_id', $cpr->parent);
-			
+
 			// redirect ke edit post parent
 			header('location: ?mod=post&act=edit&id='.$cpr->parent.'&msg=restored');
 			exit;
 			// restore done!
-		}		
+		}
 		break;
 
 	case 'edit';
 	$id 	= $v->sql(@$_GET['id']);
-	
+
 	// check id exist or not
 	$tb 	= new ElybinTable('elybin_posts');
 	$copost = $tb->GetRow('post_id', $id);
@@ -467,12 +466,12 @@ if($usergroup == 0){
 		theme_foot();
 		exit;
 	}
-	
+
 	// 1.1.3
 	// only draft & published that allowed to edit
 	$costatus = $tb->GetRowFullCustom("
 	SELECT *
-	FROM 
+	FROM
 	`elybin_posts` as `p`
 	WHERE
 	(`p`.`status` = 'draft' || `p`.`status` = 'publish') &&
@@ -483,7 +482,7 @@ if($usergroup == 0){
 		theme_foot();
 		exit;
 	}
-	
+
 	// get data
 	$cp	= $tb->SelectWhere('post_id',$id)->current();
 
@@ -536,10 +535,10 @@ if($usergroup == 0){
 		$tag_t2[$i] = $tbtag->SelectWhere('tag_id', $tag_t[$i])->current()->name;
 	}
 	$cp->tag_detail = trim(implode(", ", $tag_t2));
-	
+
 	// cek revisi
 	$corev = $tb->GetRowAnd('status', 'inherit', 'parent', $cp->post_id)-1;
-	
+
 	if($cp->status == 'inherit'){
 		er('<strong>'. lg('Ouch!') .'</strong> '. lg('Page not found. (404)') .' <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'. lg('Back') .'</a>');
 		theme_foot();
@@ -554,7 +553,7 @@ if($usergroup == 0){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=post"><?php echo lg('Post') ?></a></li>
 			<li class="active"><a href="?mod=post&amp;act=edit&amp;id=<?php echo $id ?>"><?php echo lg('Edit Post') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -570,7 +569,7 @@ if($usergroup == 0){
 			// msg
 			if(@$_GET['msg'] == 'published'){
 				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Post published successfully.') . '
-				 <a href="./../post-'.$cp->post_id.'-'.$cp->seotitle.'.html" target="_blank"><i><u>'.lg('View').'</u></i></a>
+				 <a href="'.get_url('post', $cp->post_id).'" target="_blank"><i><u>'.lg('View').'</u></i></a>
 				 </div>
 				';
 			}
@@ -587,7 +586,7 @@ if($usergroup == 0){
 				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Post successfully restored from Recycle Bin.') . '</div>';
 			}
 		?>
-				
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery-ui.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery.tagsinput.min.css"); ?></style>
@@ -602,6 +601,20 @@ if($usergroup == 0){
 							  </div>
 							</div> <!-- / .form-group -->
 							<div class="form-group">
+								<div class="col-md-4 text-right">
+									<i><?php echo get_option('site_url'); ?></i>
+								</div>
+								<div class="col-md-7">
+									<input type="hidden" id="check_seo_pid" value="<?php echo $cp->post_id ?>">
+									<b id="check_seo_fix"><?php echo $cp->seotitle ?></b>
+									<a href="#" id="check_seo_edit"><u><?php _e('Edit') ?></u></a>
+									<input type="text" name="seotitle" id="check_seo_input" class="hide-light form-control input-xs" placeholder="<?php echo lg('your-page-url') ?>" value="<?php echo $cp->seotitle ?>"/>
+								</div>
+								<div class="col-md-1">
+									<a class="btn btn-primary btn-xs hide-light" id="check_seo_btn"><?php _e('Ok') ?> <i class="fa fa-check"></i></a>
+								</div>
+							</div> <!-- / .form-group -->
+							<div class="form-group">
 							  <div class="col-sm-12">
 								<?php
 								// getting text_editor
@@ -611,8 +624,8 @@ if($usergroup == 0){
 								}
 								else if($op->text_editor == 'bs-markdown'){
 									echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
-								} 
-								?>								
+								}
+								?>
 								<div id="summernote-progress" style="display: none">
 									<p><?php echo lg('Uploading Images...') ?> - <span>1%</span></p>
 									<div class="progress progress-striped">
@@ -626,12 +639,12 @@ if($usergroup == 0){
 						  </div><!-- / .panel-body -->
 					</div>
 				</div><!-- / .col -->
-				
+
 				<div class="col-sm-3">
 					<div class="panel-body" style="box-shadow: 2px 1px 5px rgba(0,0,0,0.1); margin-bottom: 2px;">
 						 <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save') ?></button>
-						 
-						<br/>						
+
+						<br/>
 						<!-- auto save -->
 						<div id="autosave" class="text-sm text-light-gray hide-light">
 							<i>  <?php echo lg('Saving...') ?></i>
@@ -738,17 +751,17 @@ if($usergroup == 0){
 							  <div class="col-sm-12">
 							  <?php
 								if(!empty($cp->image)){
-									echo '<img class="img-thumbnail" src="../elybin-file/post/'. $cp->image .'" width="100%"/>';
-								} 
+									echo '<img class="img-thumbnail" src="../elybin-file/post/md-'. $cp->image .'" width="100%"/>';
+								}
 							  ?>
-								<input type="file" name="image" id="file-style" class="form-control"/>
+								<input type="file" name="file" id="file-style" class="form-control"/>
 								<p class="help-block"><?php echo lg('Left empty if you are not changing the images. Maximum size of images is 1MB with allowed extensions (jpg, jpeg, png or gif).') ?></p>
 							  </div>
 							</div> <!-- / .form-group -->
 					</div>
 				</div><!-- / .col -->
-				
-				<input type="hidden" name="pid" value="<?php echo $cp->post_id; ?>" />
+
+				<input type="hidden" name="pid" value="<?php echo epm_encode($cp->post_id) ?>" />
 				<input type="hidden" name="act" value="edit" />
 				<input type="hidden" name="mod" value="post" />
 			</form><!-- / .form -->
@@ -762,7 +775,7 @@ if($usergroup == 0){
 	exit;
 	$id 	= $v->sql($_GET['id']);
 	$id 	= $v->xss($id);
-	
+
 	// check id exist or not
 	$tb 	= new ElybinTable('elybin_posts');
 	$copost = $tb->GetRow('post_id', $id);
@@ -771,7 +784,7 @@ if($usergroup == 0){
 		theme_foot();
 		exit;
 	}
-	
+
 	$tb 	= new ElybinTable('elybin_posts');
 	$cpost	= $tb->SelectWhere('post_id',$id,'','');
 	$cpost	= $cpost->current();
@@ -782,7 +795,7 @@ if($usergroup == 0){
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
 							<h4 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;&nbsp;<?php echo lg('Edit current post')?></h4>
 							</div>
-							
+
 							<div class="modal-body">
 								<form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
 									<div class="form-group">
@@ -801,7 +814,7 @@ if($usergroup == 0){
 	if($editor=='summernote'){
 ?>
 							<style><?php include("assets/stylesheets/summernote.css"); ?></style>
-<?php 
+<?php
 	}
 	elseif($editor=='bs-markdown'){
 ?>
@@ -830,7 +843,7 @@ if($usergroup == 0){
 									<div class="form-group">
 								      <label class="col-sm-2 control-label"><?php echo lg('Image')?></label>
 								      <div class="col-sm-8">
-								      	<input type="file" name="image" id="file-style" class="form-control"/>
+								      	<input type="file" name="file" id="file-style" class="form-control"/>
 								      	<p class="help-block"><?php echo lg('Left empty, if you not changing this.') ?></p>
 								      </div>
 									</div> <!-- / .form-group -->
@@ -844,7 +857,7 @@ if($usergroup == 0){
 									<input type="hidden" name="mod" value="post" />
 								</form><!-- / .form -->
 							</div>
-			
+
 <?php
 		break;
 
@@ -889,12 +902,12 @@ if($usergroup == 0){
 							</div>
 <?php
 		break;
-		
+
 	// 1.1.3
 	// restore deleted post
 	case 'restore_del':
 		$post_id = $v->sql(@$_GET['id']);
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$copost = $tb->GetRowAnd('post_id', $post_id,'status','deleted');
@@ -904,19 +917,19 @@ if($usergroup == 0){
 		}
 		// just change parent post status to 'deleted'
 		$par = array(
-			'status' => 'draft'			
+			'status' => 'draft'
 		);
 
 		//Done
 		$tb->Update($par, 'post_id', $post_id);
 		_red('admin.php?mod=post&act=edit&id='.$post_id.'&msg=delrestored');
 		break;
-	
+
 	default:
 	$tb = new ElybinTable('elybin_posts');
 
-	$search = $v->sql(@$_GET['search']);	
-		
+	$search = $v->sql(@$_GET['search']);
+
 	// search
 	if(isset($_GET['search'])){
 		$multiquery = @explode(":", @$search);
@@ -928,7 +941,7 @@ if($usergroup == 0){
 	}else{
 		$s_q = "";
 	}
-	
+
 	// 1.1.3
 	// with filter
 	if(!isset($_GET['filter'])){
@@ -946,7 +959,7 @@ if($usergroup == 0){
 		WHERE
 		(`p`.`status` = 'draft' || `p`.`status` = 'publish') &&
 		`c`.`category_id` = `p`.`category_id` &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -967,7 +980,7 @@ if($usergroup == 0){
 		WHERE
 		`p`.`status` = 'publish' &&
 		`c`.`category_id` = `p`.`category_id` &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -988,7 +1001,7 @@ if($usergroup == 0){
 		WHERE
 		`p`.`status` = 'draft' &&
 		`c`.`category_id` = `p`.`category_id` &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -1009,7 +1022,7 @@ if($usergroup == 0){
 		WHERE
 		`p`.`status` = 'deleted' &&
 		`c`.`category_id` = `p`.`category_id` &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -1027,7 +1040,7 @@ if($usergroup == 0){
 	$lpost	= $tb->SelectFullCustom($que);
 
 	//echo '<pre>'.$que.'</pre>';
-?>		
+?>
 		<!-- help -->
 		<div class="page-header" id="help-panel" style="display: none">
 			<p><?php echo lg('...') ?></p>
@@ -1036,7 +1049,7 @@ if($usergroup == 0){
 		<ul class="breadcrumb breadcrumb-page">
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li class="active"><a href="?mod=post"><?php echo lg('Post') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -1052,7 +1065,7 @@ if($usergroup == 0){
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
+						<div class="pull-right col-xs-12 col-sm-6 col-md-4">
 							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
 							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('New Post')?></a>
 						</div>
@@ -1061,14 +1074,14 @@ if($usergroup == 0){
 				</div>
 			</div>
 		</div> <!-- ./Page Header -->
-		
+
 		<!-- Content here -->
 		<div class="row">
-			<div class="col-sm-12">	
+			<div class="col-sm-12">
 				<!-- Tabs -->
 				<ul class="nav nav-tabs nav-tabs-xs">
 					<li<?php if(!isset($_GET['filter'])){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totallpost = $tb->GetRowFullCustom("
 							SELECT
@@ -1076,7 +1089,7 @@ if($usergroup == 0){
 							FROM
 							`elybin_posts` as `p`
 							WHERE
-							(`p`.`status` = 'draft' || `p`.`status` = 'publish') 
+							(`p`.`status` = 'draft' || `p`.`status` = 'publish')
 							GROUP BY
 							`p`.`post_id`
 						");
@@ -1084,7 +1097,7 @@ if($usergroup == 0){
 						<a href="?mod=post"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallpost ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='published'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totpbpost = $tb->GetRowFullCustom("
 							SELECT
@@ -1100,7 +1113,7 @@ if($usergroup == 0){
 						<a href="?mod=post&amp;filter=published"><?php echo lg('Published') ?> <span class="badge badge-success"><?php echo $totpbpost ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='draft'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totdrpost = $tb->GetRowFullCustom("
 							SELECT
@@ -1116,7 +1129,7 @@ if($usergroup == 0){
 						<a href="?mod=post&amp;filter=draft"><?php echo lg('Draft') ?> <span class="badge badge-info"><?php echo $totdrpost ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='deleted'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totdelpost = $tb->GetRowFullCustom("
 							SELECT
@@ -1137,7 +1150,7 @@ if($usergroup == 0){
 					<!-- ./Panel Heading -->
 					<div class="panel-body">
 					  <div class="table-primary table-responsive">
-						
+
 						<?php
 						showOrder(array(
 							'title' => lg('Title'),
@@ -1147,7 +1160,7 @@ if($usergroup == 0){
 						?>
 						<!-- delate -->
 						<form action="app/post/proses.php" method="post">
-						<?php 
+						<?php
 						// id filter=deleted
 						// show permanent delete
 						if(@$_GET['filter'] == 'deleted'){
@@ -1157,7 +1170,7 @@ if($usergroup == 0){
 						}
 						?>
 						<input type="hidden" name="mod" value="post" />
-						
+
 						<table class="table table-bordered table-striped" id="results">
 						 <thead>
 						   <tr>
@@ -1185,14 +1198,14 @@ if($usergroup == 0){
 							<?php
 							// jika publish tammpil link
 							if($cp->post_status == 'publish'){
-								echo ' - <a href="./../post-'.$cp->post_id.'-'.$cp->seotitle.'.html" target="_blank">'.lg('View').'</a>';
+								echo ' - <a href="'.get_url('post', $cp->post_id).'" target="_blank">'.lg('View').'</a>';
 							}?>
 							</td>
 							<td><?php echo $cp->fullname?></td>
 							<td><?php echo $cp->category_name?></td>
 							<td><?php echo $ccom?></td>
 							<td><?php echo friendly_date($cp->date)?></td>
-							<td><?php 
+							<td><?php
 							// status
 							if($cp->post_status == 'publish'){
 								echo lg('Published');
@@ -1206,8 +1219,8 @@ if($usergroup == 0){
 							?></td>
 							<td>
 								<div id="tooltip">
-									
-						    		<?php 
+
+						    		<?php
 									// id filter=deleted
 									// show permanent delete
 									if(@$_GET['filter'] == 'deleted'){
@@ -1218,7 +1231,7 @@ if($usergroup == 0){
 										echo '<a href="?mod=post&amp;act=recycle_del&amp;id='.$cp->post_id.'&amp;clear=yes" class="btn btn-danger btn-outline btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="'.lg('Delete').'"><i class="fa fa-trash-o"></i></a>';
 									}
 									?>
-									
+
 								</div>
 							</td>
 						   </tr>
@@ -1231,15 +1244,15 @@ if($usergroup == 0){
 						?>
 						 </tbody>
 						</table>
-						
-						
+
+
 						<!-- Multi Delete Modal -->
 						<div id="deleteall" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 							<div class="modal-dialog modal-sm">
 								<div class="modal-content">
 									<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-									<?php 
+									<?php
 									// id filter=deleted
 									// show permanent delete
 									if(@$_GET['filter'] == 'deleted'){
@@ -1250,7 +1263,7 @@ if($usergroup == 0){
 									?>
 									</div>
 									<div class="modal-body">
-										<?php 
+										<?php
 										// id filter=deleted
 										// show permanent delete
 										if(@$_GET['filter'] == 'deleted'){

@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: About contain version, developer, and system information
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -34,15 +34,15 @@ switch (@$_GET['act']) {
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel">
-				
+
 					<!-- Panel Heading -->
 					<div class="panel-heading">
 						<span class="panel-title"><i class="fa fa-info-circle hidden-xs">&nbsp;&nbsp;</i>Elybin CMS</span>
-					</div> 
+					</div>
 					<!-- ./Panel Heading -->
 
 					<div class="panel-body">
-						
+
 						<div class="text-center">
 							<?php if($usergroup > 0){ // if not have setting priv ?>
 							<img class="img-rounded" alt="<?php echo $lg_photo?>" src="<?php echo $ELYBIN_IMAGE?>"/>
@@ -51,43 +51,62 @@ switch (@$_GET['act']) {
 							<?php } ?>
 							<h2>Elybin CMS</h2>
 							<p><?php echo lg('"Everything inside one bin, Elybin CMS"') ?></p>
+
 							<?php if($usergroup > 0){  // if not have setting priv ?>
 							<p class="text-muted">v.<?php echo $ELYBIN_VERSION?>.<?php echo $ELYBIN_BUILD?> (<?php echo $ELYBIN_SIGNATURE?>) - <?php echo $ELYBIN_RELEASE?></p>
 							<?php }else{ ?>
 							<a href="http://elybin.com" target="_blank">www.elybin.com</a>
 							<?php } ?>
+							<br/>
+							<a href="https://www.twitter.com/elybincms" target="_blank"> <i class="fa fa-twitter"></i> @elybincms</a>&nbsp;&nbsp;
+							<a href="https://www.facebook.com/elybincms" target="_blank"> <i class="fa fa-facebook-square"></i> Elybin CMS</a>&nbsp;&nbsp;
+							<a href="https://www.github.com/elybin/ElybinCMS" target="_blank"> <i class="fa fa-github"></i> elybin/ElybinCMS</a>
 						</div>
 						<hr></hr>
-						<h5 class="text-light-gray text-semibold text-s" style="margin:20px 0 10px 0;">ELYBIN CMS</h5> 
+						<h5 class="text-light-gray text-semibold text-s" style="margin:20px 0 10px 0;">ELYBIN CMS</h5>
 						<table class="table no-border">
 							<tbody>
 								<tr>
 									<td width="20%"><?php echo lg('First Author') ?></td>
-									<td>Khakim A. <i>&#60;kim@elybin.com&#62;</i>  &nbsp;&nbsp;<a href="http://twitter.com/@11jt" target="_blank"> <i class="fa fa-external-link-square"></i></a></td>
+									<td>Khakim A. <i>&#60;kim@elybin.com&#62;</i>  &nbsp;&nbsp;
+										<a href="https://www.twitter.com/11jt" target="_blank"> <i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
+										<a href="https://www.instagram.com/khakimassidiqi" target="_blank"> <i class="fa fa-instagram"></i></a>&nbsp;&nbsp;
+										<a href="http://kim.elybin.com" target="_blank"> <i class="fa fa-globe"></i></a>
+									</td>
 								</tr>
 								<tr>
 									<td width="20%"><?php echo lg('Started') ?></td>
-									<td>19 June 2014 - <?php echo lg('Now') ?> </td>
+									<td>19 June 2015 - <?php echo lg('Now') ?> </td>
 								</tr>
 								<tr>
 									<td width="20%"><?php echo lg('Extra Component') ?></td>
-									<td>Bootstrap, FontAwesome, jQuery UI, Morris.js, PHPMailer, Password Hash, Summernote, Bs-Markdown, X-Editable, Minify, Google Maps API, Animate.css, pclzip.lib, Some function from StackOverflow</td>
+									<td>Bootstrap, FontAwesome, jQuery UI, Morris.js, PHPMailer, Password Hash, Summernote, Bs-Markdown, X-Editable, Google Maps API, Animate.css, pclzip.lib, Some function from StackOverflow</td>
 								</tr>
 								<tr>
 									<td width="20%"><?php echo lg('Inspiration') ?></td>
-									<td>Wordpress, PopojiCMS, Android OS, Formulasi CMS, PhpMyAdmin</td>
+									<td>Wordpress, PopojiCMS, Android OS, Formulasi CMS, PhpMyAdmin, Blockbuster movie</td>
 								</tr>
 								<tr>
 									<td width="20%"><?php echo lg('Thanks') ?></td>
 									<td>
 										<b><?php echo lg('Special') ?></b><br/>
-										Popoji CMS, Formulasi CMS, Corps Apps, OnSite, Klik Indonesia, ICT Host.
+										- Popoji CMS (<i>for database OOP</i>) <br/>
+										- Formulasi CMS (<i>for unlimited motivation &amp; support</i>)<br/>
+										- OnSite Corp (<i>for partnership</i>)<br/>
+										- David Raka (<i>for awesome photograph</i>)<br/>
+										- Klik Indonesia (<i>for website hosting</i>)<br/>
+										- ICT Host (<i>for website hosting</i>)
 										<br/>
 										<br/>
-										<b><?php echo lg('Developer / Translator / Elybin Maniac / Donate User') ?></b>
+										<b><?php echo lg('Developer / Translator') ?></b>
 										<p>.... (<?php echo lg('Commit your name here...') ?>)</p>
 										<br/>
-										<b><?php echo lg('Tester') ?></b>
+										<b><?php _e('Bug Hunter') ?> <i class="fa fa-bug"></i></b>
+										<p>
+										Atho Miftahudin, Ade Pangestu, Fadoli FH, Andro Crash, Lehan Alfananhel<br/>
+											.... (<?php echo lg('Commit your name here...') ?>)</p>
+										<br/>
+										<b><?php echo lg('Tester / Elybin Maniac ') ?></b>
 										<p>.... (<?php echo lg('Commit your name here...') ?>)</p>
 										<span class="text-sm text-light-gray"><?php echo lg('*send us a lot of bug report to hi@elybin.com, and attach your name. Thanks for your participation.') ?></span>
 									</td>
@@ -100,7 +119,7 @@ switch (@$_GET['act']) {
 										<div class="row">
 											<div class="col-sm-3 text-center">
 												<i class="fa fa-thumbs-o-up fa-5x"></i><br/>
-												<i><?php echo lg('<b>Like & Share</b>. It\'s no problem, your share that keep our baby growing faster.') ?></i>
+												<i><?php echo lg('<b>Like & Share</b>. It\'s no problem, your share that keep our apps growing faster.') ?></i>
 											</div>
 											<div class="col-sm-3 text-center">
 												<i class="fa fa-coffee fa-5x"></i><br/>
@@ -108,7 +127,7 @@ switch (@$_GET['act']) {
 											</div>
 											<div class="col-sm-3 text-center">
 												<i class="fa fa-cloud fa-5x"></i><br/>
-												<i><?php echo lg('<b>Donating your cent ($) or ribu (Rp)</b> this one is very useful, like to pay annual hosting+domain tax. Without a website, our code just treasure inside small computer.') ?></i>
+												<i><?php echo lg('<b>Donating</b> this one is very useful, like to pay annual hosting+domain tax. Without a website, our code just treasure inside small computer.') ?></i>
 											</div>
 											<div class="col-sm-3 text-center">
 												<i class="fa fa-smile-o fa-5x"></i><br/>
@@ -117,7 +136,7 @@ switch (@$_GET['act']) {
 										</div>
 										<br/>
 										<div class="row">
-											<div class="col-sm-12 text-center">								
+											<div class="col-sm-12 text-center">
 												<div>
 												<style type="text/css">
 												#share-buttons img {
@@ -127,76 +146,76 @@ switch (@$_GET['act']) {
 												box-shadow: 0;
 												display: inline;
 												}
-												 
+
 												</style>
 												<!-- I got these buttons from elybin.com -->
 												<div id="share-buttons">
-												    
+
 												    <!-- Buffer -->
 												    <a href="https://bufferapp.com/add?url=http://www.elybin.com&amp;text=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/buffer.png" alt="Buffer" />
 												    </a>
-												    
+
 												    <!-- Digg -->
 												    <a href="http://www.digg.com/submit?url=http://www.elybin.com" target="_blank">
 												        <img src="assets/images/diggit.png" alt="Digg" />
 												    </a>
-												    
+
 												    <!-- Email -->
 												    <a href="mailto:?Subject=Elybin CMS - Buat website jadi mudah dan cepat&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20 https://elybin.com">
 												        <img src="assets/images/email.png" alt="Email" />
 												    </a>
-												 
+
 												    <!-- Facebook -->
 												    <a href="http://www.facebook.com/sharer.php?u=http://www.elybin.com" target="_blank">
 												        <img src="assets/images/facebook.png" alt="Facebook" />
 												    </a>
-												    
+
 												    <!-- Google+ -->
 												    <a href="https://plus.google.com/share?url=http://www.elybin.com" target="_blank">
 												        <img src="assets/images/google.png" alt="Google" />
 												    </a>
-												    
+
 												    <!-- LinkedIn -->
 												    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://www.elybin.com" target="_blank">
 												        <img src="assets/images/linkedin.png" alt="LinkedIn" />
 												    </a>
-												    
+
 												    <!-- Pinterest -->
 												    <a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());">
 												        <img src="assets/images/pinterest.png" alt="Pinterest" />
 												    </a>
-												    
+
 												    <!-- Print -->
 												    <a href="javascript:;" onclick="window.print()">
 												        <img src="assets/images/print.png" alt="Print" />
 												    </a>
-												    
+
 												    <!-- Reddit -->
 												    <a href="http://reddit.com/submit?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/reddit.png" alt="Reddit" />
 												    </a>
-												    
+
 												    <!-- StumbleUpon-->
 												    <a href="http://www.stumbleupon.com/submit?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/stumbleupon.png" alt="StumbleUpon" />
 												    </a>
-												    
+
 												    <!-- Tumblr-->
 												    <a href="http://www.tumblr.com/share/link?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/tumblr.png" alt="Tumblr" />
 												    </a>
-												     
+
 												    <!-- Twitter -->
 												    <a href="https://twitter.com/share?url=http://www.elybin.com&amp;name=Elybin CMS - Buat website jadi mudah dan cepat&amp;hashtags=elybin" target="_blank">
 												        <img src="assets/images/twitter.png" alt="Twitter" />
 												    </a>
-												    
+
 												    <!-- VK -->
 												    <a href="http://vkontakte.ru/share.php?url=http://www.elybin.com" target="_blank">
 												        <img src="assets/images/vk.png" alt="VK" />
 												    </a>
-												    
+
 												    <!-- Yummly -->
 												    <a href="http://www.yummly.com/urb/verify?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/yummly.png" alt="Yummly" />
@@ -204,7 +223,7 @@ switch (@$_GET['act']) {
 
 													<h4><?php echo lg('Share to help us keep this code running! say hi! ') ?> <a href="mailto:hi@elybin.com" class="text-danger" style="border-bottom: 1px dashed red">hi@elybin.com</a></h4>
 													<i><?php echo lg('Proudly, Made in Indonesia') ?></i>
-				
+
 													</div>
 												</div>
 											</div>

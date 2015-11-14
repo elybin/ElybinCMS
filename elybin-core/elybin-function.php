@@ -1,16 +1,100 @@
 <?php
-// minimum is php 5.3.7+
+/**
+ * Core Library of Elybin CMS.
+ * PHP < 5.3.7
+ *
+ * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @author		Khakim A <kim@elybin.com>
+ */
 
-// json function, to put clear data respone
+@session_start();
+
+function bigbang(){
+	/**
+   * Begining of website.
+   * @since 1.1.4
+   */
+
+  /**  If /elybin-install/ exist & config, redirect to installer (fresh install)*/
+  if(file_exists("./elybin-install/") && !file_exists("./elybin-core/elybin-config.php")){
+    redirect("./elybin-install/");
+    exit;
+  }
+
+  /**  If config doesn't exist, redirect to installer */
+  if(!file_exists("./elybin-core/elybin-config.php")){
+    redirect("./elybin-install/");
+    exit;
+  }
+
+	/**  Include all function first */
+ 	include_once('./elybin-core/elybin-oop.php');
+ 	include_once('./elybin-core/elybin-theme.php');
+ 	include_once('./elybin-admin/lang/main.php');
+ 	include_once('./elybin-main/elybin-infograb.php');
+
+  /**  If /elybin-install/ exist & config exist, switch to maintenance (upgrade) */
+  if(file_exists("./elybin-install/") && file_exists("./elybin-core/elybin-config.php") && !file_exists("./elybin-install/install_date.txt") && !whats_opened('maintenance')){
+    require('./elybin-core/message/upgrade.php');
+    //redirect(get_url('maintenance'));
+    exit;
+  }
+
+  /**  If no user found (in installation progress), redirect to installer */
+  $tbu = new ElybinTable('elybin_users');
+  if($tbu->GetRow() < 1){
+    redirect("./elybin-install/");
+    exit;
+  }
+
+	/**  If maintenace mode is active, switch to maintenance */
+	if (get_option('maintenance_mode') == 'active'){
+		redirect(get_url('maintenance'));
+	}else{
+		// Record user visit
+		count_visitor();
+
+		// redirect to default homepage if is set
+		$tbmn = new ElybinTable('elybin_menu');
+		$default_homepage = get_option('default_homepage');
+		$chomepage = $tbmn->GetRow('menu_id', $default_homepage);
+		if($chomepage == 1 && $chomepage !== "" && is_home()){
+			$menu = $tbmn->SelectWhere('menu_id', $default_homepage,'','')->current();
+			$menu_url = $menu->menu_url;
+
+			// jika bukan index  yang jadi default
+			if($menu->menu_id > 1){
+				// redirect
+				header('location: '.$menu_url);
+
+				// terminate main include page
+				exit;
+			}
+		}
+
+		// include themes
+		get_themes();
+
+	}
+	/* Appreciation */
+	appreciate_our_code();
+}
+
 function json(Array $a){
+	/**
+   * Json function, to put clear data respone.
+   * @since 1.1.3-dev
+   */
 	echo json_encode($a);
 	exit;
 }
-
-// 1.1.3
-// mixing json and showing manual redirect if javascript fail to load
-// r = redirect, j = json
 function result(Array $a, $result = 'r'){
+	/**
+   * Mixing json and showing manual redirect if javascript fail to load.
+   * @since 1.1.3-dev
+	 * @param r = redirect, j = json
+   */
+
 	if($result == 'j'){
 		json($a);
 	}else{
@@ -19,6 +103,7 @@ function result(Array $a, $result = 'r'){
 		// update for new message displayed, effective way
 		@$_SESSION['msg_code'] = $a['msg_ses'];
 		@$_SESSION['msg_content'] = $a['msg'];
+		@$_SESSION['msg_icon'] = @$a['msg_icon'];
 		// error code (for bootstrap)
 		if($a['status'] == 'ok'){
 			@$_SESSION['msg_type'] = 'success';
@@ -30,15 +115,56 @@ function result(Array $a, $result = 'r'){
 			@$_SESSION['msg_type'] = 'danger';
 		}
 
-		header('location: '.@$a['red']);
+    // only if red set
+    if(!empty($a['red'])){
+  		header('location: '.@$a['red']);
+      exit;
+    }
 	}
-	exit;
+	//exit;
 }
+function get_message($class = 'depth-xs note note-%msg_type%'){
+  /**
+   * Getting process message from session.
+   * @since 1.1.4
+   */
 
-// 1.1.3-beta-3
-// show alert message
+  // debug
+  $debug = false;
+
+  // unset
+  if(isset($_GET['msg_close'])){
+    msg_close();
+  }
+
+
+
+  // replace
+  $class = str_replace('%msg_type%', @$_SESSION['msg_type'], $class);
+  $msg_icon = (isset($_SESSION['msg_icon']) ? '<i class="'.$_SESSION['msg_icon'].'"></i>&nbsp;&nbsp;': '');
+
+  // if set
+  if(isset($_SESSION['msg'])){
+    printf('<div class="%s" id="%s">%s%s<a href="%s&msg_close" class="btn btn-xs pull-right"><i class="fa fa-times"></i>&nbsp;%s</a></div>', $class, @$_SESSION['msg_code'], $msg_icon, @$_SESSION['msg_content'], get_url('current'), __('Close'));
+    // close it
+    msg_close();
+  }
+}
+function msg_close(){
+  // close function
+  unset($_SESSION['msg']);
+  unset($_SESSION['msg_type']);
+  unset($_SESSION['msg_code']);
+  unset($_SESSION['msg_icon']);
+  unset($_SESSION['msg_content']);
+  unset($_SESSION['msg_type']);
+}
 function showAlert(){
-	// new version : support non javascript browser
+	/**
+   * Show alert message.
+	 * new version : support non javascript browser.
+   * @since 1.1.3-beta-3
+   */
 	if(!empty($_SESSION['msg_code'])){
 		echo '<div class="note note-'.$_SESSION['msg_type'].'">'.$_SESSION['msg_content'].'</div>';
 	}
@@ -47,9 +173,11 @@ function showAlert(){
 	$_SESSION['msg_type'] = '';
 	$_SESSION['msg_content'] = '';
 }
-
-function ElybinRedirect($url)
-{
+function ElybinRedirect($url){
+	/**
+   * Multi method redirect, really oldschool, and it seems not used anymore.
+   * @since 1.0.0
+   */
     if (!headers_sent())
     {
         header('Location: '.$url);
@@ -65,14 +193,25 @@ function ElybinRedirect($url)
         echo '</noscript>'; exit;
     }
 }
-// 1.1.3
-// simple redirect
-function _red($tr){
-	header('location: ' . $tr );
+function _red($str){
+	/**
+   * Simple redirect function.
+   * @since 1.1.3
+   */
+	header('location: ' . $str );
 }
-
+function redirect($str){
+	/**
+   * Simple redirect function.
+   * @since 1.1.4
+   */
+	header('location: ' . $str );
+}
 class ElybinValidasi{
-	//include 'lib/antixss.php';
+	/**
+   * Used for terminating unwanted and dangerous character.
+   * @since 1.0.0
+   */
 	function __construct(){}
 	function xss($str){
 		$str = htmlspecialchars($str);
@@ -85,6 +224,10 @@ class ElybinValidasi{
 		$str = htmlspecialchars($str);
 		return $str;
 	}
+	/**
+   * E-mail validation.
+   * @since 1.1.3
+   */
 	function mail($str, $red = 'index.php'){
 		// never let them empty
 		if(empty($str)){
@@ -108,7 +251,10 @@ class ElybinValidasi{
 			), @$_GET['r']);
 		}
 	}
-
+	/**
+   * Username validation.
+   * @since 1.1.3
+   */
 	function uname($str, $red = 'index.php'){
 		// limit username length
 		if(strlen($str) > 12){
@@ -154,6 +300,10 @@ class ElybinValidasi{
 			), @$_GET['r']);
 		}
 	}
+	/**
+   * Full name validation.
+   * @since 1.1.3
+   */
 	function name($str, $red = 'index.php'){
 		// limit username length
 		if(strlen($str) > 40){
@@ -189,34 +339,100 @@ class ElybinValidasi{
 		}
 	}
 }
-// 1.1.3
-// id or hash ecrypt to prevent sqli
-// Ecrypt to Prevent Maling (EPM)
-function epm_encode($id){
-    $a = array("0","1","2","3","4","5","6","7","8","9");
-    $b = array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
-    $r = str_replace($a, $b, $id);
-    $enc = rand(10,99).base64_encode(base64_encode($r));
-    return $enc;
+function to_int($num = 0, $negative = false){
+	/**
+	 * Filtering int value.
+	 * @since 1.1.4
+	 */
+	if($num < 0 && !$negative){
+		$num = 0;
+	}
+	if(!preg_match("/^[0-9]+$/", $num)){
+		$num = 0;
+	}
+	return $num;
 }
-// DeEcrypt to Prevent Maling (EPM)
+function sqli_($str){
+	/**
+	 * Filtering sqli (alt. Elybin Validasi).
+	 * @since 1.1.4
+	 */
+	$v = new ElybinValidasi();
+	if(!preg_match("/^[a-zA-Z0-9-]+$/", $str)){
+		$str = NULL;
+	}
+	return $v->sql($str);
+}
+function xss_($str){
+	/**
+	 * Filtering xss (alt. Elybin Validasi).
+	 * @since 1.1.4
+	 */
+	$v = new ElybinValidasi();
+	return $v->xss($str);
+}
+function searchf_($str){
+	/**
+	 * Filtering search query.
+	 * @since 1.1.4
+	 */
+	if(!preg_match("/^[a-zA-Z0-9]+$/", $str)){
+ 		$str = 'NULL';
+ 	}
+	return $str;
+}
+function epm_encode($id){
+	/**
+   * ID or Hash encryption to prevent sqli.
+	 * (EPM) = Encrypt to Prevent Maling.
+	 *
+	 * By Fauzan A. Mahanani from Formulasi CMS (www.formulasi.or.id)
+   * @since 1.1.3
+   */
+  $a = array("0","1","2","3","4","5","6","7","8","9");
+  $b = array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
+  $r = str_replace($a, $b, $id);
+  $enc = rand(10,99).base64_encode(base64_encode($r));
+  return $enc;
+}
 function epm_decode($enc) {
+	/**
+   * ID or Hash decryption to prevent sqli.
+	 * (EPM) = dEcrypt to Prevent Maling.
+	 *
+	 * By Fauzan A. Mahanani from Formulasi CMS (www.formulasi.or.id)
+   * @since 1.1.3
+   */
 	$tr = substr($enc,2,strlen($enc));
-    $str = base64_decode(base64_decode($tr));
-    $b =  array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
-    $a = array("0","1","2","3","4","5","6","7","8","9");
-    $id = str_replace($b, $a, $str);
+  $str = base64_decode(base64_decode($tr));
+  $b =  array("Plz","OkX","Ijc","UhV","Ygb","TfN","RdZ","Esx","WaC","Qmv");
+  $a = array("0","1","2","3","4","5","6","7","8","9");
+  $id = str_replace($b, $a, $str);
 
-    // check id decoded successfully?
+  // check id decoded successfully?
 	if(!preg_match("/^[0-9]+$/", $id)){
 		$id = 0;
 	}
 
 	//return
-    return $id;
+  return $id;
 }
-
+function allowed_tags($alt = array('b'), $s = ''){
+	/**
+	 * Function to decode htmlspecialchars, so it can exceute as normal html.
+	 * Not Created Yet, We Need You.
+	 * @since 1.1.4
+	 */
+	$ar = array();
+	//$s = preg_replace("/<[i]*>/", '', $s);
+	return $s;
+}
 class Paging{
+	/**
+	 * Pagging query, but not used yet.
+	 * Modified from Popoji CMS (www.popojicms.org)
+	 * @since 1.0.0
+	 */
 	function cariPosisi($batas){
 		if(empty($_GET['page'])){
 			$posisi=0;
@@ -268,9 +484,11 @@ class Paging{
 		return $link_halaman;
 	}
 }
-// 1.1.3
-// data order adv
 function showOrder(array $orba){
+	/**
+	 * Showing order combo box, mostly used in admin panel.
+	 * @since 1.1.3
+	 */
 	// collect data
 	$mod = @$_GET['mod'];
 	$act = @$_GET['act'];
@@ -335,9 +553,11 @@ function showOrder(array $orba){
 	// output
 	echo $o;
 }
-// 1.1.3
-// search adv
 function showSearch(){
+	/**
+	 * Showing search box, mostly used in admin panel.
+	 * @since 1.1.3
+	 */
 	$act = @$_GET['act'];
 	$fil = @$_GET['filter'];
 	if(isset($_GET['search'])){
@@ -372,9 +592,11 @@ function showSearch(){
 	// output
 	echo $o;
 }
-// 1.1.3
-// pagging adv
 function showPagging($totalrow, $aid = false){
+	/**
+	 * Showing pagging links, mostly used in admin panel.
+	 * @since 1.1.3
+	 */
 	// if total row > 0
 	if($totalrow > 0){
 		// collect data
@@ -462,11 +684,13 @@ function showPagging($totalrow, $aid = false){
 		return false;
 	}
 }
-// 1.1.3
-// pagging (query)
-// "numer of total data", "array of order data", "query want to modify"
 function _PageOrder(array $orderArr, $query, $limstart = 0){
-
+	/**
+	 * Pagging query, mostly used also in admin panel.
+	 * This function used to modify basic MySQL query into page ordered query.
+	 * @since 1.1.3
+	 * @param _PageOrder("numer of total data", "array of order data", "query want to modify")
+	 */
 	// pagg
 	$pr = _op()->pagging_row;
 	//$mp = ceil($count/$pr);
@@ -502,22 +726,32 @@ function _PageOrder(array $orderArr, $query, $limstart = 0){
 	$query .= 'LIMIT '.((($cpag-1)*$pr)+$limstart).','.$pr;
 	return $query;
 }
-
-
-// function textdash
 function textdash($s){
+	/**
+	 * Function to append dashed text, but is seems not being used anymore,
+	 * because it not effective ways.
+	 * @since 1.1.3
+	 */
 	$result = '<span class="text-dash">'.$s.'</span>';
 	return $result;
 }
 function seo_title($s) {
-    $c = array (' ');
-    $d = array ('-','/','\\',',','.','#',':',';','\'','"','[',']','{','}',')','(','|','`','~','!','@','%','$','^','&','*','=','?','+');
-    $s = str_replace($d, '', $s);
-    $s = strtolower(str_replace($c, '-', $s));
-    return $s;
+	/**
+	 * Convert every string into SEO Friendly string.
+	 * @since 1.1.0
+	 */
+  $c = array (' ');
+  $d = array ('-','/','\\',',','.','#',':',';','\'','"','[',']','{','}',')','(','|','`','~','!','@','%','$','^','&','*','=','?','+');
+  $s = str_replace($d, '', $s);
+  $s = trim(strtolower(str_replace($c, '-', $s)));
+  return $s;
 }
 function keyword_filter($w){
-    $d = array ('dan', 'yang', 'for', 'to');
+	/**
+	 * Filter any duplicate and few words so made it SEO Friendly.
+	 * @since 1.1.0
+	 */
+  $d = array (' dan ', ' yang' , ' for ', ' to ',' but ', ' of ');
 	$w = str_replace($d, '', $w);
 	$w =  array_slice(explode(" ",$w), 0, 10);
 	$wj = '';
@@ -530,7 +764,10 @@ function keyword_filter($w){
     return $wj;
 }
 function cutword($s, $len = 200){
-
+	/**
+	 * Cutting paragraph without crushing single word.
+	 * @since 1.1.0
+	 */
 	if(strlen($s) > $len){
 		$s = substr($s, 0, strpos($s, ' ', $len));
 		$s = trim($s);
@@ -538,9 +775,11 @@ function cutword($s, $len = 200){
 	return $s;
 }
 
-// function error handling (beta)
-// handling unknown error
 function custom_error($eno, $estr){
+	/**
+	 * Error Handling for unknown error, still beta.
+	 * @since 1.1
+	 */
 	// find known error
 	// 403
 	if(stristr($estr, 'Permission denied')){
@@ -562,78 +801,159 @@ function custom_error($eno, $estr){
 	}
 	die();
 }
+function get_post_images($pid = 0, $size = 'md'){
+	/**
+	 * get post images uri.
+	 */
+	// available
+	$available_size = array("xs","sm","md","hd","or");
+	if(!in_array($size, $available_size)){
+		return _('Invalid Image Size, available size: xs, sm, md, hd, or');
+		exit;
+	}
 
-function UploadImage($fupload_name,$mod){
-	// update for directory transversal
-	if(stristr($mod, 'elybin-file')){
-		$vdir_upload = "../../../$mod";
+	//get current post
+	$tbp = new ElybinTable("elybin_posts");
+
+	if($pid > 0){
+		// jika id di set
+		$im = $tbp->SelectWhere('post_id', $pid)->current()->image;
+
+		// check images
+		if($im == ''){
+			$out = false;
+		}else{
+			// requested size
+			if(file_exists('elybin-file/post/'.$size.'-'.$im)){
+				$out = get_url('home').'elybin-file/post/'.$size.'-'.$im;
+			}
+			else if(file_exists('elybin-file/post/'.$im)){
+				$out = get_url('home').'elybin-file/post/'.$im;
+			}
+			else{
+				$out = _('Image not found');
+			}
+		}
 	}else{
-		$vdir_upload = "../../../elybin-file/$mod/";
+		$out =  _('Invalid post ID');
+	}
+
+	return $out;
+}
+
+function UploadImage($fupload_name = null, $folder = null, array $quality = NULL){
+	/**
+	 * Upload image and compress them.
+	 * @since 1.0.0
+	 */
+  // debug
+  $debug = false;
+
+	// update for directory transversal
+	if(stristr($folder, 'elybin-file')){
+		$vdir_upload = "../../../$folder";
+		$image_url = get_url('home')."$folder";
+	}else{
+		$vdir_upload = "../../../elybin-file/$folder/";
+    $image_url = get_url('home')."elybin-file/$folder";
 	}
 	$vfile_upload = $vdir_upload . $fupload_name;
 
 	// set
-	set_error_handler("custom_error");
+	//set_error_handler("custom_error");
 
-	if(!@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload)){
-		// new result function
-		result(array(
-			'status' => 'error',
-			'title' => lg('Error'),
-			'msg' => lg('Failed to processing uploaded image. Contact adminisitrator.'),
-			'msg_ses' => 'failed_processing',
-			'red' => ''
-		), 'j');
-	};
-	// 1280px ~ 90%
-	resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);
-	// 300px ~ 80%
-	resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);
-	// 100px  ~ 40%
-	resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
-	// 50px ~ 30%
-	resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 30);
-/* 	if($_FILES["file"]["type"]=="image/jpeg"){
-		$im_src = @imagecreatefromjpeg($_FILES["file"]["tmp_name"]) or die("error,$lg_error,$lg_invalidimages");
+  // check directory writeable
+  if(!is_writeable(root_uri().str_replace('../../../','', $vdir_upload))){
+    // set error return
+    $return = [
+      "error" => [
+        "code"    => "permission_denied",
+        "message" => __('Failed while uploading image, permission denied.')
+      ]
+    ];
+  }else{
+    // move uploaded
+    if(!@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload)){
+      // give error space dude
+      $error_msg = __('Failed while processing image.');
+      // set error return
+      $return = [
+        "error" => [
+          "code"    => "failed_moving_image",
+          "message" => __('Failed while moving image to specifict directory.')
+        ]
+      ];
+      // new result function
+      /*
+      result(array(
+        'status' => 'error',
+        'title' => lg('Error'),
+        'msg' => lg('Failed to processing uploaded image. Contact adminisitrator.'),
+        'msg_ses' => 'failed_processing',
+        'red' => ''
+      ), 'j');*/
+    }else{
+      // compress to all size
+      if(empty($quality)){
+        // compress
+        // 1280px ~ 90%
+        resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);
+        // 300px ~ 80%
+        resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);
+        // 100px  ~ 40%
+        resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
+        // 50px ~ 30%
+        resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 30);
+      }else{
+        // compress to spesific size only
+        if(in_array('hd', $quality)){
+          // 1280px ~ 90%
+          resize(1280,$vdir_upload . "hd-" . $fupload_name,$vfile_upload, 90);
+        }
+        if(in_array('md', $quality)){
+          // 300px ~ 80%
+          resize(300,$vdir_upload . "md-" . $fupload_name,$vfile_upload, 80);
+        }
+        if(in_array('sm', $quality)){
+          // 100px  ~ 40%
+          resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
+        }
+        if(in_array('xs', $quality)){
+          // 50px ~ 30%
+          resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 30);
+        }
+      }
 
-		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
+      // set error return
+      $return = [
+        "ok"  => [
+          "code"    => "image_uploaded",
+          "message" => __('Image successfully uploaded.')
+          ],
+        "data"=> [
+          "image_url"       => get_url('home').$image_url,
+          "available_size"  => $quality
+          ]
+        ];
+    }
+  }
 
-		$src_width = imageSX($im_src);
-		$src_height = imageSY($im_src);
+  // result
+  if($debug){
+    var_dump(@$return['error']['message'].' '.sprintf(__('Filename: %s, Uplaod Path: %s,  Module: %s, Compression: %s, Uploaded: %s'), @$fupload_name, @$vfile_upload, @$mod, var_dump(@$quality), var_dump(@$ok)));
+    exit;
+  }else{
+    //return $ok;
 
-		$dst_width = 390;
-		$dst_height = ($dst_width/$src_width)*$src_height;
-		$im = imagecreatetruecolor($dst_width,$dst_height);
-		imagecopyresampled($im, $im_src, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
-		imagejpeg($im,$vdir_upload . "medium-" . $fupload_name);
-
-		imagedestroy($im_src);
-		imagedestroy($im);
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
-		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
-		// 50px
-		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
-	}
-	elseif($_FILES["file"]["type"]=="image/png"){
-		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
-		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
-		// 50px
-		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
-	}
-	elseif($_FILES["file"]["type"]=="image/gif"){
-		@move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload) or die("error,$lg_error,$lg_failedmoveimage");
-		resize(300,$vdir_upload . "medium-" . $fupload_name,$vfile_upload, 80);
-		// 100px
-		resize(100,$vdir_upload . "sm-" . $fupload_name,$vfile_upload, 40);
-		// 50px
-		resize(50,$vdir_upload . "xs-" . $fupload_name,$vfile_upload, 10);
-	} */
+    // new function return
+    return $return;
+  }
 }
 function resize($newWidth, $targetFile, $originalFile, $quality) {
-
+	/**
+	 * Resize image to many size.
+	 * @since 1.1.3
+	 */
     $info = getimagesize($originalFile);
     $mime = $info['mime'];
 
@@ -673,24 +993,40 @@ function resize($newWidth, $targetFile, $originalFile, $quality) {
     $image_save_func($tmp, "$targetFile", $quality);
 }
 function UploadFile($fupload_name,$mod){
+	/**
+	 * Upload a file.
+	 * @since 1.0.0
+	 */
 	$vdir_upload = "../../../elybin-file/$mod/";
 	$vfile_upload = $vdir_upload . $fupload_name;
 
 	move_uploaded_file($_FILES["file"]["tmp_name"], $vfile_upload);
 }
 function UploadPlugin($fupload_name){
+	/**
+	 * Not used anymore since 1.1.2.
+	 * @since 1.0.0
+	 */
 	$vdir_upload = "../../tmp/";
 	$vfile_upload = $vdir_upload . $fupload_name;
 
 	move_uploaded_file($_FILES["plugin_file"]["tmp_name"], $vfile_upload);
 }
 function UploadTheme($fupload_name){
+	/**
+	 * Not used anymore since 1.1.2.
+	 * @since 1.0.0
+	 */
 	$vdir_upload = "../../tmp/";
 	$vfile_upload = $vdir_upload . $fupload_name;
 
 	move_uploaded_file($_FILES["theme_file"]["tmp_name"], $vfile_upload);
 }
 function ExtractPlugin($fzip){
+	/**
+	 * Extract plugin.
+	 * @since 1.1.0
+	 */
 	$vdir_upload = "../../tmp/";
 	$vfile_upload = $vdir_upload . $fupload_name;
 	$destination_dir = "../../app/";
@@ -701,8 +1037,11 @@ function ExtractPlugin($fzip){
 		header('location:../../404.php');
 	}
 }
-
 function deleteDir($dirname) {
+	/**
+	 * Recrusively delete a directory.
+	 * @since 1.1.0
+	 */
 	// Sanity check
     if (!file_exists($dirname)) {
         return false;
@@ -744,10 +1083,12 @@ function deleteDir($dirname) {
     }
     return true;
 }
-
-// comparing date
-// diff_date($future, $past, $res = second/minute/hour/day);
 function diff_date($date1, $date2, $result = 'day'){
+	/**
+	 * Comparing date and returning with specifict format..
+	 * @since 1.1.0
+	 * @param diff_date($future, $past, $res = second/minute/hour/day);
+	 */
 	$diff = strtotime($date1)-strtotime($date2);
 
 	// dicision
@@ -772,12 +1113,15 @@ function diff_date($date1, $date2, $result = 'day'){
 	return $diff;
 }
 function time_elapsed_string($datetime, $full = false) {
+	/**
+	 * Returning Elaspsed time format.
+	 * @since 1.1.1
+	 */
+  $now = new DateTime;
+  $ago = new DateTime($datetime);
+  $diff = $now->diff($ago);
 
-    $now = new DateTime;
-    $ago = new DateTime($datetime);
-    $diff = $now->diff($ago);
-
-    $diff->w = floor($diff->d / 7);
+  $diff->w = floor($diff->d / 7);
 	$diff->d -= $diff->w * 7;
 
     $string = array(
@@ -800,8 +1144,6 @@ function time_elapsed_string($datetime, $full = false) {
     if (!$full) $string = array_slice($string, 0, 1);
     return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
-
-
 function settzone(){
 	$tz = _op()->timezone;
 	date_default_timezone_set($tz);
@@ -1101,9 +1443,12 @@ function checkcode($code){
 	}
 	return $res;
 }
-// 1.1.3
-// changing fucntion name to ccode
+
 function ccode($code){
+  /**
+   * changing fucntion name to ccode
+   * @since 1.1.4
+   */
 	// check match or not
 	if(empty($code) || empty($_SESSION['cp'])){
 		$res = false;
@@ -1119,12 +1464,11 @@ function ccode($code){
 }
 
 /* Savas Vedova - http://stackoverflow.com/questions/5815755/how-to-minify-html-code*/
-function minify_html($string)
-{
+function minify_html($string){
 	//$string = minify_js($string);
 
     // Remove html comments
-    $string = preg_replace('/<!--(?!\[if|\<\!\[endif)(.|\s)*?-->/', '', $string);
+    //$string = preg_replace('/<!--(?!\[if|\<\!\[endif)(.|\s)*?-->/', '', $string);
 
     // Remove tab
     $string = preg_replace('/\t+/', '', $string);
@@ -1194,7 +1538,27 @@ function lg($s){
 	// berikan nilai return
 	return $s;
 }
-
+function __($string, $domain = 'default'){
+	/**
+	 * Display translated string. (alternate of lg())
+	 * @since Elybin 1.1.4
+	 */
+	 return lg($string);
+}
+function _e($string, $domain = 'default'){
+	/**
+	 * Display translated string. (alternate of lg() with echo)
+	 * @since Elybin 1.1.4
+	 */
+	 echo lg($string);
+}
+function e($str, $domain = 'default'){
+	/**
+	 * Display string. (alternate of echo)
+	 * @since Elybin 1.1.4
+	 */
+	 echo $str;
+}
 // 1.1.3
 // ambil setting
 function op(){
@@ -1219,9 +1583,131 @@ function op(){
 }
 // alternate
 function _op(){
-	return op();
+	global $op;
+	$op = op();
+	return $op;
 }
+function get_option($args){
+	/**
+	 * Another alternate for _op();
+	 * @since Elybin 1.1.4
+	 * @param get_option('name_of_parameter')
+	 */
+	 global $op;
+	 $op = op();
+	 if(isset($op->$args)){
+		 return $op->$args;
+	 }else{
+		 return sprintf(_('Option "%s" not found.'), $args);
+	 }
+}
+function add_option($name = null, $value = null){
+	/**
+	 * Add option to database ;
+	 * @since Elybin 1.1.4
+	 * @param add_option('name_of_parameter','value')
+	 */
+   // not empty
+   if(  !empty($name) ){
+     // table options
+     $tb = new ElybinTable('elybin_options');
+     // check existance
+     if( $tb->GetRow('name',$name) > 0 ){
+       // return false
+       return false;
+     }else{
+       // continue
+       $tb->Insert( array('name' => $name, 'value' => $value) );
+       // success return true
+       return true;
+     }
+   }else{
+     // return false
+     return false;
+   }
+}
+function update_option($name = null, $value = null){
+	/**
+	 * Add option to database ;
+	 * @since Elybin 1.1.4
+	 * @param update_option('name_of_parameter','value')
+	 */
+   // not empty
+   if(  !empty($name) ){
+     // table options
+     $tb = new ElybinTable('elybin_options');
+     // check existance
+     if( $tb->GetRow('name',  $name) > 0 ){
+       // continue
+       $tb->Update( array('value' => $value) , 'name', $name);
+       // success return true
+       return true;
+     }else{
+       // return false
+       return false;
+     }
+   }else{
+     // return false
+     return false;
+   }
+}
+function url_rewrite($args = array()){
+  /**
+   * Getting url rewrite
+   * @since 1.1.4
+   */
+  // filter array arguments
+  $defaults = array(
+    'dynamic' => '',
+    'static1' => $args['dynamic'],
+    'static2' => $args['dynamic']
+  );
+  $args = el_parse_args($args, $defaults);
 
+  //return
+  $op = _op();
+  if(get_option('url_rewrite_style') == 'static1'){
+    return $args['static1'];
+  }
+	else if(get_option('url_rewrite_style') == 'static2'){
+    return $args['static2'];
+  }
+	else{
+    return $args['dynamic'];
+  }
+}
+function el_parse_args($args = array(), $defaults = array()){
+  /**
+   * Function to merge a array.
+   * @since 1.1.4
+   */
+
+  // get args
+  foreach ($args as $k => $l) {
+    if(isset($args[$k])){
+      $defaults[$k] = $l;
+    }
+  }
+  return $defaults;
+}
+function wp_parse_args($args = array(), $defaults = array()){
+  /**
+   * Alternative of el_parse_args().
+   * @since 1.1.4
+   */
+  el_parse_args($args, $defaults);
+}
+function _n($single, $plural, $number = 1, $domain = 'default'){
+  /**
+   * Retrieve the plural or single form based on the supplied amount. Insiped by WordPress
+   * @since 1.1.4
+   */
+   if($number > 1){
+     return lg($plural);
+   }else{
+     return lg($single);
+   }
+}
 
 // 1.1.3
 // get user info from session
@@ -1263,6 +1749,35 @@ function _vi($where = 'visitor_id', $value = 1){
 	return $vi;
 }
 
+function select_one($var1 = NULL, $var2 = NULL, $var3 = NULL, $var4 = NULL){
+	/**
+	 * This function will select one of few giving variable.
+	 * @since 1.1.4
+	 */
+	$out = NULL;
+	if(!empty($var4)){
+		$out = $var4;
+	}
+	if(!empty($var3)){
+		$out = $var3;
+	}
+	if(!empty($var2)){
+		$out = $var2;
+	}
+	if(!empty($var1)){
+		$out = $var1;
+	}
+	return $out;
+}
+
+function so($var1 = NULL, $var2 = NULL, $var3 = NULL, $var4 = NULL){
+	/**
+	 * Alternate of select_one()
+	 * @since 1.1.4
+	 */
+	return select_one($var1, $var2, $var3, $var4);
+}
+
 // 1.1.3
 // get user group from session/spesific
 function _ug($uid = false){
@@ -1292,9 +1807,7 @@ function human_filesize($bytes, $decimals = 2) {
 
 // 1.1.3
 // categorize mime type
-function categorize_mime_types($mime)
-{
-
+function categorize_mime_types($mime){
     // Classify mime types into desired categories, key-val pairings
     $mimes = array(
 		"application/pdf"=>"office",
@@ -1367,5 +1880,920 @@ function categorize_mime_types($mime)
 		// return
 		return $mimes[$mime];
 	}
+}
+function count_visitor(){
+	/*
+	 *
+	 * @sinec 1.1.4
+	 */
+	$tbv = new ElybinTable("elybin_visitor");
+	$ip = str_replace("IP: ","", client_info("yes"));
+	$cov = $tbv->GetRow('visitor_ip', $ip);
+	if($cov == 0){
+		// record new
+		$data = array(
+			'visitor_ip' => $ip,
+			'date' => date("Y-m-d"),
+			'hits' => 1,
+			'online' => date("Y-m-d H:i:s")
+		);
+		$tbv->Insert($data);
+	}else{
+		// Get prev data
+		$cvisitor = $tbv->SelectWhere('visitor_ip', $ip,'','')->current();
+		// ban malicious user
+		if($cvisitor->status == "deny"){
+			header('location: ?maintenance');
+			exit;
+		}
+		// update exiting
+		$data = array(
+			'hits' => $cvisitor->hits+1,
+			'online' => date("Y-m-d H:i:s")
+		);
+		$tbv->Update($data,'visitor_ip', $ip);
+	}
+}
+function if_inline($condition, $value1, $value2) {
+	/**
+	 * Simplified inline method of if().
+	 * @since 1.1.4
+	 */
+	if($condition){
+		return $value1;
+	}else{
+		return $value2;
+	}
+}
+function get_themes(){
+	/**
+	 * Get current active themes.
+	 * @since 1.1.4
+	 */
+	$theme_path = "elybin-file/theme/".get_option('template');
+
+ 	if(whats_opened() == 'home' && file_exists($theme_path."/index.php")){
+ 		include $theme_path."/index.php";
+ 	}
+ 	else if(whats_opened() == 'post' && file_exists($theme_path."/single.php")){
+ 		include $theme_path."/single.php";
+ 	}
+ 	else if(whats_opened() == 'category' && file_exists($theme_path."/category.php")){
+ 		include $theme_path."/category.php";
+ 	}
+ 	else if(whats_opened() == 'tag' && file_exists($theme_path."/tag.php")){
+ 		include $theme_path."/tag.php";
+ 	}
+ 	else if(whats_opened() == 'archive' && file_exists($theme_path."/archive.php")){
+ 		include $theme_path."/archive.php";
+ 	}
+ 	else if(whats_opened() == 'author' && file_exists($theme_path."/author.php")){
+ 		include $theme_path."/author.php";
+ 	}
+ 	else if(whats_opened() == 'search' && file_exists($theme_path."/search.php")){
+ 		include $theme_path."/search.php";
+ 	}
+ 	else if(whats_opened() == 'page' && file_exists($theme_path."/page.php")){
+ 		include $theme_path."/page.php";
+ 	}
+ 	else if(whats_opened() == 'album' && file_exists($theme_path."/gallery.php")){
+ 		include $theme_path."/gallery.php";
+ 	}
+ 	else if(whats_opened() == 'album-single' && file_exists($theme_path."/album.php")){
+ 		include $theme_path."/album.php";
+ 	}
+ 	else if(whats_opened() == 'photo' && file_exists($theme_path."/photo.php")){
+ 		include $theme_path."/photo.php";
+ 	}
+  else if(whats_opened() == 'apps' && file_exists('elybin-admin/app/'.@$_GET['apps'].'/'.@$_GET['apps_page'].'.php') && is_allow_frontend(@$_GET['apps'], @$_GET['apps_page'])  ){
+    include 'elybin-admin/app/'.@$_GET['apps'].'/'.@$_GET['apps_page'].'.php';
+  }
+ 	else if(whats_opened() == 'media' && file_exists("elybin-admin/app/media/open_file.php")){
+ 		include "elybin-admin/app/media/open_file.php";
+ 	}
+ 	else if(whats_opened() == 'sitemap'){
+ 		include "elybin-core/sitemap.php";
+ 	}
+ 	else if(whats_opened() == 'sitemap-xml'){
+ 		include "elybin-core/sitemap.php";
+ 	}
+ // 	else if(whats_opened() == 'rss'){
+ // 		include "elybin-core/rss.php";
+ // 	}
+ // 	else if(whats_opened() == 'atom'){
+ // 		include "elybin-core/atom.php";
+ // 	}
+ 	else if(whats_opened('rss') || whats_opened('post-rss') || whats_opened('atom') || whats_opened('post-atom')){
+ 		include('elybin-core/include/feed.php');
+ 	}
+	else if(whats_opened('maintenance')){
+    /**  Show different maintenace message, sorry this part still dirty */
+    if(file_exists("./elybin-install/") && file_exists("./elybin-core/elybin-config.php")  && !file_exists("./elybin-install/install_date.txt")){
+      include("elybin-core/message/upgrade.php");
+    }
+    else{
+   		include("elybin-core/message/maintenance.php");
+    }
+ 	}
+ 	else{
+    // if customized 404 file exist
+    if(file_exists($theme_path."/404.php")){
+      // customized 404
+   		include $theme_path."/404.php";
+    }else{
+      // include default 404
+      include("elybin-core/message/notfound.php");
+    }
+ 	}
+}
+function get_url_paged($section = 'home', $id = 0, $id2 = 0, $id3 = 0){
+	/**
+	 * Alternative way of get_url() with $paged set True.
+	 * @since 1.1.4
+	 */
+	return get_url($section, $id, $id2, $id3, true);
+}
+function get_url($section = 'home', $id = 0, $id2 = 0, $id3 = 0, $paged = false){
+	/**
+	 * Function to produce url.
+	 * @since 1.1.4
+	 */
+  // debug
+  $debug = false;
+
+	// include
+	if(get_option('url_rewrite_style') == 'static1' && file_exists('elybin-core/url/static1.php')){
+		include('url/static1.php');
+	}
+	else{
+		include('url/dynamic.php');
+	}
+
+	// prepare
+	for ($i=0; $i < count($url); $i++) {
+	 if($url[$i]['section'] == $section){
+		 $url_data = $url[$i];
+	 }
+	}
+	// if paged set
+	if($paged && isset($url_data['paged'])){
+		$url_data['template'] = $url_data['paged'];
+		if(isset($url_data['paged2'])){
+			$url_data['template2'] = $url_data['paged2'];
+			$url_data['template3'] = $url_data['paged3'];
+		}
+	}
+	// special: system directory
+	if($section == 'favicon'){
+			$url_data['section'] = 'favicon';
+			$url_data['template'] = '%site_url%elybin-file/system/'.get_option('site_favicon');
+	}
+  // special: admin home
+	else if($section == 'admin_home'){
+			$url_data['section'] = 'admin_home';
+			$url_data['template'] = '%site_url%elybin-admin/';
+	}
+  // special: current url
+	else if($section == 'current'){
+			$url_data['section'] = 'current';
+			$url_data['template'] = strlen($_SERVER['QUERY_STRING']) ? basename($_SERVER['PHP_SELF']).'?'.$_SERVER['QUERY_STRING'] : basename($_SERVER['PHP_SELF']);
+	}
+	// checks
+	if(!isset($url_data)){
+		// debug
+    if($debug){
+
+      return sprintf(__('&#34;%s&#34; is a wrong section name in <b>&#34;%s&#34;</b> on line <b>%s</b>'),
+          $section,
+    			debug_backtrace()[0]["file"],
+    			debug_backtrace()[0]["line"]
+    		);
+    }else{
+      return false;
+    }
+    exit;
+	}else{
+		$s['site_url'] = get_option('site_url');
+		switch ($url_data['section']) {
+			case 'post':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['post_id'] 	= $id;
+					$s['post_seo']	= @$tb->SelectWhere('post_id', $id)->current()->seotitle;
+				}else{
+					$s['post_id'] 	= @$tb->SelectWhere('seotitle', $id)->current()->post_id;
+					$s['post_seo']	= $id;
+				}
+				break;
+
+			case 'page':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['page_id'] 	= $id;
+					$s['page_seo']	= @$tb->SelectWhere('post_id', $id)->current()->seotitle;
+				}else{
+					$s['page_id'] 	= @$tb->SelectWhere('seotitle', $id)->current()->post_id;
+					$s['page_seo']	= $id;
+				}
+				break;
+
+			case 'category':
+				$tb = new ElybinTable('elybin_category');
+				if(is_numeric($id)){
+					$s['cat_id'] 	= $id;
+					$s['cat_seo']	= @$tb->SelectWhere('category_id', $id)->current()->seotitle;
+				}else{
+					$s['cat_id'] 	= @$tb->SelectWhere('seotitle', $id)->current()->category_id;
+					$s['cat_seo']	= $id;
+				}
+				break;
+
+			case 'tag':
+				$tb = new ElybinTable('elybin_tag');
+				if(is_numeric($id)){
+					$s['tag_id'] 	= $id;
+					$s['tag_seo']	= $tb->SelectWhere('tag_id', $id)->current()->seotitle;
+				}else{
+					$s['tag_id'] 	= $tb->SelectWhere('seotitle', $id)->current()->tag_id;
+					$s['tag_seo']	= $id;
+				}
+				break;
+
+			case 'author':
+				$tb = new ElybinTable('elybin_users');
+				$s['author_id'] 	= $id;
+				$s['author_seo']	= seo_title($tb->SelectWhere('user_id', $id)->current()->fullname);
+				break;
+
+			case 'gallery':
+				break;
+
+			case 'album':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['album_id'] 	= $id;
+					$s['album_seo']	= $tb->SelectWhereAnd('post_id', $id, 'type', 'album')->current()->seotitle;
+				}else{
+					$s['album_id'] 	= $tb->SelectWhereAnd('seotitle', $id, 'type', 'album')->current()->post_id;
+					$s['album_seo']	= $id;
+				}
+				break;
+
+			case 'photo':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['album_id'] 	= $id;
+					$s['album_seo']	= $tb->SelectWhereAnd('post_id', $id, 'type', 'album')->current()->seotitle;
+				}else{
+					$s['album_id'] 	= $tb->SelectWhereAnd('seotitle', $id, 'type', 'album')->current()->post_id;
+					$s['album_seo']	= $id;
+				}
+				$tb = new ElybinTable('elybin_media');
+				if(is_numeric($id2)){
+					$s['photo_id'] 	= $id2;
+					$s['photo_seo']	= $tb->SelectWhere('media_id', $id2)->current()->seotitle;
+				}else{
+					$s['photo_id'] 	= $tb->SelectWhere('seotitle', $id2)->current()->media_id;
+					$s['photo_seo']	= $id2;
+				}
+				break;
+
+      case 'apps':
+        $s['apps_slug'] 	= $id;
+        $s['apps_page_slug'] 	= $id2;
+        break;
+
+			case 'archive':
+				$s['year'] 	= substr($id, 0, 4);
+				$s['month'] 	= substr($id, 4, 2);
+				$s['day']  = substr($id, 6, 2);
+				// filter
+				if(strlen($id) == 4){
+					$url_data['template'] = $url_data['template3'];
+				}
+				else if(strlen($id) == 6){
+					$url_data['template'] = $url_data['template2'];
+				}
+				break;
+
+			case 'post-rss':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['post_id'] 	= $id;
+					$s['post_seo']	= $tb->SelectWhere('post_id', $id)->current()->seotitle;
+				}else{
+					$s['post_id'] 	= $tb->SelectWhere('seotitle', $id)->current()->post_id;
+					$s['post_seo']	= $id;
+				}
+				break;
+
+			case 'post-atom':
+				$tb = new ElybinTable('elybin_posts');
+				if(is_numeric($id)){
+					$s['post_id'] 	= $id;
+					$s['post_seo']	= $tb->SelectWhere('post_id', $id)->current()->seotitle;
+				}else{
+					$s['post_id'] 	= $tb->SelectWhere('seotitle', $id)->current()->post_id;
+					$s['post_seo']	= $id;
+				}
+				break;
+
+			case 'media':
+        $tb = new ElybinTable('elybin_media');
+				$s['media_hash'] 	= $tb->SelectWhere('media_id', $id)->current()->hash;
+				$s['media_mode']	= $id2;
+				break;
+
+			case 'search':
+				$s['keywords'] = $id;
+				break;
+
+			case 'home':
+				break;
+
+			case 'sitemap':
+				break;
+
+			case 'sitemap-xml':
+				break;
+
+			case '404':
+				break;
+
+			case '403':
+				break;
+
+			case '500':
+				break;
+
+			case 'maintenance':
+				break;
+
+			case 'error':
+				break;
+
+			case 'blocked':
+				break;
+
+			case 'atom':
+				break;
+
+			case 'atom-comment':
+				break;
+
+			case 'rss':
+				break;
+
+			case 'rss-comment':
+				break;
+
+			case 'login':
+				break;
+
+			case 'register':
+				break;
+
+			case 'forgot':
+				break;
+
+			case 'favicon':
+				break;
+
+      /** backend **/
+			case 'admin_home':
+				break;
+
+			default:
+				break;
+		}
+
+		// replace
+		for ($i=0; $i < count($s); $i++) {
+			$url_data['template'] = str_replace('%'.array_keys($s)[$i].'%', $s[array_keys($s)[$i]], $url_data['template']);
+		}
+
+		// result
+		return $url_data['template'];
+	}
+}
+function get_sitemap_xml(){
+	$a = 1;
+	/**
+	 * Home
+	 */
+	$tbp = new ElybinTable("elybin_posts");
+	$cp = $tbp->SelectWhereAnd('status','publish','type','post','post_id','DESC','0,10000');
+	$cop = $tbp->GetRowAnd('status','publish','type','post');
+
+  $links[$a] = new stdClass();
+  $links[$a]->loc = get_url('home');
+  $links[$a]->lastmod = (empty($cp->current()->date) ? date("c"): date("c", strtotime(@$cp->current()->date)));
+  $links[$a]->changefreq = 'hourly';
+  $links[$a]->priority = '1.00';
+  $a++;
+
+	/**
+	 * Post
+	 */
+	$i = 1;
+	if($cop > 0){
+		foreach ($cp as $p) {
+			// old post least priority
+			if($i < 30){
+				$pr = '0.90';
+			}
+			else if($i < 50){
+				$pr = '0.80';
+			}
+			else if($i < 100){
+				$pr = '0.75';
+			}
+			else if($i < 500){
+				$pr = '0.70';
+			}
+			else if($i < 1000){
+				$pr = '0.40';
+			}
+			else if($i < 2000){
+				$pr = '0.30';
+			}
+			else if($i < 5000){
+				$pr = '0.20';
+			}
+			else{
+				$pr = '0.10';
+			}
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('post', $p->post_id);
+			$links[$a]->lastmod = date("c", strtotime($p->date));
+			$links[$a]->changefreq = 'hourly';
+			$links[$a]->priority = $pr;
+			$a++;
+			$i++;
+		}
+	}
+
+	/**
+	 * Category
+	 */
+	$tbc = new ElybinTable("elybin_category");
+	$cc = $tbc->SelectWhere('status','active','category_id','DESC','0,10000');
+	$coc = $tbc->GetRow('status','active');
+	$cp = $tbp->SelectWhereAnd('status','publish','type','post','post_id','DESC','0,10000');
+	if($coc > 0){
+		foreach ($cc as $c) {
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('category', $c->category_id);
+			$links[$a]->lastmod = (empty($cp->current()->date) ? date("c"): date("c", strtotime(@$cp->current()->date)));
+			$links[$a]->changefreq = 'daily';
+			$links[$a]->priority = '0.90';
+			$a++;
+		}
+	}
+	/**
+	 * Tag
+	 */
+	$tbt = new ElybinTable("elybin_tag");
+	$ct = $tbt->Select('tag_id','DESC','0,10000');
+	$cot = $tbt->GetRow();
+	if($coc > 0){
+		foreach ($ct as $t) {
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('tag', $t->tag_id);
+			$links[$a]->lastmod = (empty($cp->current()->date) ? date("c"): date("c", strtotime(@$cp->current()->date)));
+			$links[$a]->changefreq = 'daily';
+			$links[$a]->priority = '0.70';
+			$a++;
+		}
+	}
+	/**
+	 * Author
+	 */
+	$cp = $tbp->SelectFullCustom("
+	SELECT *
+	FROM
+	`elybin_posts` as `p`
+	WHERE
+	`p`.`status` = 'publish' &&
+	`p`.`type` = 'post'
+	GROUP BY `p`.`author`
+	");
+	$cop = $tbp->GetRowAnd('status','publish','type','post');
+	if($cop > 0){
+		foreach ($cp as $p) {
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('author', $p->author);
+			$links[$a]->lastmod = date("c", strtotime($cp->current()->date));
+			$links[$a]->changefreq = 'daily';
+			$links[$a]->priority = '0.60';
+			$a++;
+		}
+	}
+	/**
+	 * Album
+	 */
+	$i = 1;
+	$cpp = $tbp->SelectWhereAnd('status','active','type','album','post_id','DESC','0,10000');
+	$cop = $tbp->GetRowAnd('status','active','type','album');
+	if($cop > 0){
+		/**
+		 * Gallery
+		 */
+		$links[$a] = new stdClass();
+		$links[$a]->loc = get_url('gallery');
+		$links[$a]->lastmod = date("c", strtotime($cpp->current()->date));
+		$links[$a]->changefreq = 'daily';
+		$links[$a]->priority = '0.90';
+		$a++;
+		foreach ($cpp as $p) {
+			// old post least priority
+			if($i > 10){
+				$pr = '0.50';
+			}else{
+				$pr = '0.60';
+			}
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('album', $p->post_id);
+			$links[$a]->lastmod = date("c", strtotime($p->date));
+			$links[$a]->changefreq = 'daily';
+			$links[$a]->priority = $pr;
+			/**
+			 * Photo
+			 */
+			$cph = $tbp->SelectFullCustom("
+			SELECT
+			`m`.*
+			FROM
+			`elybin_relation` as `r`
+			LEFT JOIN
+			`elybin_media` as `m`
+			ON `m`.`media_id` = `r`.`second_id` && `m`.`share` = 'yes'
+			WHERE
+			`r`.`type` = 'album' &&
+			`r`.`target` = 'media' &&
+			`r`.`first_id` = ".$p->post_id);
+			foreach ($cph as $p2) {
+				$links[$a] = new stdClass();
+				$links[$a]->loc = str_replace('&', '&amp;', get_url('photo', $p->post_id, $p2->media_id  ) );
+				$links[$a]->lastmod = date("c", strtotime($p2->date));
+				$links[$a]->changefreq = 'daily';
+				$links[$a]->priority = '0.50';
+				$a++;
+			}
+
+			$a++;
+			$i++;
+		}
+	}
+	/**
+	 * Page
+	 */
+	$cpp = $tbp->SelectWhereAnd('status','active','type','page','post_id','DESC','0,10000');
+	$cop = $tbp->GetRowAnd('status','active','type','page');
+	$i = 1;
+	if($cop > 0){
+		foreach ($cpp as $p) {
+			$links[$a] = new stdClass();
+			$links[$a]->loc = get_url('page', $p->post_id);
+			$links[$a]->lastmod = date("c", strtotime($p->date));
+			$links[$a]->changefreq = 'daily';
+			$links[$a]->priority = '0.80';
+			$a++;
+			$i++;
+		}
+	}
+	/**
+	 * Sitemap
+	 */
+	 $links[$a] = new stdClass();
+	 $links[$a]->loc = get_url('sitemap');
+	 $links[$a]->lastmod = date("c");
+	 $links[$a]->changefreq = 'daily';
+	 $links[$a]->priority = '0.80';
+	 $a++;
+	/**
+	 * Login
+	 */
+	 $links[$a] = new stdClass();
+	 $links[$a]->loc = get_url('login');
+	 $links[$a]->lastmod = date("c");
+	 $links[$a]->changefreq = 'daily';
+	 $links[$a]->priority = '1.00';
+	 $a++;
+	/**
+	 * Register
+	 */
+	 $links[$a] = new stdClass();
+	 $links[$a]->loc = get_url('register');
+	 $links[$a]->lastmod = date("c");
+	 $links[$a]->changefreq = 'daily';
+	 $links[$a]->priority = '1.00';
+	 $a++;
+	/**
+	 * Forgot
+	 */
+	 $links[$a] = new stdClass();
+	 $links[$a]->loc = get_url('forgot');
+	 $links[$a]->lastmod = date("c");
+	 $links[$a]->changefreq = 'daily';
+	 $links[$a]->priority = '0.20';
+	 $a++;
+	 /**
+ 	 * Rss
+ 	 */
+ 	 $links[$a] = new stdClass();
+ 	 $links[$a]->loc = get_url('rss');
+ 	 $links[$a]->lastmod = date("c");
+ 	 $links[$a]->changefreq = 'daily';
+ 	 $links[$a]->priority = '0.90';
+ 	 $a++;
+ 	/**
+ 	 * Rss Comment
+ 	 * N/A
+ 	 */
+ 	 /*
+ 	 $links[$a] = new stdClass();
+ 	 $links[$a]->loc = get_url('rss-comment');
+ 	 $links[$a]->lastmod = date("c");
+ 	 $links[$a]->changefreq = 'daily';
+ 	 $links[$a]->priority = '0.80';
+ 	 $a++;*/
+ 	/**
+ 	 * Atom
+ 	 */
+ 	 $links[$a] = new stdClass();
+ 	 $links[$a]->loc = get_url('atom');
+ 	 $links[$a]->lastmod = date("c");
+ 	 $links[$a]->changefreq = 'daily';
+ 	 $links[$a]->priority = '0.90';
+ 	 $a++;
+ 	/**
+ 	 * Atom Comment
+ 	 * N/A
+ 	 */
+ 	 /*
+ 	 $links[$a] = new stdClass();
+ 	 $links[$a]->loc = get_url('atom-comment');
+ 	 $links[$a]->lastmod = date("c");
+ 	 $links[$a]->changefreq = 'daily';
+ 	 $links[$a]->priority = '0.80';
+ 	 $a++;*/
+	// result
+	return $links;
+}
+function get_feed(){
+  /**
+   * Generating rss & atom feed.
+	 * @since 1.1.4
+   */
+  $a = 1;
+  /**
+   * Post
+   */
+  $tbp = new ElybinTable("elybin_posts");
+  if(whats_opened('post-rss') || whats_opened('post-atom')){
+    $pid = sqli_(to_int(@$_GET['p']));
+    $ptid = sqli_(@$_GET['pt']);
+		// where
+		if($pid > 0){
+			$wh = "`p`.`post_id` = $pid";
+		}else{
+			$wh = "`p`.`seotitle` = '$ptid'";
+		}
+    $q = "
+		SELECT
+		`p`.*,
+		`u`.`fullname` as `author_name`,
+		`c`.`name` as `category_name`,
+		`c`.`seotitle` as `category_seo`,
+		`co`.`comment_id` as `comment_id`,
+		`co`.`author` as `comment_author`,
+		`co`.`user_id` as `comment_user_id`,
+		`co`.`email` as `comment_email`,
+		`co`.`date` as `comment_date`,
+		`co`.`content` as `comment_content`,
+		(
+		  SELECT
+		    COUNT(`co2`.`comment_id`)
+		  FROM
+		    `elybin_comments` as `co2`
+		  WHERE
+		    `co2`.`post_id` = `p`.`post_id`
+		) as `comment_count`
+		FROM
+		`elybin_posts` as `p`
+		LEFT JOIN
+		`elybin_comments` as `co`
+		ON `co`.`post_id` = `p`.`post_id` && `co`.`status` = 'active'
+		LEFT JOIN
+		`elybin_users` as `u`
+		ON `u`.`user_id` = `p`.`author`
+		LEFT JOIN
+		`elybin_category` as `c`
+		ON `c`.`category_id` = `p`.`category_id`
+		WHERE
+		`p`.`status` = 'publish' &&
+		`p`.`type` = 'post' &&
+		$wh
+		ORDER BY
+		`p`.`post_id` DESC
+    ";
+    $cp = $tbp->SelectFullCustom($q);
+    $cop = $tbp->GetRowFullCustom($q);
+  }else{
+    $q = "
+    SELECT
+    `p`.*,
+    `u`.`fullname` as `author_name`,
+    `c`.`name` as `category_name`,
+    `c`.`seotitle` as `category_seo`,
+    (
+      SELECT
+        COUNT(`co`.`comment_id`)
+      FROM
+        `elybin_comments` as `co`
+      WHERE
+        `co`.`post_id` = `p`.`post_id`
+    ) as `comment_count`
+    FROM
+    `elybin_posts` as `p`
+    LEFT JOIN
+    `elybin_users` as `u`
+    ON `u`.`user_id` = `p`.`author`
+    LEFT JOIN
+    `elybin_category` as `c`
+    ON `c`.`category_id` = `p`.`category_id`
+    WHERE
+    `p`.`status` = 'publish' &&
+    `p`.`type` = 'post'
+    ORDER BY
+    `p`.`post_id` DESC
+    LIMIT
+    0,10000
+    ";
+    $cp = $tbp->SelectFullCustom($q);
+    $cop = $tbp->GetRowFullCustom($q);
+  }
+  $i = 1;
+  // Current Post in Single
+  $cps = $cp->current();
+  // old post least priority
+  $feed = new stdClass();
+  // rss
+  $feed->rss = 'start from here';
+  $feed->title = (is_single() ? sprintf(_('Comments on: %s'), @$cps->title) : get_option('site_name')) ;
+  $feed->atom_link = (is_single() ? str_replace('&','&#038;', get_url('post-rss', $cps->post_id)):  get_url('rss')) ;
+  $feed->link = (is_single() ? get_url('post', @$cps->post_id) :  get_url('home')) ;
+  $feed->creator = (empty($cps->author) ? get_option('site_owner') : get_url('author', $cps->author));
+  $feed->lastBuildDate = (empty($cps->date) ? date("r", strtotime(date("Y-m-d 00:00:00"))) : date("r", strtotime($cps->date)) );
+  $feed->category = (empty($cps->category_name) ? __('General') : $cps->category_name);
+  $feed->updatePeriod = 'hourly';
+  $feed->updateFrequency = '1';
+  $feed->language = get_option('content_language');
+  $feed->generator = 'http://www.elybin.com/?v=1.1.4';
+
+  // atom
+  $feed->atom = 'start from here';
+  $feed->xml_base = get_url('atom');
+  $feed->xml_lang = $feed->language;
+  $feed->subtitle = get_option('site_description');
+  $feed->updated = (empty($cps->date) ? date("Y-m-d\TH:i:s\Z", strtotime(date("Y-m-d 00:00:00"))) : date("Y-m-d\TH:i:s\Z", strtotime($cps->date)) );
+  $feed->link_alternate = (is_single() ? str_replace('&','&#038;', get_url('post', @$cps->post_id).'#comments') : get_url('home')) ;
+  $feed->atom_id = (is_single() ? str_replace('&','&#038;', get_url('post-atom', @$cps->post_id)) : get_url('atom'));
+  $feed->atom_self = $feed->atom_id;
+  $feed->generator_uri = 'http://www.elybin.com/';
+  $feed->generator_version = '1.1.4';
+  $feed->generator_name = 'Elybin CMS';
+
+
+  if($cop > 0){
+    foreach ($cp as $p) {
+      // item Rss
+      $feed->items[$a] = new stdClass();
+      $feed->items[$a]->rss = 'start from here';
+      $feed->items[$a]->title = $p->title;
+      $feed->items[$a]->link = get_url('post', $p->post_id);
+      $feed->items[$a]->comments = get_url('post', $p->post_id).'#comments';
+      $feed->items[$a]->pubDate = date("r", strtotime($p->date));
+      $feed->items[$a]->creator = $p->author_name;
+      $feed->items[$a]->category = $p->category_name;
+      $feed->items[$a]->guid = get_url('post', $p->post_id);
+      $feed->items[$a]->description = cutword(strip_tags($p->content), 500);
+      $feed->items[$a]->content_encoded = cutword($p->content, 500);
+      $feed->items[$a]->commentRss = str_replace('&','&#038;', get_url('post-rss', $p->post_id));
+      $feed->items[$a]->comment_count = $p->comment_count;
+
+      // item Atom
+      $feed->items[$a]->atom = 'start from here';
+      $feed->items[$a]->author = $feed->items[$a]->creator;
+      $feed->items[$a]->link_alternate = if_inline(is_single(), get_url('post', $p->post_id).'#comments', get_url('post', $p->post_id));
+      $feed->items[$a]->atom_id = if_inline(is_single(), get_url('post', $p->post_id).'#comments', get_url('post', $p->post_id));
+      $feed->items[$a]->updated = date("Y-m-d\TH:i:s\Z", strtotime($p->date));
+      $feed->items[$a]->published = date("Y-m-d\TH:i:s\Z", strtotime($p->date));
+      $feed->items[$a]->category_name = $feed->items[$a]->category;
+      $feed->items[$a]->category_scheme = get_url('category', $p->category_id);
+      $feed->items[$a]->summary = cutword(strip_tags($p->content), 200);
+      $feed->items[$a]->comment_uri = get_url('post', $p->post_id).'#comments';
+      $feed->items[$a]->comment_atom_uri = str_replace('&','&#038;', get_url('post-atom', $p->post_id));
+
+      // comment Rss
+      $feed->comments[$a] = new stdClass();
+      if($p->comment_count > 0 && is_single()){
+        $feed->comments[$a]->comment_rss = 'start';
+        $feed->comments[$a]->title = sprintf(_('By: %s'), $p->comment_author);
+        $feed->comments[$a]->link = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
+        $feed->comments[$a]->creator = $p->comment_author;
+        $feed->comments[$a]->pubDate = date("r", strtotime($p->comment_date));
+        $feed->comments[$a]->guid = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
+        $feed->comments[$a]->description = cutword(strip_tags($p->comment_content), 200);
+        $feed->comments[$a]->content_encoded = cutword($p->comment_content, 200);
+
+        $feed->comments[$a]->comment_atom = 'start';
+        $feed->comments[$a]->title = sprintf(_('By: %s'), $p->comment_author);
+        $feed->comments[$a]->link = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
+        $feed->comments[$a]->author = $p->comment_author;
+        $feed->comments[$a]->author_uri = 'http://www.elybin.com/';
+        $feed->comments[$a]->atom_id = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
+        $feed->comments[$a]->updated = date("Y-m-d\TH:i:s\Z", strtotime($p->comment_date));
+        $feed->comments[$a]->published = date("Y-m-d\TH:i:s\Z", strtotime($p->comment_date));
+        $feed->comments[$a]->content_encoded = cutword(strip_tags($p->comment_content), 200);
+        $feed->comments[$a]->in_reply_to = get_url('post', $p->post_id);
+      }else{
+        $feed->comments = null;
+      }
+
+      $a++;
+      $i++;
+    }
+  }else{
+    // if not found
+    $feed->items = null;
+    $feed->comments = null;
+  }
+  // return
+  return $feed;
+}
+function root_uri($sring_result = true){
+	/**
+	 * Count how many directory transversal needed
+	 * @since 1.1.3
+	 */
+	// current dir
+	$current_url = @getcwd();
+	$current_url = str_replace("\\","/", $current_url);
+  $strpos = strpos($current_url, "elybin-admin");
+  $home_url = substr($current_url, 0, $strpos);
+
+  return $home_url;
+}
+function is_allow_frontend($apps_slug = null, $apps_page_slug = null){
+  /**
+   * Checking file allowed included or not
+   * @since 1.1.4
+   */
+  // check plugin active or not
+  $tb = new ElybinTable('elybin_plugins');
+  if( $tb->GetRow('alias', $apps_slug) < 1 ){
+    return false; exit;
+  }
+
+  // try to get more info
+  $o = null;
+  // read
+  $f = @fopen( 'elybin-admin/app/'.$apps_slug.'/'.$apps_page_slug.'.php'  , "r");
+  while(!feof($f)) {
+    $o .= fgets($f);
+  }
+  fclose($f);
+  // remove header
+  $extract_origin = preg_match('/\/\*(.*)\*\//s', $o, $match);
+  $o = trim(@$match[1]);
+
+  /* get information */
+  preg_match('/(Frontend:)(.*)/', $o, $m);
+  $frontend = ( trim(  @$m[2] ) == null ? false: trim(  $m[2] ) );
+  $frontend = ( $frontend == 'true' ? true:false);
+  // return
+  return $frontend;
+}
+
+function appreciate_our_code(){
+  /**
+   * This is appreciation to our code, thank you for using Elybin CMS
+   * Important: please don't remove this function.
+   * @since Elybin 1.1.4
+   */
+   $ThanksELybin = @$_SESSION['$ThanksELybin'];
+   $_SESSION['$ThanksELybin'] = '';
+   if(strlen($ThanksELybin) != 32 && !(
+	 whats_opened('sitemap-xml') ||
+	 whats_opened('sitemap') ||
+	 whats_opened('post-atom') ||
+	 whats_opened('post-rss') ||
+	 whats_opened('rss') ||
+	 whats_opened('atom') ||
+	 whats_opened('media') ||
+   isset($_GET['clear']))): echo '<br/>'.lg('Powered by').' <a href="http://www.elybin.com/" alt="Elybin - '.lg('Modern, Powerful &amp; Beautiful for all you need').'" class="text-dash" style="background-color: transparent">Elybin CMS</a> '; endif;
+	 e((!whats_opened('media') ? '<!-- Thanks for using Elybin CMS - www.elybin.com -->':''));
 }
 ?>

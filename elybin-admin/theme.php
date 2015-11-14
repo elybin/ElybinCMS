@@ -3,9 +3,9 @@
  * [ Main theme of admin panel
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 ?>
 <?php function theme_head(){
@@ -91,6 +91,7 @@ if(isset($subtitle)){
 	<link href="assets/stylesheets/widgets.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/stylesheets/ui.css" rel="stylesheet" type="text/css">
 
+	<meta name="theme-color" content="#435267">
 </head>
 <body class="theme-<?php echo $op->admin_theme?> main-menu-animated main-navbar-fixed mmc">
 <script>var init = [];</script>
@@ -409,22 +410,61 @@ if(isset($subtitle)){
 				</li>
 				<?php } ?>
 				<?php
-					$tblpl = new ElybinTable('elybin_plugins');
-					$lpl = $tblpl->SelectWhereAnd('status','active','type','apps','','');
-					$cpl = $tblpl->GetRowAnd('status','active','type','apps');
+				/** PLUGIN MENU */
+					// count available plugin for current user
+					// foreach ($lpl as $pl) {
+					// 	//explode usergroup and search
+					// 	$plugin_priv = explode(",",$pl->usergroup);
+					// 	// hide if privillage not found
+					// 	if (array_search($u->level, $plugin_priv) !== false) {
+					// 		@$plavailable++;
+					// 	}
+					// }
+					$plavailable = 1;
 
-					// count available plugin for cureent user
-					foreach ($lpl as $pl) {
-						//explode usergroup and search
-						$plugin_priv = explode(",",$pl->usergroup);
-						// hide if privillage not found
-						if (array_search($u->level, $plugin_priv) !== false) {
-							@$plavailable++;
-						}
-					}
+					/** echo */
+					// not empty
+					if( get_panel_menu() !== null ) {
+						// loop
+						foreach (get_panel_menu() as $k => $v) {
+							$k = array_keys($v)[0];
+							$v = $v[$k];
+					?>
+					<li<?php e(	(empty($v['submenu']) ? '':' class="mm-dropdown"')	) ?>>
+						<a href="<?php e(	(empty($v['submenu']) ? @$v['url']:'#')	) ?>">
+							<?php e(	(empty($v['icon']) ? '':'<i class="menu-icon fa '.$v['icon'].'"></i>')	) ?>
+							<span class="mm-text"><?php e(	(empty($k) ? '':$k)	) ?></span>
+							<span class="label label-primary"><?php e(	(empty($v['label']) ? '':$v['label'])	) ?></span>
+						</a>
+
+						<?php
+						// if has child
+						if(	!empty($v['submenu'])	){ ?>
+							<ul>
+
+							<?php
+							// loop
+							foreach ($v['submenu'] as $k2 => $v2) { ?>
+							<li>
+								<a href="<?php e(	(empty($v2['submenu']) ? $v2['url']:'#')	) ?>">
+									<?php e(	(empty($v2['icon']) ? '':'<i class="menu-icon fa '.$v2['icon'].'"></i>')	) ?>
+									<span class="mm-text"><?php e(	(empty($k2) ? '':$k2)	) ?></span>
+									<span class="label label-primary"><?php e(	(empty($v2['label']) ? '':$v2['label'])	) ?></span>
+								</a>
+							</li>
+						<?php
+							} // loop?>
+						</ul>
+						<?php
+						} // if end ?>
+					</li>
+					<?php
+						} // loop
+					} // not empty
 
 					// if active pluigin and available plugin for this user more than zero
-					if($cpl>0 AND @$plavailable>0){
+					if(@$plavailable>0){
+						/*
 				?>
 				<li class="mm-dropdown">
 					<a href="#">
@@ -454,7 +494,7 @@ if(isset($subtitle)){
 						<?php } } ?>
 					</ul>
 				</li>
-				<?php } ?>
+			<?php */} ?>
 				<?php
 					// show if have privilage
 					if($ug->setting == 1){

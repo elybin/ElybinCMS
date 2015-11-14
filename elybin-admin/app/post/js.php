@@ -3,9 +3,9 @@
  * Module: Post
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
@@ -452,6 +452,48 @@ init.push(function () {
 	}
 	// trigger triggerAS
 	triggerAS($('#form'));
+
+	// Check seo Title
+	inp = $("#check_seo_input");
+	fix = $("#check_seo_fix");
+	btn = $("#check_seo_btn");
+	edt = $("#check_seo_edit");
+	pid = $("input[name='pid']");
+	btn.click(function(){
+		$.ajax({
+				url: 'app/post/ajax/check_seotitle.php?seo=' + inp.val() + '&pid=' + pid.val(),
+				type: 'GET',
+				success: function(data) {
+					console.log(data);
+					if(data['available']){
+						inp.hide();
+						btn.hide();
+						fix.show();
+						edt.show();
+
+						fix.html(inp.val());
+					}
+					else if(!data['available']){
+						fix.html(data['suggestion']);
+						inp.val(data['suggestion']);
+						// error growl
+						$.growl.warning({ title: data['error'], message: data['msg']});
+					}
+			 },
+			 error: function(e){
+				autoSave(t);
+				$('#autosave').fadeIn().html('<?php echo lg("Gagal menyimpan, mencoba kembali...") ?>');
+			 }
+			});
+	});
+	edt.click(function(){
+		edt.hide();
+		fix.hide();
+		inp.show();
+		btn.show();
+		return false;
+	})
+
 });<?php ob_end_flush(); ?>
 </script>
 <?php

@@ -1100,7 +1100,7 @@ function (a) {
 				"role": this._itemRole()
 			}), b.children(":not(.ui-menu-item)").each(function () {
 				var b = a(this);
-				/[^\-\u2014\u2013\s]/.test(b.text()) || b.addClass("ui-widget-content ui-menu-divider")
+				/[^\-\u2015\u2013\s]/.test(b.text()) || b.addClass("ui-widget-content ui-menu-divider")
 			}), b.children(".ui-state-disabled").attr("aria-disabled", "true"), this.active && !a.contains(this.element[0], this.active[0]) && this.blur()
 		},
 		"_itemRole": function () {

@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Theme
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -22,6 +22,10 @@ if($usergroup == 0){
 	theme_foot();
 	exit;
 }else{
+
+	// require
+	require_once('inc/main.func.php');
+
 	// start here
 	switch (@$_GET['act']) {
 		case 'add':
@@ -68,15 +72,15 @@ if($usergroup == 0){
 									<input type="radio" name="file_name" value="<?php echo $f['file_name']?>" class="px" <?php if($fst){echo ' checked="checked"';}?>>
 									<span class="lbl"><?php echo $f['file_name']?></span>
 							</label>
-					<?php 
+					<?php
 						$fst = false;
-						} 
+						}
 					?>
 							</p>
 					      </div>
 					  </div> <!-- / .form-group -->
 					<?php
-						
+
 					}else{
 					?>
 					<div class="text-center panel-padding">
@@ -159,16 +163,8 @@ if($usergroup == 0){
 
 <?php
 			break;
-		
+
 		default:
-		$tb 	= new ElybinTable('elybin_themes');
-		
-		// count total themes
-		$cotheme = $tb->GetRow('', '');
-		
-		// get data
-		$ltheme	= $tb->Select('theme_id','ASC');
-		$no = 1;
 ?>
 		<!-- Page Header -->
 		<div class="page-header">
@@ -180,8 +176,8 @@ if($usergroup == 0){
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
-							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
+						<div class="pull-right col-xs-12 col-sm-6 col-md-4">
+							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="hide pull-right btn btn-success btn-labeled" style="width: 100%">
 							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('Add New')?></a>
 						</div>
 					</div>
@@ -193,110 +189,104 @@ if($usergroup == 0){
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel">
-				
+
 					<!-- Panel Heading -->
 					<div class="panel-heading">
 						<span class="panel-title"><i class="fa fa-tint hidden-xs">&nbsp;&nbsp;</i><?php echo lg('All themes')?></span>
 						<div class="panel-heading-controls" id="tooltip">
 							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 						</div> <!-- / .panel-heading-controls -->
-					</div> 
+					</div>
 					<!-- ./Panel Heading -->
-					
+
 					<div class="panel-body">
-						<div class="col-sm-12">	
+						<div class="col-sm-12">
 							<!-- Tabs for md -->
 							<ul class="nav nav-tabs nav-tabs-simple hidden-xs hidden-sm">
 								<li class="pull-right">
 									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo lg('Admin Panel'); ?> <span class="badge badge-info">1</span></a>
 								</li>
 								<li class="active pull-right">
-									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
+									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php e(	count(	@get_available_template()['data']	)	) ?></span></a>
 								</li>
 							</ul> <!-- / .nav -->
 							<!-- / Tabs for md -->
-							
+
 							<!-- Tabs for xs sm -->
 							<ul class="nav nav-tabs nav-tabs-simple nav-justified visible-xs visible-sm">
 								<li>
-									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo lg('Admin Panel'); ?> <span class="badge badge-info">10</span></a>
+									<a href="#adminpanel-tabs" data-toggle="tab"><?php echo lg('Admin Panel'); ?> <span class="badge badge-info">1</span></a>
 								</li>
 								<li class="active">
-									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php echo $cotheme; ?></span></a>
+									<a href="#frontend-tabs" data-toggle="tab"><?php echo lg('Front End'); ?> <span class="badge badge-info"><?php e(	count(	@get_available_template()['data']	)	) ?></span></a>
 								</li>
 							</ul> <!-- / .nav -->
 							<!-- / Tabs xs sm -->
 
 						</div>
 						<div class="clearfix form-group-margin"></div> <!-- Margin -->
-						
+
 						<!-- Tab Content -->
 						<div class="tab-content">
 							<div class="tab-pane fade active in" id="frontend-tabs">
-					<?php		
-					foreach($ltheme as $cat){
-						$preview_file = "../elybin-file/theme/{$cat->folder}/preview.jpg";
-						if(file_exists($preview_file)){
-							$preview = $preview_file;
-						}else{
-							$preview = "../elybin-file/system/no-preview-default.png";
-						}
-						if($cat->status !== 'active'){
-							$status = '
-							
-								<form action="'.$action.'" method="post">
-									<div class="btn-group">
-									<a href="?mod=theme&amp;act=del&amp;id='.$cat->theme_id.'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="left" data-original-title="'.lg('Delete').'"><i class="fa fa-trash-o"></i></a>
-									<button class="btn btn-sm" data-placement="left" data-original-title="'.lg('Activate').'"><span class="fa fa-eye"></span></button>
-									</div>
-									<input type="hidden" name="theme_id" value="'.$cat->theme_id.'" />
-									<input type="hidden" name="act" value="active" />
-									<input type="hidden" name="mod" value="theme" />
-								</form>
-							';
-						}else{
-							$status = lg('Active').' <span class="fa fa-check-circle" id="equal-height"></span>';
-						}
-						?>
-						<div class="col-xs-12 col-sm-6 col-md-3">	
-							<div class="stat-panel">
-								<div class="stat-row">
-									<!-- Info background, without padding, horizontally centered text, super large text -->
-									<div class="stat-cell bg-primary padding-sm text-left text-bg">
-										<span class="pull-right">
-											<?php echo $status?>
-										</span>
-										<span class="">
-											<?php echo $cat->name?>
-										</span>
-									</div>
-								</div> <!-- /.stat-row -->
-								<div class="stat-row">
-									<!-- Bordered, without top border, horizontally centered text, large text -->
-									<div class="stat-cell bordered no-border-t text-center text-sm">
-										<img src="<?php echo $preview?>" class="img-thumbnail grid-gutter-margin-b">	
-										<p class="no-margin-hr">
-											<?php echo $cat->description?><br>
-											<?php echo lg('By')?> <i><?php echo $cat->author?></i><br>
-											<a href="<?php echo $cat->url?>" target="_blank"><?php echo $cat->url?>&nbsp;<i class="fa fa-external-link"></i></a>
-										</p>
-									</div>
-								</div> <!-- /.stat-row -->
-							</div> <!-- /.stat-panel -->
-						</div> <!-- /.col-sm-3 -->
-						<?php
-							$no++;
-						}
-						?>
+								<?php
+								/** Getting available template **/
+								if(!isset(get_available_template()['error'])){
+									foreach(get_available_template()['data'] as $t){ ?>
+								<div class="col-xs-12 col-sm-6 col-md-3">
+									<div class="stat-panel">
+										<div class="stat-row">
+											<!-- Info background, without padding, horizontally centered text, super large text -->
+											<div class="stat-cell bg-primary padding-sm text-left text-bg">
+												<span class="pull-right">
+													<?php
+													/** If themes activated */
+													if(	$t['active']	): ?>
+													<?php _e('Active') ?> <span class="fa fa-check-circle" id="equal-height"></span>
+													<?php else: ?>
+													<form action="app/theme/proses.php" method="post">
+														<div class="btn-group">
+														<a href="?mod=theme&amp;act=del&amp;id=<?php e(	$t['theme_id']	) ?>&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="left" data-original-title="<?php _e('Delete') ?>"><i class="fa fa-trash-o"></i></a>
+														<button class="btn btn-sm" data-placement="left" data-original-title="<?php _e('Activate') ?>"><span class="fa fa-eye"></span></button>
+														</div>
+														<input type="hidden" name="theme_id" value="<?php e(	$t['theme_id'] 	) ?>" />
+														<input type="hidden" name="act" value="active" />
+														<input type="hidden" name="mod" value="theme" />
+													</form>
+												<?php endif; ?>
+												</span>
+												<span class="">
+													<?php e(	$t['theme_name']	) ?>
+												</span>
+											</div>
+										</div> <!-- /.stat-row -->
+										<div class="stat-row">
+											<!-- Bordered, without top border, horizontally centered text, large text -->
+											<div class="stat-cell bordered no-border-t text-center text-sm">
+												<img src="<?php e($t['screenshoot']) ?>" class="img-thumbnail grid-gutter-margin-b">
+												<p class="no-margin-hr">
+													<?php e( $t['description'] ) ?><br/>
+													<a href="<?php e(	$t['theme_uri']	) ?>" target="_blank"><?php _e('Detail') ?>&nbsp;<i class="fa fa-external-link"></i></a>
+													<br><br>
+													<?php printf( __('By %s'), (empty($t['author_uri']) ? $t['author'] : '<a href="'.$t['author_uri'].'">'.$t['author'].' <i class="fa fa-external-link"></i></a>'	) )?> <br>
+												</p>
+											</div>
+										</div> <!-- /.stat-row -->
+									</div> <!-- /.stat-panel -->
+								</div> <!-- /.col-sm-3 -->
+							<?php
+								}
+							}
+							?>
 							</div><!-- ./tab -->
 							<div class="tab-pane fade" id="adminpanel-tabs">
 								<style><?php include("assets/stylesheets/clean.min.css"); ?></style>
 								<div class="demo-themes-row" id="demo-themes">
 									<?php
 									// get option
-									$getoption1 = new ElybinTable('elybin_options'); 
-									$admin_theme = $getoption1->SelectWhere('name','admin_theme','','')->current()->value; 
-									
+									$getoption1 = new ElybinTable('elybin_options');
+									$admin_theme = $getoption1->SelectWhere('name','admin_theme','','')->current()->value;
+
 									$theme_admin = json_decode('
 									[
 									  { "name": "clean",  "title": "Clean", "img": "assets/full/themes/clean.png" }
@@ -321,7 +311,7 @@ if($usergroup == 0){
 				</div> <!-- /.panel -->
 			</div> <!-- /.col -->
 		</div> <!-- /.row -->
-		
+
 				<!-- Delete Modal -->
 				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 					<div class="modal-dialog modal-sm">

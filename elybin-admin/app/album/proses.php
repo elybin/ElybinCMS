@@ -3,9 +3,9 @@
  * [ Module: Album Proccess
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
@@ -13,7 +13,7 @@ if(empty($_SESSION['login'])){
 }else{
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
-	include_once('../../lang/main.php');
+	include_once('inc/module-function.php');
 
 	// string validation for security
 	$v 	= new ElybinValidasi();
@@ -31,35 +31,45 @@ if($usergroup == 0){
 
 	//ADD
 	if ($mod=='album' AND $act=='add'){
-		$aid = $v->sql(epm_decode($_POST['aid']));
-		$name = $v->xss($_POST['name']);
-		$image = $_POST['image'];
+		$aid = sqli_(epm_decode($_POST['aid']));
+		$name = xss_($_POST['name']);
+		$seotitle =  seo_title($name);
+		$image = @$_POST['image'];
 
 		//if field empty
 		if(empty($name)){
 			$name = lg('Untitled');
+			$seotitle =  seo_title($name);
+		}
+
+		// checking seo title
+		if(!check_seotitle($seotitle, $aid)){
+			$seotitle = suggest_unique($seotitle, $aid);
 		}
 
 		// basic info
  		$tbp = new ElybinTable('elybin_posts');
 		$d1 = array(
 			'title' => $name,
-			'seotitle' => seo_title($name),
-			'status' => 'published'
+			'seotitle' => $seotitle,
+			'status' => 'active'
 			);
 		$tbp->Update($d1,'post_id', $aid);
 
 		// relate images to their album
 		$tbr = new ElybinTable('elybin_relation');
-		foreach($image as $iid){
-			$d2 = array(
-				'type' => 'album',
-				'target' => 'media',
-				'first_id' => $aid,
-				'second_id' => $v->sql(epm_decode($iid))
-			);
-			$tbr->Insert($d2);
+		if(!empty($image)){
+			foreach($image as $iid){
+				$d2 = array(
+					'type' => 'album',
+					'target' => 'media',
+					'first_id' => $aid,
+					'second_id' => sqli_(epm_decode($iid))
+				);
+				$tbr->Insert($d2);
+			}
 		}
+
 
 		//Done
 		$a = array(
@@ -74,7 +84,7 @@ if($usergroup == 0){
 	}
 	//EDIT
 	elseif($mod=='album' AND $act=='edit'){
-		$aid = $v->sql(epm_decode(@$_POST['aid']));
+		$aid = sqli_(epm_decode(@$_POST['aid']));
 		$name = $v->xss(@$_POST['name']);
 		$image = @$_POST['image'];
 
@@ -91,8 +101,7 @@ if($usergroup == 0){
 		// basic info
  		$tbp = new ElybinTable('elybin_posts');
 		$d1 = array(
-			'title' => $name,
-			'seotitle' => seo_title($name)
+			'title' => $name
 			);
 		$tbp->Update($d1,'post_id', $aid);
 
@@ -115,6 +124,63 @@ if($usergroup == 0){
 			'title' => lg('Success'),
 			'isi' => lg('Changes saved'),
 			'callback' => 'edit',
+			'callback_hash' => epm_encode($aid),
+			'callback_msg' => 'updated'
+		);
+		echo json_encode($a);
+	}
+	//EDIT MORE
+	elseif($mod=='album' AND $act=='edit_more'){
+		$aid = sqli_(epm_decode(@$_POST['aid']));
+		$title = xss_(@$_POST['title']);
+		$seotitle = xss_($_POST['seotitle']);
+		$image = @$_POST['image'];
+		$status = xss_(@$_POST['status']);
+		$content = html_entity_decode($_POST['content'],ENT_QUOTES);
+
+		// if image empty
+		if(empty($image)){
+			$image = [];
+		}
+
+		//if field empty
+		if(empty($title)){
+			$title = lg('Untitled');
+			$seotitle =  seo_title($title);
+		}
+
+		/*
+		 * check seo title available or no
+		 * @since 1.1.4
+		 */
+		if(!check_seotitle($seotitle, $aid)){
+			$a = array(
+				'status' => 'error',
+				'title' => __('Error'),
+				'isi' => __('SEO title already used, there our suggestion.'),
+				'callback' => 'edit',
+				'callback_id' => epm_encode($aid),
+				'callback_msg' => __('SEO title already used, please check it first.')
+			);
+			echo json_encode($a);
+			exit;
+		}
+
+		// basic info
+ 		$tbp = new ElybinTable('elybin_posts');
+		$d1 = array(
+			'title' => $title,
+			'seotitle' => $seotitle,
+			'content' => $content,
+			'status' => $status
+			);
+		$tbp->Update($d1,'post_id', $aid);
+
+		$a = array(
+			'status' => 'ok',
+			'title' => lg('Success'),
+			'isi' => lg('Changes saved'),
+			'callback' => 'edit_more',
 			'callback_hash' => epm_encode($aid),
 			'callback_msg' => 'updated'
 		);

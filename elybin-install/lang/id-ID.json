@@ -10,8 +10,8 @@
 	],
 	"dictionary": [
 {
-	"f":"Set these directory to writeable (755): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
-	"t":"Atur direktori berikut menjadi bisa ditulis (755): \"elybin-install/\", \"elybin-core/\", \"elybin-file\".",
+	"f":"Set your directory to writeable, and try again.",
+	"t":"Atur direktori anda menjadi bisa ditulis, dan coba lagi.",
 	"i":"index.php"
 },
 {
@@ -482,6 +482,21 @@
 {
 	"f":"Login as Owner",
 	"t":"Masuk sebagai Pemilik",
+	"i":"index.php"
+},
+{
+	"f":"Refresh Page",
+	"t":"Muat Ulang Halaman",
+	"i":"index.php"
+},
+{
+	"f":"Installation Locked Temporary",
+	"t":"Instalasi Dikunci Sementara",
+	"i":"index.php"
+},
+{
+	"f":"We're preventing someone steal your website while installing. So, your installation process automatically locked after 2 hours, to continue installation delete <code>install_date.txt</code> inside <code>elybin-install</code> and refresh this page.",
+	"t":"Kami mencegah seseorang mencuri situs anda selama instalasi. Jadi, proses instalasi anda secara otomatis terkunci setelah 2 jam, untuk melanjutkan instalasi hapus <code>install_date.txt</code> di dalam <code>elybin-install</code> dan muat ulang halaman ini.",
 	"i":"index.php"
 },
 

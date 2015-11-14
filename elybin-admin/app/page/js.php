@@ -3,9 +3,9 @@
  * Module: Post
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
@@ -227,7 +227,7 @@ init.push(function () {
 		if($edt=='summernote'){
 ?>
 <script src="assets/javascripts/summernote.min.js"></script>
-<script><?php ob_start('minify_js'); ?>
+<script>
 init.push(function () {
 	//summernote editor
 	if (! $('html').hasClass('ie8')) {
@@ -258,14 +258,14 @@ init.push(function () {
 	if (! $('html').hasClass('ie8')) {
 		$("#text-editor").markdown({ iconlibrary: 'fa' });
 	}
-})<?php ob_end_flush(); ?>
+})
 </script>
 <?php } ?>
 <script src="assets/javascripts/select2.min.js"></script>
 <script src="assets/javascripts/elybin-function.min.js"></script>
 <script src="assets/javascripts/jquery.tagsinput.min.js"></script>
 <script src="assets/javascripts/jquery-ui.min.js"></script>
-<script><?php ob_start('minify_js'); ?>
+<script>
 init.push(function () {
 	$('#file-style').pixelFileInput({ placeholder: '<?php echo lg("Select file...") ?>' });
 
@@ -288,7 +288,7 @@ init.push(function () {
 		$.growl({ title: "<?php echo lg('Processing') ?>", message: "<?php echo lg('Processing') ?>", duration: 9999*9999 });
 		// start ajax
 	    $.ajax({
-	      url: $(this).attr('action'),
+	      url: $(this).attr('action') + '?r=j',
 	      type: 'POST',
 	      data: new FormData(this),
 	      processData: false,
@@ -412,7 +412,51 @@ init.push(function () {
 	}
 	// trigger triggerAS
 	triggerAS($('#form'));
-});<?php ob_end_flush(); ?>
+
+
+	// Check seo Title
+	inp = $("#check_seo_input");
+	fix = $("#check_seo_fix");
+	btn = $("#check_seo_btn");
+	edt = $("#check_seo_edit");
+	pid = $("input[name='pid']");
+	btn.click(function(){
+		$.ajax({
+				url: 'app/page/ajax/check_seotitle.php?seo=' + inp.val() + '&pid=' + pid.val(),
+				type: 'GET',
+				success: function(data) {
+					console.log(data);
+					if(data['available']){
+						inp.hide();
+						btn.hide();
+						fix.show();
+						edt.show();
+
+						fix.html(inp.val());
+					}
+					else if(!data['available']){
+						fix.html(data['suggestion']);
+						inp.val(data['suggestion']);
+						// error growl
+						$.growl.warning({ title: data['error'], message: data['msg']});
+					}
+			 },
+			 error: function(e){
+				autoSave(t);
+				$('#autosave').fadeIn().html('<?php echo lg("Gagal menyimpan, mencoba kembali...") ?>');
+			 }
+			});
+	});
+	edt.click(function(){
+		edt.hide();
+		fix.hide();
+		inp.show();
+		btn.show();
+		return false;
+	})
+
+
+});
 </script>
 <?php
 			break;

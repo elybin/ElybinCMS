@@ -101,6 +101,7 @@ switch (@$_GET['p']) {
 				<input type="text" name="c" class="w-50" placeholder="<?php echo lg('Right code here') ?>" required/>
 				<img src="../elybin-core/elybin-captcha.php" class="w-45">
 			</div>
+			<input type="hidden" name="callback" value="<?php e(@$_GET['callback']) ?>">
 			<button class="btn"><?php echo lg('Sign in') ?></button>
 		</form>
 		<div class="cen">

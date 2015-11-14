@@ -1,20 +1,20 @@
 <?php
 /* Javascript
  * Module: Option JS
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 @session_start();
 if(empty($_SESSION['login'])){
 	header('location: index.php');
-}else{	
+}else{
 	@include_once('../../../elybin-core/elybin-function.php');
 	@include_once('../../../elybin-core/elybin-oop.php');
 	@include_once('../../lang/main.php');
-	
+
 	// get usergroup privilage/access from current user to this module
 	$usergroup = _ug()->setting;
 
@@ -35,15 +35,15 @@ if($usergroup == 0){
 <script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&amp;libraries=places'></script>
 <script src="assets/javascripts/locationpicker.jquery.js"></script>
 <script>
-init.push(function () {  
-  $('#tooltip a').tooltip();	
+init.push(function () {
+  $('#tooltip a').tooltip();
   ElybinLocationPicker(<?php echo $op->site_coordinate ?>, "app/option/proses.php?result=json");
 });
-</script>  
+</script>
 <!-- ./Javascript -->
 <?php
-			break;	
-			
+			break;
+
 		default: // case default
 ?>
 <!-- Optional javascripts -->
@@ -51,10 +51,10 @@ init.push(function () {
 <script src="assets/javascripts/bootstrap-editable.min.js"></script>
 <script type="text/javascript">
 <?php ob_start('minify_js'); ?>
-init.push(function () {    
+init.push(function () {
 //turn to inline mode
 //$.fn.editable = 'inline';
- 
+
   //TEXT
   $('#site_url, #site_name, #site_phone, #site_owner, #site_email, #site_hero_title, #site_hero_subtitle, #social_twitter, #social_facebook, #social_instagram, #smtp_host, #smtp_port, #smtp_user, #smtp_pass, #mail_daily_limit').editable({
     type: 'text',
@@ -79,7 +79,7 @@ init.push(function () {
 		}
     }
   });
-  
+
   //textarea
   $('#site_description, #site_office_address').editable({
     type: 'textarea',
@@ -165,7 +165,7 @@ init.push(function () {
 		}
     }
   });
-  
+
   //select: allow deny confrim
   $('#default_comment_status').editable({
     type: 'select',
@@ -196,7 +196,7 @@ init.push(function () {
 		}
     }
   });
-  
+
   //select: active deactive
   $('#maintenance_mode, #developer_mode, #smtp_status').editable({
     type: 'select',
@@ -298,7 +298,10 @@ init.push(function () {
       {value: 2, text: '2 <?php echo lg("Posts")?>'},
       {value: 3, text: '3 <?php echo lg("Posts")?>'},
       {value: 4, text: '4 <?php echo lg("Posts")?>'},
-      {value: 5, text: '5 <?php echo lg("Posts")?>'}
+      {value: 5, text: '5 <?php echo lg("Posts")?>'},
+      {value: 9, text: '9 <?php echo lg("Posts")?>'},
+      {value: 10, text: '10 <?php echo lg("Posts")?>'},
+      {value: 20, text: '20 <?php echo lg("Posts")?>'}
     ],
     success: function(data) {
 		// decode json
@@ -357,7 +360,7 @@ init.push(function () {
 		}
     }
   });
-  
+
   //select: default homepage
   $('#default_homepage').editable({
     type: 'select',
@@ -395,7 +398,7 @@ init.push(function () {
 		}
     }
   });
-  
+
   //select: timezone
   $('#timezone').editable({
     type: 'select',
@@ -431,7 +434,7 @@ init.push(function () {
     showbuttons: false,
     pk: 'option',
     url: 'app/option/proses.php',
-    source: 
+    source:
     <?php
     // get available language
 	// scan `elybin-core/lang` directory
@@ -440,7 +443,7 @@ init.push(function () {
 	$lg_name = array();
 	foreach($dir as $d){
 		if(substr($d, 2, 1) == '-'){
-			array_push($lg_name, 
+			array_push($lg_name,
 				array(
 					'value' => $d,
 					'text' => $d
@@ -474,7 +477,7 @@ init.push(function () {
   //image upload
   $('#file-style, #file-style2, #file-style3').pixelFileInput({ placeholder: '<?php echo lg("Select file...")?>' });
   $('#site_logo').popover();
-  $('#tooltip a').tooltip();  $('#tooltipl').tooltip(); 
+  $('#tooltip a').tooltip();  $('#tooltipl').tooltip();
 
   ElybinHideShow('site_logo','site_logo_img');
   ElybinHideShow('site_favicon','site_favicon_img');
@@ -482,7 +485,7 @@ init.push(function () {
 });
 <?php ob_end_flush(); ?>
 </script>
-<?php		
+<?php
 			break;
 	}
   }

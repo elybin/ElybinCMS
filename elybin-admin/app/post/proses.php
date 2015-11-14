@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Post - Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
@@ -14,6 +14,7 @@ if(empty($_SESSION['login'])){
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
+	include_once('inc/module-function.php');
 	settzone();
 
 	$v = new ElybinValidasi;
@@ -31,7 +32,7 @@ if(empty($_SESSION['login'])){
 		$content = $_POST['content'];
 		$seotitle =  seo_title($title);
 		$pid = $v->sql($_POST['pid']);
-		
+
 		// cek dulu, minimal ada 1 kategori
 		$tblc = new ElybinTable('elybin_category');
 		$coc = $tblc->GetRow();
@@ -40,10 +41,10 @@ if(empty($_SESSION['login'])){
 			_red('../../../404.html');
 			exit;
 		}
-		
+
 		$tbl = new ElybinTable("elybin_posts");
 		$tb = $tbl;
-		
+
 		//get current user
 		$u = _u();
 		$author = $u->user_id;
@@ -52,15 +53,20 @@ if(empty($_SESSION['login'])){
 			$title = '('. lg('Untitled') .')';
 			$seotitle = seo_title($title);
 		}
-		
+
+		// checking seo title
+		if(!check_seotitle($seotitle, $pid)){
+			$seotitle = suggest_unique($seotitle, $pid);
+		}
+
 		// post_meta
 		$post_meta = '{"post_meta":"false"}';
-		
+
 		// 1.1.3
 		// visibility
 		if($visibility == "protected"){
 			$post_password = md5($_POST['post_password']);
-			
+
 			// inset to post_meta
 			$ar = array(
 				'post_meta' => 'true',
@@ -69,7 +75,7 @@ if(empty($_SESSION['login'])){
 			// convert to json
 			$post_meta = json_encode($ar);
 		}
-		
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -97,9 +103,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -115,10 +121,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -127,20 +133,20 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
-		
+
 		// getting defaut comment option
 		$option = op()->default_comment_status;
 		$category = op()->default_category;
-		
-		// ambil data draft/prepost jika ada, 
+
+		// ambil data draft/prepost jika ada,
 		$cp = $tbl->SelectWhere('post_id', $pid)->current();
-		
+
 		// 1.1.3
 		// post revision logic
 		// ada perubahan?
@@ -163,9 +169,9 @@ if(empty($_SESSION['login'])){
 				'date' => $cp->date,
 				'author' => $cp->author,
 				'category_id' => $cp->category_id,
-				'seotitle' => $cp->seotitle,
+				'seotitle' => '',
 				'tag' => $cp->tag,
-				'status' => 'inherit',					
+				'status' => 'inherit',
 				'visibility' => $cp->visibility,
 				'parent' => $cp->post_id,
 				'post_meta' => $cp->post_meta,
@@ -173,7 +179,7 @@ if(empty($_SESSION['login'])){
 				'type' => $cp->type
 			);
 			$tbl->Insert($d);
-			
+
 			// duplikat post baru
 			// menggulangi jika yang mengubah berbeda user
 			$d = array(
@@ -182,7 +188,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => $category,
 				'date' => date("Y-m-d H:i:s"),
 				'author' => _u()->user_id,
-				'seotitle' => $seotitle,
+				'seotitle' => '',
 				'tag' => @$tag,
 				'status' => 'inherit',
 				'visibility' => $visibility,
@@ -193,12 +199,12 @@ if(empty($_SESSION['login'])){
 			);
 			$tbl->Insert($d);
 		}
-		
-		if(!empty($_FILES['image']['tmp_name'])){
+
+		if(!empty($_FILES['file']['tmp_name'])){
 			//get images
-			$extensionList = array("jpg", "jpeg");
-			$fileName = $_FILES['image']['name'];
-			$tmpName = $_FILES['image']['tmp_name'];
+			$extensionList = ["jpg", "jpeg"];
+			$fileName = $_FILES['file']['name'];
+			$tmpName = $_FILES['file']['tmp_name'];
 			$pecah = explode(".", $fileName);
 			$ekstensi = @$pecah[count($pecah)-1];
 			$rand = rand(1111,9999);
@@ -208,7 +214,7 @@ if(empty($_SESSION['login'])){
 
 			if (in_array($ekstensi, $extensionList)){
 				// check the size (not more than 1024)
-				$image_size = @$_FILES['image']['size'];
+				$image_size = @$_FILES['file']['size'];
 				if($image_size/1024 > 1024){
 					$a = array(
 						'status' => 'error',
@@ -218,9 +224,23 @@ if(empty($_SESSION['login'])){
 					echo json_encode($a);
 					exit;
 				}
-			
+
 				//upload images
-				UploadImage($image,'post');
+				$up = UploadImage($image,'post');
+				if(empty($up['ok'])){
+					// return error
+					//image extension deny
+					$a = array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'isi' => $up['error']['message']
+					);
+					echo json_encode($a);
+					exit;
+				}
+
+
+
 				$tbl = new ElybinTable('elybin_posts');
 				$d = array(
 					'title' => $title,
@@ -239,10 +259,9 @@ if(empty($_SESSION['login'])){
 				);
 				$tbl->Update($d, 'post_id', $pid);
 
-/* 				
 
 				//Done
-/* 				$a = array(
+				/* $a = array(
 					'status' => 'ok',
 					'title' => lg('Success'),
 					'isi' => $lg_datainputsuccessful
@@ -270,7 +289,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => $category,
 				'seotitle' => $seotitle,
 				'tag' => @$tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => $visibility,
 				'post_meta' => $post_meta,
 				'comment' => $option,
@@ -289,7 +308,7 @@ if(empty($_SESSION['login'])){
 		}else{
 			$callback_msg = '';
 		}
-			
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -306,7 +325,7 @@ if(empty($_SESSION['login'])){
 	// shut down at version 1.1.3
 	elseif($mod=='post' AND $act=='addquick'){
 		exit;
-/* 		$title = $v->xss($_POST['title']);
+ 		/* 		$title = $v->xss($_POST['title']);
 		$category = $v->sql($_POST['category_id']);
 		$content = html_entity_decode($_POST['content'],ENT_QUOTES);
 		$seotitle =  seo_title($title);
@@ -322,7 +341,7 @@ if(empty($_SESSION['login'])){
 			$title = '('. lg('Tanpa Judul') .')';
 			$seotitle = seo_title($title);
 		}
-		
+
 		//get lastest post id
 		$tblp = new ElybinTable('elybin_posts');
 		$post2 = $tblp->SelectLimit('post_id','DESC','0,1');
@@ -379,10 +398,15 @@ if(empty($_SESSION['login'])){
 			$title = '('. lg('Untitled') .')';
 			$seotitle = seo_title($title);
 		}
-		
+
+		// checking seo title
+		if(!check_seotitle($seotitle, $pid)){
+			$seotitle = suggest_unique($seotitle, $pid);
+		}
+
 		// post_meta
 		$post_meta = '{"post_meta":"false"}';
-		
+
 		// 1.1.3
 		// visibility
 		if($visibility == "protected"){
@@ -390,7 +414,7 @@ if(empty($_SESSION['login'])){
 		}else{
 			$post_password = '';
 		}
-		
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -419,9 +443,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -437,10 +461,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -449,20 +473,20 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
-		
+
 		// getting defaut comment option
 		$option = op()->default_comment_status;
 		$category = op()->default_category;
-		
+
 		// if post not found
 		$tbl = new ElybinTable('elybin_posts');
-		
+
 		// cek apakah post prepost atau bukan
 		// jika `satus` = 'prepost' maka berikan 'type'='post'
 		$cp = $tbl->SelectWhere('post_id', $pid)->current();
@@ -479,7 +503,7 @@ if(empty($_SESSION['login'])){
 					'category_id' => $category,
 					'seotitle' => $seotitle,
 					'tag' => @$tag,
-					'status' => 'inherit',					
+					'status' => 'inherit',
 					'visibility' => $visibility,
 					'post_meta' => $post_meta,
 					'post_password' => $post_password,
@@ -489,7 +513,7 @@ if(empty($_SESSION['login'])){
 				);
 				$tbl->Insert($d);
 			}
-			
+
 			// ubah main/parent post
 			// berikan type = 'post'
 			$data = array(
@@ -500,15 +524,15 @@ if(empty($_SESSION['login'])){
 				'category_id' => $category,
 				'seotitle' => $seotitle,
 				'tag' => @$tag,
-				'status' => 'draft',					
+				'status' => 'draft',
 				'visibility' => $visibility,
 				'post_meta' => $post_meta,
 				'post_password' => $post_password,
 				'comment' => $option,
 				'type' => 'autosave'
 			);
-			
-			
+
+
 		}else{
 			// 1.1.3
 			// post revision logic
@@ -518,7 +542,7 @@ if(empty($_SESSION['login'])){
 			// buat duplikat post lama
 			if($revision){
 				// jika dapat status = 'publish'
-/* 				if($status == 'publish'){
+   	/* 				if($status == 'publish'){
 					// backup post lama
 					$d = array(
 						'title' => $cp->title,
@@ -528,7 +552,7 @@ if(empty($_SESSION['login'])){
 						'category_id' => $cp->category_id,
 						'seotitle' => $cp->seotitle,
 						'tag' => $cp->tag,
-						'status' => 'inherit',					
+						'status' => 'inherit',
 						'visibility' => $cp->visibility,
 						'parent' => $cp->post_id,
 						'post_meta' => $cp->post_meta,
@@ -537,7 +561,7 @@ if(empty($_SESSION['login'])){
 					);
 					$tbl->Insert($d);
 				} */
-				
+
 				if($status == 'publish'){
 					// backup post baru
 					$d = array(
@@ -545,10 +569,10 @@ if(empty($_SESSION['login'])){
 						'content' => html_entity_decode($content,ENT_QUOTES),
 						'date' => date("Y-m-d H:i:s"),
 						'category_id' => $category,
-						'seotitle' => $seotitle,
+						'seotitle' => '',
 						'author' => _u()->user_id,
 						'tag' => @$tag,
-						'status' => 'inherit',					
+						'status' => 'inherit',
 						'visibility' => $visibility,
 						'post_meta' => $post_meta,
 						'parent' => $pid,
@@ -564,10 +588,10 @@ if(empty($_SESSION['login'])){
 						'content' => html_entity_decode($content,ENT_QUOTES),
 						'date' => date("Y-m-d H:i:s"),
 						'category_id' => $category,
-						'seotitle' => $seotitle,
+						'seotitle' => '',
 						'author' => _u()->user_id,
 						'tag' => @$tag,
-						'status' => 'inherit',					
+						'status' => 'inherit',
 						'visibility' => $visibility,
 						'post_meta' => $post_meta,
 						'parent' => $pid,
@@ -587,7 +611,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => $category,
 				'seotitle' => $seotitle,
 				'tag' => @$tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => $visibility,
 				'post_meta' => $post_meta,
 				'post_password' => $post_password,
@@ -596,16 +620,16 @@ if(empty($_SESSION['login'])){
 			);
 		}
 		$tbl->Update($data, 'post_id', $pid);
-			
-		
-		// isi 
+
+
+		// isi
 		// jika status = draft
 		if($status == 'draft'){
 			$isi = lg('Saved to Draft at');
 		}else{
 			$isi = lg('Saved at');
 		}
-		
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -618,8 +642,9 @@ if(empty($_SESSION['login'])){
 
 	//EDIT
 	elseif($mod=='post' AND $act=='edit'){
-		$post_id = $v->sql($_POST['pid']);
+		$post_id = sqli_(to_int(epm_decode(@$_POST['pid'])));
 		$title = $v->xss($_POST['title']);
+		$seotitle = xss_($_POST['seotitle']);
 		$content = html_entity_decode($_POST['content'],ENT_QUOTES);
 		$category = $v->sql($_POST['category_id']);
 		$status = $v->xss($_POST['status']);
@@ -629,7 +654,7 @@ if(empty($_SESSION['login'])){
 		$author = _u()->user_id;
 
 		// proses
-		$seotitle =  seo_title($title);
+		$pid = $post_id;
 
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
@@ -644,11 +669,27 @@ if(empty($_SESSION['login'])){
 			echo json_encode($a);
 			exit;
 		}
-	
+
 		//if field empty
 		if(empty($title)){
 			$title = '('. lg('Tanpa Judul') .')';
-			$seotitle = seo_title($title);
+		}
+
+		/*
+		 * check seo title available or not
+		 * @since 1.1.4
+		 */
+		if(!check_seotitle($seotitle, $pid)){
+			$a = array(
+				'status' => 'error',
+				'title' => __('Error'),
+				'isi' => __('SEO title already used, there our suggestion.'),
+				'callback' => 'edit',
+				'callback_id' => epm_encode($pid),
+				'callback_msg' => __('SEO title already used, please check it first.')
+			);
+			echo json_encode($a);
+			exit;
 		}
 
 		// 1.1.3
@@ -657,7 +698,7 @@ if(empty($_SESSION['login'])){
 		// visibility
 		if($visibility == "protected"){
 			$post_password = md5($_POST['post_password']);
-			
+
 			// inset to post_meta
 			$ar = array(
 				'post_meta' => 'true',
@@ -666,7 +707,7 @@ if(empty($_SESSION['login'])){
 			// convert to json
 			$post_meta = json_encode($ar);
 		}
-		
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -694,9 +735,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -712,10 +753,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -724,17 +765,17 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
 
 		//get previous post data
 		$tbl = new ElybinTable('elybin_posts');
 		$cp = $tbl->SelectWhere('post_id',$post_id,'','')->current();
-		
+
 		// 1.1.3
 		// post revision logic
 		// ada perubahan?
@@ -759,7 +800,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => $cp->category_id,
 				'seotitle' => $cp->seotitle,
 				'tag' => $cp->tag,
-				'status' => 'inherit',					
+				'status' => 'inherit',
 				'visibility' => $cp->visibility,
 				'parent' => $cp->post_id,
 				'post_meta' => $cp->post_meta,
@@ -771,9 +812,9 @@ if(empty($_SESSION['login'])){
 				'date' => date("Y-m-d H:i:s"),
 				'author' => $author,
 				'category_id' => $category,
-				'seotitle' => $seotitle,
+				'seotitle' => '',
 				'tag' => $tag,
-				'status' => 'inherit',					
+				'status' => 'inherit',
 				'visibility' => $visibility,
 				'parent' => $post_id,
 				'post_meta' => $post_meta,
@@ -781,13 +822,13 @@ if(empty($_SESSION['login'])){
 			);
 			$tbl->Insert($d);
 		}
-			
+
 		//with images
-		if(!empty($_FILES['image']['tmp_name'])){
+		if(!empty($_FILES['file']['tmp_name'])){
 			// get images
 			$extensionList = array("jpg", "jpeg");
-			$fileName = $_FILES['image']['name'];
-			$tmpName = $_FILES['image']['tmp_name'];
+			$fileName = $_FILES['file']['name'];
+			$tmpName = $_FILES['file']['tmp_name'];
 			$pecah = explode(".", $fileName);
 			$ekstensi = @$pecah[count($pecah)-1]; // fixed bug
 			$rand = rand(1111,9999);
@@ -798,7 +839,7 @@ if(empty($_SESSION['login'])){
 			//check extesion
 			if (in_array($ekstensi, $extensionList)){
 				// check the size (not more than 1024)
-				$image_size = @$_FILES['image']['size'];
+				$image_size = @$_FILES['file']['size'];
 				if($image_size/1024 > 1024){
 					$a = array(
 						'status' => 'error',
@@ -808,15 +849,29 @@ if(empty($_SESSION['login'])){
 					echo json_encode($a);
 					exit;
 				}
-				
+
+
+
+				//upload images
+				$up = UploadImage($image,'post');
+				if(empty($up['ok'])){
+					// return error
+					//image extension deny
+					$a = array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'isi' => $up['error']['message']
+					);
+					echo json_encode($a);
+					exit;
+				}
 
 				//replace image if exist
 				$fileimage_lama = "../../../elybin-file/post/$image_lama"; //previous image
 				if (file_exists("$fileimage_lama") && ($image_lama!="")){
-					unlink("../../../elybin-file/post/$image_lama");
-					unlink("../../../elybin-file/post/medium-$image_lama");
+					@unlink("../../../elybin-file/post/$image_lama");
+					@unlink("../../../elybin-file/post/medium-$image_lama");
 				}
-				UploadImage($image,'post');
 
 				//update
 				$data = array(
@@ -827,7 +882,7 @@ if(empty($_SESSION['login'])){
 					'date' =>  date("Y-m-d H:i:s"),
 					'tag' => $tag,
 					'image' => $image,
-					'status' => $status,					
+					'status' => $status,
 					'visibility' => $visibility,
 					'post_meta' => $post_meta,
 					'comment' => $comment,
@@ -840,7 +895,7 @@ if(empty($_SESSION['login'])){
 					'status' => 'error',
 					'title' => lg('Error'),
 					'isi' => lg('File extension not allowed.')
-				);			
+				);
 				echo json_encode($a);
 				exit;
 			}
@@ -853,7 +908,7 @@ if(empty($_SESSION['login'])){
 				'seotitle' => $seotitle,
 				'date' =>  date("Y-m-d H:i:s"),
 				'tag' => $tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => $visibility,
 				'post_meta' => $post_meta,
 				'comment' => $comment,
@@ -875,7 +930,7 @@ if(empty($_SESSION['login'])){
 				$callback_msg = '';
 			}
 		}
-			
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -894,7 +949,7 @@ if(empty($_SESSION['login'])){
 	// v1.1.3
 	elseif($mod=='post' AND $act=='recycle_del'){
 		$post_id = $v->sql(@$_POST['post_id']);
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$copost = $tb->GetRow('post_id', $post_id);
@@ -904,13 +959,13 @@ if(empty($_SESSION['login'])){
 		}
 		// just change parent post status to 'deleted'
 		$par = array(
-			'status' => 'deleted'			
+			'status' => 'deleted'
 		);
 
 		//Done
 		$tb->Update($par, 'post_id', $post_id);
 		_red('../../admin.php?mod='.$mod);
-	}	
+	}
 	// MULTI RECYCLE DEL
 	// temporary delete, just move post to recycle bin
 	// v1.1.3
@@ -926,7 +981,7 @@ if(empty($_SESSION['login'])){
 				$pecah = $pecah[0];
 				// check id safe from sqli
 				$post_id_fix = $v->sql($pecah);
-				
+
 				// check id exist or not
 				$tb 	= new ElybinTable('elybin_posts');
 				$copost = $tb->GetRow('post_id', $post_id_fix);
@@ -937,7 +992,7 @@ if(empty($_SESSION['login'])){
 
 				// just change parent post status to 'deleted'
 				$par = array(
-					'status' => 'deleted'			
+					'status' => 'deleted'
 				);
 
 				//Done
@@ -949,7 +1004,7 @@ if(empty($_SESSION['login'])){
 	//DEL
 	elseif($mod=='post' AND $act=='del'){
 		$post_id = $v->sql($_POST['post_id']);
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$copost = $tb->GetRow('post_id', $post_id);
@@ -963,14 +1018,14 @@ if(empty($_SESSION['login'])){
 		if($ccom > 0){
 			$tbco->Delete('post_id', $post_id);
 		}
-		
+
 		//get image name first
 		$cimg = $tb->SelectWhere('post_id',$post_id,'','')->current();
 		$image = $cimg->image;
 		$fileimage = "../../../elybin-file/post/$image";
 		if (file_exists("$fileimage") AND ($image!="")){ //delete images
-			unlink("../../../elybin-file/post/$image");
-			unlink("../../../elybin-file/post/medium-$image");
+			@unlink("../../../elybin-file/post/$image");
+			@unlink("../../../elybin-file/post/medium-$image");
 		}
 		// 1.1.3
 		// logika tag
@@ -982,19 +1037,19 @@ if(empty($_SESSION['login'])){
 				$tbtag->Custom("
 				UPDATE
 				","
-				SET  
-				count =  count-1 
+				SET
+				count =  count-1
 				WHERE  tag_id = $cp
-				"); 
+				");
 			}
 		}
 		// end of tag logic
-		
+
 		//Done
 		$tb->Delete('post_id', $post_id);
 		$tb->Delete('parent', $post_id);
 		header('location:../../admin.php?mod='.$mod);
-	}	
+	}
 	//MULTI DEL
 	elseif($mod=='post' AND $act=='multidel'){
 		//array of delected post
@@ -1008,7 +1063,7 @@ if(empty($_SESSION['login'])){
 				$pecah = $pecah[0];
 				// check id safe from sqli
 				$post_id_fix = $v->sql($pecah);
-				
+
 				// check id exist or not
 				$tb 	= new ElybinTable('elybin_posts');
 				$copost = $tb->GetRow('post_id', $post_id_fix);
@@ -1023,15 +1078,15 @@ if(empty($_SESSION['login'])){
 				if($ccom > 0){
 					$tbco->Delete('post_id', $post_id_fix);
 				}
-		
+
 				//get image name first
 				$img = $tb->SelectWhere('post_id',$post_id_fix,'','')->current();
 				$postimg = $img->image;
 				$filepost = "../../../elybin-file/post/$postimg";
 				//delete images
 				if (file_exists("$filepost") AND ($postimg!="")){
-					unlink("../../../elybin-file/post/$postimg");
-					unlink("../../../elybin-file/post/medium-$postimg");
+					@unlink("../../../elybin-file/post/$postimg");
+					@unlink("../../../elybin-file/post/medium-$postimg");
 				}
 
 				// 1.1.3
@@ -1044,14 +1099,14 @@ if(empty($_SESSION['login'])){
 						$tbtag->Custom("
 						UPDATE
 						","
-						SET  
-						count =  count-1 
+						SET
+						count =  count-1
 						WHERE  tag_id = $cp
-						"); 
+						");
 					}
 				}
 				// end of tag logic
-				
+
 				//Done
 				$tb->Delete('post_id', $post_id_fix);
 				$tb->Delete('parent', $post_id_fix);
@@ -1066,9 +1121,9 @@ if(empty($_SESSION['login'])){
 			'status' => 'error',
 			'title' => lg('Error'),
 			'isi' => lg('There some error occur, this is our mistake, please contact us. (Err: Target Proccess Not Found, Act & Mod)')
-		);			
+		);
 		echo json_encode($a);
-		exit;	
+		exit;
 	}
-}	
+}
 ?>

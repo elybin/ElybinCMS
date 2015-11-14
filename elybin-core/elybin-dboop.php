@@ -13,15 +13,16 @@ class ElybinConnect {
 			//try to connect
 			self::$_connection = @mysql_connect(DB_HOST, DB_USER, DB_PASSWD);
 			if(!self::$_connection){
-				$error_msg = "Gagal melalukan koneksi ke database, hubungi Administrator anda. <br/>(Failed to connect to database, please contact your Administrator.)";
+				$error_msg = __('Failed while connecting to database.');
 				exit($error_msg);
 				//throw new Exception($error_msg);
 			}
 			//try to select db
 			$result = @mysql_select_db(DB_NAME, self::$_connection);
 			if(!$result){
-				$error_msg = "Koneksi gagal: ".mysql_error();
-				throw new Exception($error_msg);
+				$error_msg = __('Database not found.');
+				exit($error_msg);
+				//throw new Exception($error_msg);
 			}
 		}
 		return self::$_connection;
@@ -33,6 +34,6 @@ class ElybinConnect {
 			mysql_close(self::$_connection);
 		}
 	}
-} 
+}
 
 ?>

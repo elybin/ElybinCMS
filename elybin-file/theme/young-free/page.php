@@ -1,40 +1,28 @@
 <?php
-  // pages
-  $id = @$_GET['id'];
-  $tbp = new ElybinTable('elybin_pages');
+/**
+ * The template for displaying pages.
+ *
+ * @package Elybin
+ * @subpackage YoungFree
+ * @since YoungFree 1.1
+ */
 
-  $pagestat = $tbp->GetRowAnd('page_id',$id,'status','active');
-  if($pagestat == 0){
-    header('location: 404.html');
-    exit;
-  }
+get_header(); ?>
+<!-- Main Content -->
+<div class="container" style="margin-top:90px">
+  <div class="row">
+    <div class="col-md-12">
+      <?php
+        // Start the loop.
+        while( have_posts() ) :  the_post();
 
-  $page = $tbp->SelectWhereAnd('page_id',$id,'status','active','','')->current();
-  // meta
-  $subtitle = $page->title;
-  $meta_desc = substr(strip_tags(html_entity_decode($page->content)),0,200);
-  $meta_keyword = keyword_filter(strip_tags(html_entity_decode($page->content)));
+          // Include the page content template.
+          get_template_part('content', 'page');
 
-  $content = $page->content;
-  $content = html_entity_decode($content);
-
-
-  include_once 'header.php';
-  include_once 'menu.php';
-?>
-    <!-- Main Content -->
-    <div class="container">
-		<!-- margin -->
-		<div class="clearfix" style="margin-top:90px"></div>
-        <!-- search bar -->
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <?php echo $content?>
-            </div>
-
-        </div>
-        <!-- .row -->
-    </div>
-<?php
-  include "footer.php";
-?>
+        // End the loop.
+        endwhile;
+     ?>
+    </div><!-- .col-md-9 / ./post-container-->
+  </div><!-- ./row -->
+</div><!-- ./container -->
+<?php get_footer();

@@ -1,20 +1,20 @@
 <?php
 /* Short description for file
  * [ Module: Setting - Plugin Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
+
 session_start();
 if(empty($_SESSION['login'])){
 	header('location:../../../403.html');
-}else{	
-	include_once('../../../elybin-core/elybin-function.php');
-	include_once('../../../elybin-core/elybin-oop.php');
-	include_once '../../../elybin-core/elybin-pclzip.lib.php';
-	include_once('../../lang/main.php');
+}else{
+	require_once('../../../elybin-core/elybin-function.php');
+	require_once('../../../elybin-core/elybin-oop.php');
+	require_once('inc/main.func.php');
 
 
 // get usergroup privilage/access from current user to this module
@@ -32,10 +32,12 @@ if($usergroup == 0){
 
 	//ADD
 	if ($mod=='plugin' AND $act=='add'){
+		_e('Disabled since 1.1.4');
+		exit;
 		$file_name = $_POST['file_name'];
 		$ext = substr($file_name, -4);
 		$prefix = substr($file_name, 0, 4);
-		
+
 		// check file extension
 		if($prefix!=="com." || $ext!==".zip"){
 			// give error
@@ -50,15 +52,15 @@ if($usergroup == 0){
 		// remove prefix and ext
 		$folder = str_replace("com.", "", $file_name);
 		$folder = str_replace(".zip", "", $folder);
-		
+
 
 		// create temp folder
-		$destination_dir = "../../tmp/";		
+		$destination_dir = "../../tmp/";
 		if(!file_exists($destination_dir.$folder."/")){
 			mkdir($destination_dir.$folder."/");
-		}	
-		
-		if(file_exists($destination_dir.$folder."/")){			
+		}
+
+		if(file_exists($destination_dir.$folder."/")){
 			// extract the zip
 			$archive = new PclZip("../../../elybin-file/ext/com.$folder.zip");
 			if ($archive->extract(PCLZIP_OPT_BY_NAME, 'ElybinManifest.php', PCLZIP_OPT_PATH, $destination_dir.$folder."/") == 0){
@@ -84,7 +86,7 @@ if($usergroup == 0){
 			echo json_encode($a);
 			exit;
 		}
-		
+
 		// get plguin info
 		include($destination_dir.$folder."/ElybinManifest.php");
 		// already installed
@@ -101,7 +103,7 @@ if($usergroup == 0){
 			deleteDir($destination_dir.$folder."/");
 			exit;
 		}
-				
+
 		// copy to targetdir
 		@mkdir("../".$app_alias);
 		$archive = new PclZip("../../../elybin-file/ext/com.$folder.zip");
@@ -115,7 +117,7 @@ if($usergroup == 0){
 			echo json_encode($a);
 			exit;
 		}
-	
+
 		// get all usergroup
 		$tblug = new ElybinTable('elybin_usergroup');
 		$tblug = $tblug->Select('','');
@@ -124,7 +126,7 @@ if($usergroup == 0){
 			$usergroup_all = "$usergroup_all,$ugal->usergroup_id";
 		}
 		$usergroup_all = ltrim($usergroup_all, ",");
-		
+
 		// write to database
 		$data = array(
 			'name' => $app_name,
@@ -149,8 +151,8 @@ if($usergroup == 0){
 		}
 		// Get plugin id
 		$plugin_id = $tbl->SelectWhere('alias',$app_alias,'plugin_id', 'DESC')->current()->plugin_id;
-		
-		//Done 
+
+		//Done
 		$a = array(
 			'status' => 'ok',
 			'title' => lg('Success'),
@@ -161,127 +163,75 @@ if($usergroup == 0){
 	}
 	//INSTALL
 	elseif ($mod=='plugin' AND $act=='install'){
-		$plugin_id = $v->sql($_POST['plugin_id']);
+		$slug = $v->sql($_POST['plugin_id']);
 
-		// check id exist or not
-		$tb = new ElybinTable('elybin_plugins');
-		$coplugin = $tb->GetRow('plugin_id', $plugin_id);
-		if(empty($plugin_id) OR ($coplugin == 0)){
-			header('location: ../../../404.html');
-			exit;
+		// get error
+		if( !empty(get_plugin_info($slug)['error']) ){
+			// error
+			result(array(
+				'status' => 'error',
+				'title' => lg('Error'),
+				'msg' => get_plugin_info($slug)['error']['message'],
+				'msg_ses' => get_plugin_info($slug)['error']['code'],
+				'red' => get_url('admin_home').'admin.php?mod=plugin'
+			), @$_GET['r']);
+		}else{
+			// get data
+			$p = get_plugin_info($slug)['data'][0];
+			// update database
+			$data = array(
+				'alias' => $slug,
+				'version' => $p['version'],
+				'status' => true
+			);
+			// insert
+			$tb = new ElybinTable('elybin_plugins');
+			$tb->Insert($data);
+
+			// success
+			result(array(
+				'status' => 'ok',
+				'title' => __('Installed'),
+				'msg' => __('Plugin successfully installed.'),
+				'msg_ses' => 'plugin_installed',
+				'red' => get_url('admin_home').'admin.php?mod=plugin'
+			), @$_GET['r']);
 		}
-
-		// get plugin information
-		$cplug = $tb->SelectWhere('plugin_id',$plugin_id,'','');
-		$cplug = $cplug->current();
-
-		// sql installer
-		$sql_contents = "";
-		$fp = fopen("../".$cplug->alias."/db/install.sql","r");
-		while(! feof($fp))
-		  {
-		  $sql_contents .= fgets($fp);
-		  }
-		fclose($fp);
-
-		$sql_contents =  explode(";", rtrim($sql_contents, ";"));
-
-		// because we can't use oop
-		$dbhostsql = DB_HOST;
-		$dbusersql = DB_USER;
-		$dbpasswordsql = DB_PASSWD;
-		$dbnamesql = DB_NAME;
-		$connection = mysql_connect($dbhostsql, $dbusersql, $dbpasswordsql) or die(mysql_error());
-		mysql_select_db($dbnamesql, $connection) or die(mysql_error());
-
-		foreach($sql_contents as $query){
-			$result = @mysql_query($query);
-			if ($result){
-				$tb 	= new ElybinTable('elybin_plugins');
-				$ccon	= $tb->SelectWhere('plugin_id',$plugin_id,'','');
-				$ccon	= $ccon->current();
-				$status = $ccon->status;
-				if($status == 'install'){
-					$data = array('status' => 'active');
-					$tb->Update($data,'plugin_id',$plugin_id);
-				}
-
-				deleteDir("../".$cplug->alias."/db/install.sql");
-			}
-		}
-		
-		// execute installer
-		if(file_exists("../".$cplug->alias."/ElybinInstall.php")){
-			include("../".$cplug->alias."/ElybinInstall.php");
-		}
-		
-		//header('location:../../admin.php?mod='.$mod);
 	}
 	//DEL
 	elseif ($mod=='plugin' AND $act=='del'){
-		$plugin_id = $v->sql($_POST['plugin_id']);
-		$tabledel = new ElybinTable('elybin_plugins');
+		$slug = $v->sql($_POST['plugin_id']);
 
-		// check id exist or not
-		$coplugin = $tabledel->GetRow('plugin_id', $plugin_id);
-		if(empty($plugin_id) OR ($coplugin == 0)){
-			header('location: ../../../404.html');
-			exit;
-		}
-
-		$cplug = $tabledel->SelectWhere('plugin_id',$plugin_id,'','');
-		$cplug = $cplug->current();
-
-		// only delete dir if plugin not installed
-		if($cplug->status == 'install'){
-			$dir = "../".$cplug->alias."/";
-			deleteDir($dir);
-			$tabledel->Delete('plugin_id', $plugin_id);
-			header('location:../../admin.php?mod='.$mod);
-			exit;
-		}
-
-		// execute remover
-		$sql_contents = "";
-		$fp = fopen("../".$cplug->alias."/db/remove.sql","r");
-		while(! feof($fp))
-		  {
-		  $sql_contents .= fgets($fp);
-		  }
-		fclose($fp);
-
-		// because we can't use oop
-		$dbhostsql = DB_HOST;
-		$dbusersql = DB_USER;
-		$dbpasswordsql = DB_PASSWD;
-		$dbnamesql = DB_NAME;
-		$connection = mysql_connect($dbhostsql, $dbusersql, $dbpasswordsql) or die(mysql_error());
-		mysql_select_db($dbnamesql, $connection) or die(mysql_error());
-		$result = mysql_query($sql_contents) or die(mysql_error());
-		if ($result){
-			// Wipe 
-			$dir = "../".$cplug->alias."/";
-			deleteDir($dir);
-			//Done
-			$tabledel->Delete('plugin_id', $plugin_id);
-		}else{
-			// give error
-			$a = array(
+		// get error
+		if( !empty(get_plugin_info($slug)['error']) ){
+			// error
+			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
-				'isi' => $lg_pluginremovefailed
-			);
-			echo json_encode($a);
-			exit;
+				'msg' => get_plugin_info($slug)['error']['message'],
+				'msg_ses' => get_plugin_info($slug)['error']['code'],
+				'red' => get_url('admin_home').'admin.php?mod=plugin'
+			), @$_GET['r']);
+		}else{
+			// delete
+			$tb = new ElybinTable('elybin_plugins');
+			$tb->Delete('alias', $slug);
+
+			// success
+			result(array(
+				'status' => 'ok',
+				'title' => __('Success'),
+				'msg' => __('Plugin successfully uninsalled.'),
+				'msg_ses' => 'plugin_uninstalled',
+				'red' => get_url('admin_home').'admin.php?mod=plugin'
+			), @$_GET['r']);
 		}
-		
-		header('location:../../admin.php?mod='.$mod);
 	}
 	//404
 	else{
 		echo '404';
 		header('location:../../../404.php');
 	}
-}	
+}
 }
 ?>

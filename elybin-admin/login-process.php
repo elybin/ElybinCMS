@@ -1,14 +1,14 @@
 <?php
 /* Short description for file
- * Login Procees 
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * Login Procees
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  * ---------------------------------------------
  * 1.1.3
- * - Update Interface 
+ * - Update Interface
  * - Update Hashing password method
  * - Add data to Elybin Statistic
  * - Fixing user blocking
@@ -31,6 +31,13 @@ if(isset($_SESSION['login'])){
 			$post_u = $v->xss(@$_POST['u']);
 			$post_p = $v->xss(@$_POST['p']);
 			$post_c = $v->xss(@$_POST['c']);
+			// collect callback
+			$post_cb = urldecode(@$_POST['cb']);
+
+			// set callback to session
+			if(!empty($post_cb)){
+				$_SESSION['callback'] = $post_cb;
+			}
 
 			// filter input
 			if(!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/", $post_u)){
@@ -49,7 +56,7 @@ if(isset($_SESSION['login'])){
 
 			// I lost and confuse without you, fill me please :(
 			if(empty($post_u)){
-				// I'm into you :)					
+				// I'm into you :)
 				result(array(
 						'status' => 'error',
 						'title' => lg('Error'),
@@ -63,7 +70,7 @@ if(isset($_SESSION['login'])){
 				$cs = $tbs->SelectFullCustom("
 					SELECT
 					SUM(`stat_value1`) as `user_failed_login`
-					FROM 
+					FROM
 					`elybin_statistic` as `s`
 					WHERE
 					`s`.`stat_date` LIKE '".date('Y-m-d')."%' &&
@@ -104,10 +111,10 @@ if(isset($_SESSION['login'])){
 						'session' => $rd,
 						'lastlogin' => date('Y-m-d H:i:s')
 					), 'user_id', $cu->user_id);
-					
+
 					// set session
 					$_SESSION['login'] = $rd;
-					$_SESSION['last_activity'] = time(); 
+					$_SESSION['last_activity'] = time();
 					$_SESSION['loginfail'] = 0;
 					unset($_SESSION['loginfail']);
 
@@ -122,16 +129,36 @@ if(isset($_SESSION['login'])){
 					));
 
 					// destroy cp session (still not effective)
-					unset($_SESSION['cp']); @$_SESSION['cp']='';
+					@$_SESSION['cp'] = null;
+					unset($_SESSION['cp']);
 
 					// url referer
-					if(isset($_SESSION['ref'])){
-						$ref = urldecode($_SESSION['ref']);
+					if(isset($_SESSION['ref']) || !empty($_SESSION['callback'])){
+						if(!empty($_SESSION['callback'])){
+							// backup session
+							$url_callback = $_SESSION['callback'];
+							// destroy
+							$_SESSION['callback'] = null;
+							unset($_SESSION['callback']);
+							// redirect
+							$ref = urldecode($url_callback);
+						}
+						else{
+							// redirect
+							$ref = urldecode($_SESSION['ref']);
+						}
+						// redir
 						header('location: '.$ref);
-					}else{
+					}
+					// upgrade detected, redirect to install
+					else if(	file_exists("../elybin-install/") && file_exists("../elybin-core/elybin-config.php") && !file_exists("../elybin-install/install_date.txt") ){
+						// redir
+						redirect( get_url('home').'elybin-install');
+					}
+					else{
 						header('location: admin.php?mod=home');
 					}
-					
+
 				}else{
 
 					// collect to statistic
@@ -167,7 +194,7 @@ if(isset($_SESSION['login'])){
 			// set temp session
 			$_SESSION['ses_u'] = $post_u;
 			$_SESSION['ses_e'] = $post_e;
- 
+
 
 			// never let them empty
 			if(empty($post_u)){
@@ -322,7 +349,7 @@ if(isset($_SESSION['login'])){
 				'level' => 3,
 				'session' => 'offline'
 			));
-			
+
 			// push notif
 			/*
 			$dpn = array(
@@ -348,8 +375,8 @@ if(isset($_SESSION['login'])){
 
 			// set temp session
 			$_SESSION['ses_u'] = '';
-			$_SESSION['ses_e'] = '';			
-			
+			$_SESSION['ses_e'] = '';
+
 			// destroy cp session (still not effective)
 			unset($_SESSION['cp']); @$_SESSION['cp']='';
 
@@ -362,13 +389,13 @@ if(isset($_SESSION['login'])){
 				'red' => 'index.php?p=login'
 				), @$_GET['r']);
 			break;
-		
-		/* 
+
+		/*
 		 *	Forgot E-mail - Not Tested Yet!
 		 * 	-----------
 		 *	1.1.3
-		 *  - add smtp 
-		 *  - add daily mail sent limit 
+		 *  - add smtp
+		 *  - add daily mail sent limit
 		 */
 		case 'forgot':
 			// collet post data
@@ -402,13 +429,13 @@ if(isset($_SESSION['login'])){
 				SELECT
 				*,
 				COUNT(`user_id`) as `row`
-				FROM 
+				FROM
 				`elybin_users` as `u`
 				WHERE
 				`u`.`user_account_email` = '$post_e'
 				LIMIT 0,1
 				")->current();
-			
+
 			if($cu->row < 1){
 				result(array(
 					'status' => 'error',
@@ -426,7 +453,7 @@ if(isset($_SESSION['login'])){
 				$cs = $tbs->SelectFullCustom("
 					SELECT
 					SUM(`stat_value1`) as `daily_sent`
-					FROM 
+					FROM
 					`elybin_statistic` as `s`
 					WHERE
 					`s`.`stat_date` LIKE '".date('Y-m-d')."%' &&
@@ -447,10 +474,10 @@ if(isset($_SESSION['login'])){
 
 				// check global daily mail limit
 				$cs = $tbs->SelectFullCustom("
-					SELECT 
+					SELECT
 					SUM(`stat_value1`) as `today_sent`
 					FROM
-					`elybin_statistic` as `s` 
+					`elybin_statistic` as `s`
 					WHERE
 					`s`.`stat_date` LIKE '".date("Y-m-d")."%' &&
 					`s`.`stat_module` = 'mail' &&
@@ -469,7 +496,7 @@ if(isset($_SESSION['login'])){
 
 				// generate random key
 				$fk = md5(sha1($post_e.date('HisYmhid').microtime()));
-				// update 
+				// update
 				$tb->Update(array(
 					'user_account_forgetkey' => $fk,
 					'forget_date' => date('Y-m-d H:i:s')
@@ -480,7 +507,7 @@ if(isset($_SESSION['login'])){
 
 				Hi $cu->fullname, <br/><br/>
 
-				Someone recently requested a password change for your account in &quot;<a href='$op->site_url'>$op->site_name</a>&quot;. 
+				Someone recently requested a password change for your account in &quot;<a href='$op->site_url'>$op->site_name</a>&quot;.
 				If this was you, you can set a new password  <a href=\"$op->site_url/elybin-admin/index.php?p=recover&k=".$fk."\">here</a> :<br/><br/>
 
 				<a href=\"$op->site_url/elybin-admin/index.php?p=reccover&k=".$fk."\">Reset Password</a><br/><br/>
@@ -494,7 +521,7 @@ if(isset($_SESSION['login'])){
 				------------------------------------------------------------<br/>
 				$op->site_url powered by <a href='http://www.elybin.com'>Elybin CMS - Free Open Source CMS</a>
 				";
-				
+
 				// check what method used to send email
 				if($op->smtp_status == 'active'){
 					// gmail smtp
@@ -630,7 +657,7 @@ if(isset($_SESSION['login'])){
 				COUNT(`user_id`) as `row`
 				from
 				`elybin_users` as `u`
-				WHERE 
+				WHERE
 				`u`.`user_account_forgetkey` = '$post_k'
 				LIMIT 0,1
 				")->current();

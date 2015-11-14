@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Page - Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
@@ -13,6 +13,7 @@ if(empty($_SESSION['login'])){
 }else{
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
+	include_once('inc/module-function.php');
 	include_once('../../lang/main.php');
 	settzone();
 
@@ -23,16 +24,16 @@ if(empty($_SESSION['login'])){
 	//ADD
 	if ($mod=='page' AND $act=='add'){
 		// getting page value
-		$title = $v->xss($_POST['title']);
-		$status = $v->xss(@$_POST['status']);
-		$tag = $v->xss(@$_POST['tag']);
+		$title = xss_($_POST['title']);
+		$status = xss_(@$_POST['status']);
+		$tag = xss_(@$_POST['tag']);
 		$content = $_POST['content'];
 		$seotitle =  seo_title($title);
-		$pid = $v->sql(epm_decode($_POST['pid']));
-		
+		$pid = sqli_(to_int(epm_decode($_POST['pid'])));
+
 		$tbl = new ElybinTable("elybin_posts");
 		$tb = $tbl;
-		
+
 		//get current user
 		$u = _u();
 		$author = $u->user_id;
@@ -42,7 +43,12 @@ if(empty($_SESSION['login'])){
 			$seotitle = seo_title($title);
 		}
 
-		
+		// checking seo title
+		if(!check_seotitle($seotitle, $pid)){
+			$seotitle = suggest_unique($seotitle, $pid);
+		}
+
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -70,9 +76,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -88,10 +94,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -100,16 +106,16 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
-		
-		// ambil data draft/prepost jika ada, 
+
+		// ambil data draft/prepost jika ada,
 		$cp = $tbl->SelectWhere('post_id', $pid)->current();
-		
+
 		// 1.1.3
 		// post revision logic
 		// ada perubahan?
@@ -132,16 +138,16 @@ if(empty($_SESSION['login'])){
 				'date' => $cp->date,
 				'author' => $cp->author,
 				'category_id' => 0,
-				'seotitle' => $cp->seotitle,
+				'seotitle' => '',
 				'tag' => $cp->tag,
-				'status' => 'inherit',					
+				'status' => 'inherit',
 				'visibility' => '',
 				'parent' => $cp->post_id,
 				'comment' => 'allow',
 				'type' => $cp->type
 			);
 			$tbl->Insert($d);
-			
+
 			// duplikat post baru
 			// menggulangi jika yang mengubah berbeda user
 			$d = array(
@@ -150,7 +156,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => 0,
 				'date' => date("Y-m-d H:i:s"),
 				'author' => _u()->user_id,
-				'seotitle' => $seotitle,
+				'seotitle' => '',
 				'tag' => @$tag,
 				'status' => 'inherit',
 				'visibility' => '',
@@ -160,7 +166,7 @@ if(empty($_SESSION['login'])){
 			);
 			$tbl->Insert($d);
 		}
-		
+
 		if(!empty($_FILES['file']['tmp_name'])){
 			//get images
 			$extensionList = array("jpg", "jpeg");
@@ -185,9 +191,22 @@ if(empty($_SESSION['login'])){
 					echo json_encode($a);
 					exit;
 				}
-			
+
 				//upload images
-				UploadImage($image,'page');
+				$up = UploadImage($image,'page');
+				if(empty($up['ok'])){
+					// return error
+					//image extension deny
+					$a = array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'isi' => $up['error']['message']
+					);
+					echo json_encode($a);
+					exit;
+				}
+
+				//save
 				$tbl = new ElybinTable('elybin_posts');
 				$d = array(
 					'title' => $title,
@@ -226,7 +245,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => 0,
 				'seotitle' => $seotitle,
 				'tag' => @$tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => '',
 				'comment' => 'allow',
 				'type' => 'page'
@@ -244,7 +263,7 @@ if(empty($_SESSION['login'])){
 		}else{
 			$callback_msg = '';
 		}
-			
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -274,8 +293,8 @@ if(empty($_SESSION['login'])){
 			$title = '('. lg('Untitled') .')';
 			$seotitle = seo_title($title);
 		}
-		
-		
+
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -304,9 +323,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -322,10 +341,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -334,16 +353,16 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
 
 		// if post not found
 		$tbl = new ElybinTable('elybin_posts');
-		
+
 		// cek apakah post prepost atau bukan
 		// jika `satus` = 'prepost' maka berikan 'type'='post'
 		$cp = $tbl->SelectWhere('post_id', $pid)->current();
@@ -358,9 +377,9 @@ if(empty($_SESSION['login'])){
 					'date' => date("Y-m-d H:i:s"),
 					'author' => $author,
 					'category_id' => 0,
-					'seotitle' => $seotitle,
+					'seotitle' => '',
 					'tag' => @$tag,
-					'status' => 'inherit',					
+					'status' => 'inherit',
 					'visibility' => '',
 					'post_password' => '',
 					'comment' => 'allow',
@@ -369,7 +388,7 @@ if(empty($_SESSION['login'])){
 				);
 				$tbl->Insert($d);
 			}
-			
+
 			// ubah main/parent post
 			// berikan type = 'page'
 			$data = array(
@@ -378,16 +397,16 @@ if(empty($_SESSION['login'])){
 				'date' => date("Y-m-d H:i:s"),
 				'author' => $author,
 				'category_id' => 0,
-				'seotitle' => $seotitle,
+				'seotitle' => '',
 				'tag' => @$tag,
-				'status' => 'deactive',					
+				'status' => 'deactive',
 				'visibility' => '',
 				'post_password' => '',
 				'comment' => 'allow',
 				'type' => 'autosave_page'
 			);
-			
-			
+
+
 		}else{
 			// 1.1.3
 			// post revision logic
@@ -403,10 +422,10 @@ if(empty($_SESSION['login'])){
 						'content' => html_entity_decode($content,ENT_QUOTES),
 						'date' => date("Y-m-d H:i:s"),
 						'category_id' => 0,
-						'seotitle' => $seotitle,
+						'seotitle' => '',
 						'author' => _u()->user_id,
 						'tag' => @$tag,
-						'status' => 'inherit',					
+						'status' => 'inherit',
 						'visibility' => '',
 						'parent' => $pid,
 						'post_password' => '',
@@ -421,10 +440,10 @@ if(empty($_SESSION['login'])){
 						'content' => html_entity_decode($content,ENT_QUOTES),
 						'date' => date("Y-m-d H:i:s"),
 						'category_id' => 0,
-						'seotitle' => $seotitle,
+						'seotitle' => '',
 						'author' => _u()->user_id,
 						'tag' => @$tag,
-						'status' => 'inherit',					
+						'status' => 'inherit',
 						'visibility' => '',
 						'parent' => $pid,
 						'post_password' => '',
@@ -443,7 +462,7 @@ if(empty($_SESSION['login'])){
 				'category_id' => 0,
 				'seotitle' => $seotitle,
 				'tag' => @$tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => '',
 				'post_password' => '',
 				'comment' => 'allow',
@@ -451,16 +470,16 @@ if(empty($_SESSION['login'])){
 			);
 		}
 		$tbl->Update($data, 'post_id', $pid);
-			
-		
-		// isi 
+
+
+		// isi
 		// jika status = draft
 		if($status == 'deactive'){
 			$isi = lg('Saved but not Published at');
 		}else{
 			$isi = lg('Published Successfully at');
 		}
-		
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -473,12 +492,12 @@ if(empty($_SESSION['login'])){
 
 	//EDIT
 	elseif($mod=='page' AND $act=='edit'){
-		$post_id = $v->sql(epm_decode($_POST['pid']));
-		$title = $v->xss($_POST['title']);
-		$seotitle =  seo_title($title);
+		$post_id = sqli_(epm_decode($_POST['pid']));
+		$title = xss_($_POST['title']);
+		$seotitle =  sqli_($_POST['seotitle']);
 		$content = html_entity_decode($_POST['content'],ENT_QUOTES);
-		$status = $v->xss($_POST['status']);
-		$tag = $v->xss($_POST['tag']);
+		$status = xss_($_POST['status']);
+		$tag = xss_($_POST['tag']);
 		$author = _u()->user_id;
 
 		// check id exist or not
@@ -494,13 +513,28 @@ if(empty($_SESSION['login'])){
 			echo json_encode($a);
 			exit;
 		}
-	
+
+		// check seo title available or not
+		// final result
+		if(!check_seotitle($seotitle, $post_id)){
+			$a = array(
+				'status' => 'error',
+				'title' => __('Error'),
+				'isi' => __('SEO title already used, there our suggestion.'),
+				'callback' => 'edit',
+				'callback_id' => epm_encode($post_id),
+				'callback_msg' => __('SEO title already used, please check it first.')
+			);
+			echo json_encode($a);
+			exit;
+		}
+
 		//if field empty
 		if(empty($title)){
 			$title = '('. lg('Untitled') .')';
 			$seotitle = seo_title($title);
 		}
-		
+
 		// 1.1.3
 		// logika tag
 		$tbtag = new ElybinTable("elybin_tag");
@@ -528,9 +562,9 @@ if(empty($_SESSION['login'])){
 					// just pick the id
 					$new_tag_id[$i] = $tbtag->SelectWhere('seotitle', seo_title(trim($tag_tmp[$i])))->current()->tag_id;
 				}
-				
+
 			}
-			
+
 			$tag = json_encode($new_tag_id);
 		}
 		// get data form database
@@ -546,10 +580,10 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count+1 
+			SET
+			count =  count+1
 			WHERE  tag_id = $d1
-			"); 
+			");
 		}
 		// diff2 tag (gone)
 		$diff2 = array_diff($old_tags, $new_tag_id);
@@ -558,17 +592,17 @@ if(empty($_SESSION['login'])){
 			$tbtag->Custom("
 			UPDATE
 			","
-			SET  
-			count =  count-1 
+			SET
+			count =  count-1
 			WHERE  tag_id = $d2
-			"); 
+			");
 		}
 		// end of tag logic
 
 		//get previous post data
 		$tbl = new ElybinTable('elybin_posts');
 		$cp = $tbl->SelectWhere('post_id',$post_id,'','')->current();
-		
+
 		// 1.1.3
 		// post revision logic
 		// ada perubahan?
@@ -592,14 +626,14 @@ if(empty($_SESSION['login'])){
 				'category_id' => 0,
 				'seotitle' => '',
 				'tag' => $tag,
-				'status' => 'inherit',					
+				'status' => 'inherit',
 				'visibility' => '',
 				'parent' => $post_id,
 				'comment' => 'allow'
 			);
 			$tbl->Insert($d);
 		}
-			
+
 		//with images
 		if(!empty($_FILES['file']['tmp_name'])){
 			// get images
@@ -626,15 +660,27 @@ if(empty($_SESSION['login'])){
 					echo json_encode($a);
 					exit;
 				}
-				
+
+				//upload images
+				$up = UploadImage($image,'page');
+				if(empty($up['ok'])){
+					// return error
+					//image extension deny
+					$a = array(
+						'status' => 'error',
+						'title' => lg('Error'),
+						'isi' => $up['error']['message']
+					);
+					echo json_encode($a);
+					exit;
+				}
 
 				//replace image if exist
 				$fileimage_lama = "../../../elybin-file/page/$image_lama"; //previous image
 				if (file_exists("$fileimage_lama") && ($image_lama!="")){
-					unlink("../../../elybin-file/page/$image_lama");
-					unlink("../../../elybin-file/page/medium-$image_lama");
+					@unlink("../../../elybin-file/page/$image_lama");
+					@unlink("../../../elybin-file/page/medium-$image_lama");
 				}
-				UploadImage($image,'page');
 
 				//update
 				$data = array(
@@ -645,7 +691,7 @@ if(empty($_SESSION['login'])){
 					'date' =>  date("Y-m-d H:i:s"),
 					'tag' => $tag,
 					'image' => $image,
-					'status' => $status,					
+					'status' => $status,
 					'visibility' => '',
 					'comment' => 'allow',
 					'type' => 'page'
@@ -657,7 +703,7 @@ if(empty($_SESSION['login'])){
 					'status' => 'error',
 					'title' => lg('Error'),
 					'isi' => lg('File extension not allowed')
-				);			
+				);
 				echo json_encode($a);
 				exit;
 			}
@@ -670,7 +716,7 @@ if(empty($_SESSION['login'])){
 				'seotitle' => $seotitle,
 				'date' =>  date("Y-m-d H:i:s"),
 				'tag' => $tag,
-				'status' => $status,					
+				'status' => $status,
 				'visibility' => '',
 				'comment' => 'allow',
 				'type' => 'page'
@@ -691,7 +737,7 @@ if(empty($_SESSION['login'])){
 				$callback_msg = '';
 			}
 		}
-			
+
 		//Done
 		$a = array(
 			'status' => 'ok',
@@ -708,7 +754,7 @@ if(empty($_SESSION['login'])){
 	//DEL
 	elseif($mod=='page' AND $act=='del'){
 		$post_id = $v->sql(epm_decode($_POST['hash']));
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$copost = $tb->GetRowAnd('post_id', $post_id ,'type', 'page');
@@ -716,14 +762,14 @@ if(empty($_SESSION['login'])){
 			header('location: ../../../404.html');
 			exit;
 		}
-		
+
 		//get image name first
 		$cimg = $tb->SelectWhere('post_id',$post_id,'','')->current();
 		$image = $cimg->image;
 		$fileimage = "../../../elybin-file/page/$image";
 		if (file_exists("$fileimage") AND ($image!="")){ //delete images
-			unlink("../../../elybin-file/page/$image");
-			unlink("../../../elybin-file/page/medium-$image");
+			@unlink("../../../elybin-file/page/$image");
+			@unlink("../../../elybin-file/page/medium-$image");
 		}
 		// 1.1.3
 		// logika tag
@@ -735,19 +781,19 @@ if(empty($_SESSION['login'])){
 				$tbtag->Custom("
 				UPDATE
 				","
-				SET  
-				count =  count-1 
+				SET
+				count =  count-1
 				WHERE  tag_id = $cp
-				"); 
+				");
 			}
 		}
 		// end of tag logic
-		
+
 		//Done
 		$tb->Delete('post_id', $post_id);
 		$tb->Delete('parent', $post_id);
 		header('location:../../admin.php?mod=page&msg=deleted');
-	}	
+	}
 	//MULTI DEL
 	elseif($mod=='page' AND $act=='multidel'){
 		//array of delected post
@@ -761,7 +807,7 @@ if(empty($_SESSION['login'])){
 				$pecah = $pecah[0];
 				// check id safe from sqli
 				$post_id_fix = $v->sql(epm_decode($pecah));
-				
+
 				// check id exist or not
 				$tb 	= new ElybinTable('elybin_posts');
 				$copost = $tb->GetRowAnd('post_id', $post_id_fix,'type','page');
@@ -776,8 +822,8 @@ if(empty($_SESSION['login'])){
 				$filepost = "../../../elybin-file/page/$postimg";
 				//delete images
 				if (file_exists("$filepost") AND ($postimg!="")){
-					unlink("../../../elybin-file/page/$postimg");
-					unlink("../../../elybin-file/page/medium-$postimg");
+					@unlink("../../../elybin-file/page/$postimg");
+					@unlink("../../../elybin-file/page/medium-$postimg");
 				}
 
 				// 1.1.3
@@ -790,14 +836,14 @@ if(empty($_SESSION['login'])){
 						$tbtag->Custom("
 						UPDATE
 						","
-						SET  
-						count =  count-1 
+						SET
+						count =  count-1
 						WHERE  tag_id = $cp
-						"); 
+						");
 					}
 				}
 				// end of tag logic
-				
+
 				//Done
 				$tb->Delete('post_id', $post_id_fix);
 				$tb->Delete('parent', $post_id_fix);
@@ -812,9 +858,9 @@ if(empty($_SESSION['login'])){
 			'status' => 'error',
 			'title' => lg('Error'),
 			'isi' => lg('Terjadi Kesalahan pada Sistem, Hubungi Pengembang Kami. (Err: Target Proccess Not Found, Act & Mod)')
-		);			
+		);
 		echo json_encode($a);
-		exit;	
+		exit;
 	}
-}	
+}
 ?>

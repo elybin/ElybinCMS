@@ -3,9 +3,9 @@
  * [ Module: Media
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(!isset($_SESSION['login'])){
 	// new redirect
@@ -207,7 +207,7 @@ if($usergroup == 0){
 								if($cm->type == 'office' || $cm->type == 'text' || $cm->type == 'archive' || $cm->type == 'audio' || $cm->type == 'video'){
 								?>
 								<div class="col-sm-12 text-center">
-									<iframe src="http://docs.google.com/gview?url=<?php echo _op()->site_url ?>file/v/<?php echo $cm->hash?>&embedded=true" style="width: 100%; height:500px;" frameborder="0"></iframe>
+									<iframe src="http://docs.google.com/gview?url=<?php e(urlencode(get_url('media', $cm->media_id, 'v'))) ?>&amp;embedded=true" style="width: 100%; height:500px;" frameborder="0"></iframe>
 								</div>
 								<?php
 								}
@@ -265,16 +265,16 @@ if($usergroup == 0){
 									<tr>
 										<td><i><?php echo lg('Share to') ?></i></td>
 										<td>
-											<input type="text" value="<?php echo _op()->site_url ?>file/v/<?php echo $cm->hash?>" class="form-control"><br/>
-											<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo _op()->site_url ?>file/v/<?php echo $cm->hash?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-facebook-square"></i>&nbsp;<?php echo lg('Share to Facebook')?></a>&nbsp;
-											<a href="https://twitter.com/intent/tweet?url=<?php echo _op()->site_url ?>file/v/<?php echo $cm->hash?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-twitter"></i>&nbsp;<?php echo lg('Share to Twitter')?></a>&nbsp;
-											<a href="https://plus.google.com/share?url=<?php echo _op()->site_url ?>file/v/<?php echo $cm->hash?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-google-plus"></i>&nbsp;<?php echo lg('Share to Google+')?></a>&nbsp;
+											<input type="text" value="<?php e(get_url('media', $cm->media_id, 'v')) ?>" class="form-control"><br/>
+											<a href="https://www.facebook.com/sharer/sharer.php?u=<?php e(urlencode(get_url('media', $cm->media_id, 'v'))) ?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-facebook-square"></i>&nbsp;<?php echo lg('Share to Facebook')?></a>&nbsp;
+											<a href="https://www.twitter.com/intent/tweet?url=<?php e(urlencode(get_url('media', $cm->media_id, 'v'))) ?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-twitter"></i>&nbsp;<?php echo lg('Share to Twitter')?></a>&nbsp;
+											<a href="https://plus.google.com/share?url=<?php e(urlencode(get_url('media', $cm->media_id, 'v'))) ?>" class="btn btn-xs btn-info" target="_blank"><i class="fa fa-google-plus"></i>&nbsp;<?php echo lg('Share to Google+')?></a>&nbsp;
 										</td>
 									</tr>
 								</table>
 								<hr></hr>
 								<div class="form-group no-margin-b">
-									<a href="../file/d/<?php echo $cm->hash?>" class="btn btn-success"><i class="fa fa-download"></i>&nbsp;<?php echo lg('Download')?></a>&nbsp;
+									<a href="<?php e(get_url('media', $cm->media_id,'d')) ?>" class="btn btn-success"><i class="fa fa-download"></i>&nbsp;<?php echo lg('Download')?></a>&nbsp;
 									<a href="?mod=media&amp;act=del&amp;hash=<?php echo epm_encode($cm->media_id) ?>&amp;clear=yes" class="btn btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete Permanently') ?>"><i class="fa fa-trash-o"></i><i class="fa fa-times"></i>&nbsp;<?php echo lg('Delete') ?></a>
 									<button class="btn btn-default pull-right" data-dismiss="modal"><i class="fa fa-share"></i>&nbsp;<?php echo lg('Back')?></button>
 								</div>

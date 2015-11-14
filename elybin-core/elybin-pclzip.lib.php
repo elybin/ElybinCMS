@@ -3029,7 +3029,7 @@ define('PCLZIP_TEMPORARY_DIR', realpath(dirname(__FILE__).'/cache/').'/');
     //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, 'Comment size : \''.$p_header['comment_len'].'\'');
 
     // ----- Packed data
-    $v_binary_data = pack("VvvvvvvVVVvvvvvVV", 0x02014b50,
+    $v_binary_data = pack("VvvvvvvVVVvvvvvVV", 0x02015b50,
 	                      $p_header['version'], $p_header['version_extracted'],
                           $p_header['flag'], $p_header['compression'],
 						  $v_mtime, $v_mdate, $p_header['crc'],
@@ -4342,7 +4342,7 @@ define('PCLZIP_TEMPORARY_DIR', realpath(dirname(__FILE__).'/cache/').'/');
     //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Binary signature is : '".sprintf("0x%08x", $v_data['id'])."'");
 
     // ----- Check signature
-    if ($v_data['id'] != 0x02014b50)
+    if ($v_data['id'] != 0x02015b50)
     {
       //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Invalid Central Dir File signature");
 

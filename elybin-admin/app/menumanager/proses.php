@@ -1,16 +1,16 @@
 <?php
 /* Short description for file
  * [ Module: Setting - Menu manager Proccess
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 session_start();
 if(empty($_SESSION['login'])){
 	header('location:../../../403.html');
-}else{	
+}else{
 	include_once('../../../elybin-core/elybin-function.php');
 	include_once('../../../elybin-core/elybin-oop.php');
 	include_once('../../lang/main.php');
@@ -47,13 +47,13 @@ if($usergroup == 0){
 			'title' => lg('Success'),
 			'isi' => lg('New menu order saved')
 		);
-		echo json_encode($a);	
+		echo json_encode($a);
 		exit;
 	}
 	//ADD
 	elseif ($mod=='menumanager' AND $act=='add'){
 		$title = $v->xss($_POST['title']);
-		$url = $v->xss($_POST['url']);
+		$url = htmlspecialchars_decode($_POST['url']);
 		$parent = $v->xss($_POST['parent_id']);
 		$class = $v->xss($_POST['class']);
 
@@ -84,19 +84,19 @@ if($usergroup == 0){
 		if($parent>0){  //16
 			// get parent_id from menu_id = 16
 			$checksub2 = $tbl->SelectWhere('menu_id',$parent,'','');
-			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
-			//  16 				15 		Sub Sub Menu 	MAX 	
+			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
+			//  16 				15 		Sub Sub Menu 	MAX
 			$parentsub1 = $checksub2->current()->parent_id; // parent_id = 15
 
 			// count row that contain parent_id = 15
 			$csub2 = $tbl->GetRow('parent_id',$parentsub1); //2
-			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
+			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
 			//	16 				15 		Sub Sub Menu 	MAX 						12
 			//	17 				15 		Sub Sub Menu 2 	MAX 						13
 
 			if($csub2>0){ // 2
 				$checksub1 = $tbl->SelectWhere('menu_id',$parentsub1,'','');
-				//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
+				//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
 				//	15 				14 		Sub Menu 		sub-menu 					11
 				foreach ($checksub1 as $s1) {
 					if($s1->parent_id>0){ //parent_id = 14
@@ -144,13 +144,13 @@ if($usergroup == 0){
 			'title' => lg('Success'),
 			'isi' => lg('New menu created successfully.')
 		);
-		echo json_encode($a);	
+		echo json_encode($a);
 	}
 	//EDIT
 	elseif ($mod=='menumanager' AND $act=='edit'){
 		$id = $v->sql($_POST['id']);
-		$title = $v->xss($_POST['title']);
-		$url = $v->xss($_POST['url']);
+		$title = xss_($_POST['title'])	;
+		$url = htmlspecialchars_decode($_POST['url']);
 		$parent = $v->xss($_POST['parent_id']);
 		$class = $v->xss($_POST['class']);
 
@@ -193,19 +193,19 @@ if($usergroup == 0){
 		if($parent>0){  //16
 			// get parent_id from menu_id = 16
 			$checksub2 = $tbl->SelectWhere('menu_id',$parent,'','');
-			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
-			//  16 				15 		Sub Sub Menu 	MAX 	
+			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
+			//  16 				15 		Sub Sub Menu 	MAX
 			$parentsub1 = $checksub2->current()->parent_id; // parent_id = 15
 
 			// count row that contain parent_id = 15
 			$csub2 = $tbl->GetRow('parent_id',$parentsub1); //2
-			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
+			//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
 			//	16 				15 		Sub Sub Menu 	MAX 						12
 			//	17 				15 		Sub Sub Menu 2 	MAX 						13
 
 			if($csub2>0){ // 2
 				$checksub1 = $tbl->SelectWhere('menu_id',$parentsub1,'','');
-				//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position 
+				//  menu_id 	parent_id 	menu_title 		menu_url 	menu_class 	menu_position
 				//	15 				14 		Sub Menu 		sub-menu 					11
 				foreach ($checksub1 as $s1) {
 					if($s1->parent_id>0){ //parent_id = 14
@@ -238,7 +238,7 @@ if($usergroup == 0){
 			'title' => lg('Success'),
 			'isi' => lg('Changes Saved')
 		);
-		echo json_encode($a);	
+		echo json_encode($a);
 		exit;
 	}
 	//DEL
@@ -265,7 +265,7 @@ if($usergroup == 0){
 				$tbsub2 = new ElybinTable('elybin_menu');
 				$csub2 = $tbsub2->GetRow('parent_id',$sub1->menu_id); //1
 
-				//if 
+				//if
 				if($csub2>0){
 					// delete sub sub menu
 					$csub2 = $tbsub2->Delete('parent_id',$sub1->menu_id);
@@ -289,6 +289,6 @@ if($usergroup == 0){
 	else{
 		header('location:../../../404.html');
 	}
-}	
+}
 }
 ?>

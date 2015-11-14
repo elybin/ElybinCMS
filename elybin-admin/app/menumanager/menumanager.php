@@ -1,11 +1,11 @@
 <?php
 /* Short description for file
  * [ Module: Setting - Menu manager
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(empty($_SESSION['login'])){
 	header('location: index.php');
@@ -40,46 +40,62 @@ if($usergroup == 0){
 						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
-					      <div class="col-sm-4">
-							<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" required/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
+						<div class="col-sm-8">
+							<div class="form-group">
+									<label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
+									<div class="col-sm-6">
+								<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" required/></td>
+									</div>
+							</div> <!-- / .form-group -->
 
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
-					      <div class="col-sm-4">
-							<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" required/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
+							<div class="form-group">
+									<label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
+									<div class="col-sm-6">
+								<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" required/></td>
+									</div>
+							</div> <!-- / .form-group -->
 
-						<div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
-					      <div class="col-sm-4">
-							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
-							<select name="parent_id" id="multiselect-style" class="from-control">
-								<option value="0"><?php echo lg('No Parent')?></option>
-					      	<?php
-					      		$tblm = new ElybinTable('elybin_menu');
-					      		$menu = $tblm->Select('','');
-					      		foreach($menu as $m){
-					      	?>
-								<option value="<?php echo $m->menu_id; ?>"><?php echo $m->menu_title; ?></option>
-					      	<?php
-					      		}
-					      	?>
-							</select>
-					      </div>
-						</div> <!-- / .form-group -->
+							<div class="form-group">
+									<label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
+									<div class="col-sm-6">
+								<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
+								<select name="parent_id" id="multiselect-style" class="from-control">
+									<option value="0"><?php echo lg('No Parent')?></option>
+										<?php
+											$tblm = new ElybinTable('elybin_menu');
+											$menu = $tblm->Select('','');
+											foreach($menu as $m){
+										?>
+									<option value="<?php echo $m->menu_id; ?>"><?php echo $m->menu_title; ?></option>
+										<?php
+											}
+										?>
+								</select>
+									</div>
+							</div> <!-- / .form-group -->
 
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
-					      <div class="col-sm-4">
-							<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
-
+							<div class="form-group">
+									<label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
+									<div class="col-sm-6">
+								<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
+									</div>
+							</div> <!-- / .form-group -->
+						</div>
+						<div class="col-sm-4">
+							<div class="panel panel-dark panel-success">
+								<div class="panel-heading">
+									<i class="fa fa-info-circle pull-right"></i><?php _e('Tips') ?>
+								</div>
+								<div class="panel-body">
+									<?php _e('You can also using <b>URL Address Dynamic Expression</b> (<i>Address that changed automatically every updating content</i>). Follow this step:') ?>
+									<ol>
+										<li><b><?php _e('Section Name') ?></b>: <?php _e('Determine the section, available section names: <i>post, page, category, tag, archive, gallery, album.</i>') ?></li>
+										<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>http://elybin.com/?page_id=<b>this_is_content_id</b></code>') ?></li>
+										<li><b><?php _e('Put it together') ?></b>: <?php _e('Basicly URL Dynnamic Expression using this formula. <b>{&quot;section_name&quot;:&quot;content_id&quot;}</b> for example: <code>{&quot;post&quot;:&quot;1&quot;}</code>') ?></li>
+									</ol>
+								</div>
+							</div>
+						</div>
 					</div><!-- / .panel-body -->
 					  <div class="panel-footer">
 						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save')?></button>
@@ -136,93 +152,110 @@ if($usergroup == 0){
 						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
-					      <div class="col-sm-4">
-							<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" value="<?php echo $cmenu->menu_title?>" required/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
+						<div class="col-sm-8">
+						  <div class="form-group">
+						      <label class="col-sm-2 control-label"><?php echo lg('Title')?>*</label>
+						      <div class="col-sm-6">
+								<input type="text" name="title"  class="form-control" placeholder="<?php echo lg('Title')?>" value="<?php echo $cmenu->menu_title?>" required/></td>
+						      </div>
+						  </div> <!-- / .form-group -->
 
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
-					      <div class="col-sm-4">
-							<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" value="<?php echo $cmenu->menu_url?>" required/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
+						  <div class="form-group">
+						      <label class="col-sm-2 control-label"><?php echo lg('Address')?>*</label>
+						      <div class="col-sm-6">
+								<input type="text" name="url"  class="form-control" placeholder="<?php echo lg('Address')?>" value="<?php _e( htmlspecialchars( $cmenu->menu_url) )?>" required/></td>
+						      </div>
+						  </div> <!-- / .form-group -->
 
-						<div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
-					      <div class="col-sm-4">
-							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
-							<select name="parent_id" id="multiselect-style" class="form-control">
-								<option value="0"><?php echo lg('No Parent')?></option>
-					      	<?php
-								$countchild = $tb->GetRow('parent_id',$id);
-								if($countchild==0){
-					      			$menu = $tb->SelectWhereAndNot('menu_id',$id,'parent_id',$id);
-						      		foreach($menu as $m){
-					      	?>
-								<option value="<?php echo $m->menu_id; ?>"<?php if($cmenu->parent_id==$m->menu_id){echo ' selected=selected';}?>><?php echo $m->menu_title; ?></option>
-					      	<?php
-					      			}
-					      		}
-					      	?>
-							</select>
-					      </div>
-						</div> <!-- / .form-group -->
+							<div class="form-group">
+						      <label class="col-sm-2 control-label"><?php echo lg('Parent')?>*</label>
+						      <div class="col-sm-6">
+								<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
+								<select name="parent_id" id="multiselect-style" class="form-control">
+									<option value="0"><?php echo lg('No Parent')?></option>
+						      	<?php
+									$countchild = $tb->GetRow('parent_id',$id);
+									if($countchild==0){
+						      			$menu = $tb->SelectWhereAndNot('menu_id',$id,'parent_id',$id);
+							      		foreach($menu as $m){
+						      	?>
+									<option value="<?php echo $m->menu_id; ?>"<?php if($cmenu->parent_id==$m->menu_id){echo ' selected=selected';}?>><?php echo $m->menu_title; ?></option>
+						      	<?php
+						      			}
+						      		}
+						      	?>
+								</select>
+						      </div>
+							</div> <!-- / .form-group -->
 
-					  <div class="form-group">
-					      <label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
-					      <div class="col-sm-4">
-							<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
-					      </div>
-					  </div> <!-- / .form-group -->
+						  <div class="form-group">
+						      <label class="col-sm-2 control-label"><?php echo lg('CSS Class')?></label>
+						      <div class="col-sm-6">
+								<input type="text" name="class"  class="form-control" placeholder="<?php echo lg('CSS Class')?>"/></td>
+						      </div>
+						  </div> <!-- / .form-group -->
 
-					  <?php
-					  	$csubmenu = $tb->GetRow('parent_id',$id);
-					  	if($csubmenu>0){
+						  <?php
+						  	$csubmenu = $tb->GetRow('parent_id',$id);
+						  	if($csubmenu>0){
 
-					  ?>
-					  <br/>
-		     	  	  <div class="col-sm-12">
-						<div class="panel widget-tasks">
-							<div class="panel-heading">
-								<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo lg('Sort Submenu')?> - <?php echo $cmenu->menu_title?></span>
-							</div> <!-- / .panel-heading -->
-							<!-- Without vertical padding -->
-							<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
-							<div class="panel-body no-padding-vr" id="sortable-list">
-							<?php
-							   $tblm = new ElybinTable('elybin_menu');
-							   $tblm = $tblm->SelectWhere('parent_id',$cmenu->menu_id,'menu_position','ASC');
-							   foreach($tblm as $f){
-							   		$tblsub = new ElybinTable('elybin_menu');
-							   		$tblsub = $tblsub->SelectWhere('parent_id',$f->menu_id,'menu_position','ASC');
-							   		$submenu = "";
-							   		foreach ($tblsub as $ff) {
-							   			$submenu .= $ff->menu_title.", ";
-							   		}
-							   		$submenu = rtrim($submenu,", ");
-							   		
-							   		if(!empty($submenu)){
-							   			$submenu = " <span>($submenu)</span>";
-							   		}
-							?>
-								<div class="task">
-									<div class="pull-right">
-										<div id="tooltip">
-											<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Edit')?>"><i class="fa fa-pencil-square-o"></i></a>
-											<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;back=<?php echo $id?>&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete')?>"><i class="fa fa-times"></i></a>
+						  ?>
+						  <br/>
+			     	  	  <div class="col-sm-12">
+							<div class="panel widget-tasks">
+								<div class="panel-heading">
+									<span class="panel-title"><i class="panel-title-icon fa fa-sort-amount-asc"></i><?php echo lg('Sort Submenu')?> - <?php echo $cmenu->menu_title?></span>
+								</div> <!-- / .panel-heading -->
+								<!-- Without vertical padding -->
+								<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
+								<div class="panel-body no-padding-vr" id="sortable-list">
+								<?php
+								   $tblm = new ElybinTable('elybin_menu');
+								   $tblm = $tblm->SelectWhere('parent_id',$cmenu->menu_id,'menu_position','ASC');
+								   foreach($tblm as $f){
+								   		$tblsub = new ElybinTable('elybin_menu');
+								   		$tblsub = $tblsub->SelectWhere('parent_id',$f->menu_id,'menu_position','ASC');
+								   		$submenu = "";
+								   		foreach ($tblsub as $ff) {
+								   			$submenu .= $ff->menu_title.", ";
+								   		}
+								   		$submenu = rtrim($submenu,", ");
+
+								   		if(!empty($submenu)){
+								   			$submenu = " <span>($submenu)</span>";
+								   		}
+								?>
+									<div class="task">
+										<div class="pull-right">
+											<div id="tooltip">
+												<a href="?mod=menumanager&amp;act=edit&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-success" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php echo lg('Edit')?>"><i class="fa fa-pencil-square-o"></i></a>
+												<a href="?mod=menumanager&amp;act=del&amp;clear=yes&amp;back=<?php echo $id?>&amp;id=<?php echo $f->menu_id?>" class="btn btn-xs btn-outline btn-danger" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="<?php echo lg('Delete')?>"><i class="fa fa-times"></i></a>
+											</div>
 										</div>
-									</div>
-									<div class="fa fa-arrows-v task-sort-icon"></div>
-									<span class="task-title" id="<?php echo $f->menu_id?>"><?php echo $f->menu_title?><?php echo $submenu?></span>
-								</div> <!-- / .task -->
-							<?php } ?>
-							</div> <!-- / .panel-body -->
-						</div> <!-- / .panel -->
-					</div><!-- / . col-sm-12 -->
+										<div class="fa fa-arrows-v task-sort-icon"></div>
+										<span class="task-title" id="<?php echo $f->menu_id?>"><?php echo $f->menu_title?><?php echo $submenu?></span>
+									</div> <!-- / .task -->
+								<?php } ?>
+								</div> <!-- / .panel-body -->
+							</div> <!-- / .panel -->
+						</div><!-- / . col-sm-1  -->
 					<?php } ?>
+					</div>
+					<div class="col-sm-4">
+						<div class="panel panel-dark panel-success">
+							<div class="panel-heading">
+								<i class="fa fa-info-circle pull-right"></i><?php _e('Tips') ?>
+							</div>
+							<div class="panel-body">
+								<?php _e('You can also using <b>URL Address Dynamic Expression</b> (<i>Address that changed automatically every updating content</i>). Follow this step:') ?>
+								<ol>
+									<li><b><?php _e('Section Name') ?></b>: <?php _e('Determine the section, available section names: <i>post, page, category, tag, archive, gallery, album.</i>') ?></li>
+									<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>http://elybin.com/?page_id=<b>this_is_content_id</b></code>') ?></li>
+									<li><b><?php _e('Put it together') ?></b>: <?php _e('Basicly URL Dynnamic Expression using this formula. <b>{&quot;section_name&quot;:&quot;content_id&quot;}</b> for example: <code>{&quot;post&quot;:&quot;1&quot;}</code>') ?></li>
+								</ol>
+							</div>
+						</div>
+					</div>
 					</div><!-- / .panel-body -->
 					  <div class="panel-footer">
 						  <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Changes')?></button>
@@ -233,7 +266,7 @@ if($usergroup == 0){
 					  </div> <!-- / .form-footer -->
 				</form><!-- / .form -->
 
- 
+
 				<!-- Delete Modal -->
 				<div id="delete" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 					<div class="modal-dialog modal-sm">
@@ -290,7 +323,7 @@ if($usergroup == 0){
 							</div>
 <?php
 			break;
-		
+
 		default:
 ?>
 		<!-- Page Header -->
@@ -303,7 +336,7 @@ if($usergroup == 0){
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
+						<div class="pull-right col-xs-12 col-sm-6 col-md-4">
 							<a href="?mod=<?php echo @$_GET['mod']?>&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
 							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('Add New')?></a>
 						</div>
@@ -322,9 +355,9 @@ if($usergroup == 0){
 						<div class="panel-heading-controls" id="tooltip">
 							<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 						</div> <!-- / .panel-heading-controls -->
-					</div> 
+					</div>
 					<!-- ./Panel Heading -->
-					
+
 					<div class="panel-body">
 						<div class="col-sm-8">
 							<div class="panel widget-tasks panel-dark-gray">
@@ -351,14 +384,14 @@ if($usergroup == 0){
 											}
 
 											$submenu .= '- <a href="?mod=menumanager&amp;act=edit&amp;id='.$ff->menu_id.'">'.$ff->menu_title.$csubsub."</a><br/>";
-											
+
 										}
 										$submenu = rtrim($submenu,"<br/>");
-										
+
 										if(!empty($submenu)){
 											$submenu = " <span>$submenu</span>";
 
-											
+
 										}
 								?>
 									<div class="task">
@@ -376,14 +409,14 @@ if($usergroup == 0){
 								</div> <!-- / .panel-body -->
 							</div> <!-- / .panel -->
 						</div><!-- / . col-sm-8 -->
-	
+
 						<div class="col-sm-4">
 							<div class="note note-info">
 								<h1 class="fa fa-5x fa-sort-amount-asc text-default"></h1>
 								<p><?php echo lg('Menu Manager')?></p>
 							</div>
 						</div><!-- / . col-sm-4 -->
-						
+
 					</div> <!-- / .panel-body -->
 				</div> <!-- / .panel -->
 			</div><!-- / . col -->

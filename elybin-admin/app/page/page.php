@@ -1,15 +1,17 @@
 <?php
 /* Short description for file
  * Module: Page
- *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ *
+ * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  ---------------------------
  1.1.3-1 (Release 1) - Edited by (@Kim)
  - Redesign List
  - Merge Table with Post
+ 1.1.4
+ - Adding seotitle unique
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -41,7 +43,7 @@ if($usergroup == 0){
 			theme_foot();
 			exit;
 		}
-		
+
 		// buat auto draf
 		$tbl = new ElybinTable('elybin_posts');
 		$date = date("Y-m-d H:i:s");
@@ -53,7 +55,7 @@ if($usergroup == 0){
 			'category_id' => 0,
 			'seotitle' => '',
 			'tag' => '',
-			'status' => 'prepost',					
+			'status' => 'prepost',
 			'visibility' => '',
 			'post_meta' => '',
 			'post_password' => '',
@@ -63,7 +65,7 @@ if($usergroup == 0){
 		$tbl->Insert($data);
 		// ambil id ini
 		$cp = $tbl->SelectWhereAnd('status', 'prepost', 'date', $date, 'post_id', 'DESC')->current();
-		
+
 ?>		<!-- help -->
 		<div class="page-header hide-light" id="help-panel">
 			<p><?php echo lg('...') ?></p>
@@ -73,7 +75,7 @@ if($usergroup == 0){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=page"><?php echo lg('Page') ?></a></li>
 			<li class="active"><a href="?mod=page&amp;act=add"><?php echo lg('New Page') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -83,7 +85,7 @@ if($usergroup == 0){
 			<a href="?mod=page" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Page') ?></a>
 			<h1><?php echo lg('New Page') ?></h1>
 		</div> <!-- / .page-header -->
-		
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery-ui.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery.tagsinput.min.css"); ?></style>
@@ -106,8 +108,8 @@ if(op()->text_editor == 'summernote'){
 }
 else if(op()->text_editor == 'bs-markdown'){
 	echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
-} 
-?>	
+}
+?>
 								<div id="summernote-progress" style="display: none">
 									<p><?php echo lg('Uploading Images...') ?> - <span>1%</span></p>
 									<div class="progress progress-striped">
@@ -121,12 +123,12 @@ else if(op()->text_editor == 'bs-markdown'){
 						  </div><!-- / .panel-body -->
 					</div>
 				</div><!-- / .col -->
-				
+
 				<div class="col-sm-3">
 					<div class="panel-body" style="box-shadow: 2px 1px 5px rgba(0,0,0,0.1); margin-bottom: 2px;">
 						<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save') ?></button>
 
-						<br/>						
+						<br/>
 						<!-- auto save -->
 						<div id="autosave" class="text-sm text-light-gray hide-light">
 							<i>  <?php echo lg('Saving...') ?></i>
@@ -164,8 +166,8 @@ else if(op()->text_editor == 'bs-markdown'){
 							</div> <!-- / .form-group -->
 					</div>
 				</div><!-- / .col -->
-				
-				
+
+
 				<input type="hidden" name="pid" value="<?php echo epm_encode($cp->post_id) ?>" />
 				<input type="hidden" name="act" value="add" />
 				<input type="hidden" name="mod" value="page" />
@@ -177,7 +179,7 @@ else if(op()->text_editor == 'bs-markdown'){
 		// revision
 		case 'revision':
 			$id 	= $v->sql(@$_GET['id']);
-	
+
 			// check id exist or not
 			$tb 	= new ElybinTable('elybin_posts');
 			$copost = $tb->GetRow('parent', $id);
@@ -186,9 +188,9 @@ else if(op()->text_editor == 'bs-markdown'){
 				theme_foot();
 				exit;
 			}
-			
+
 			// get data
-			$cp	 = $tb->SelectFullCustom("			
+			$cp	 = $tb->SelectFullCustom("
 			SELECT
 			`p`.*,
 			`u`.`fullname`
@@ -210,17 +212,17 @@ else if(op()->text_editor == 'bs-markdown'){
 			`elybin_users` as `u`
 			WHERE
 			`p`.`parent` = $id  &&
-			`u`.`user_id` = `p`.`author` 
+			`u`.`user_id` = `p`.`author`
 			";
-			
-			
+
+
 			// query for current state
 			$crsque = "$que
-			ORDER BY `p`.`post_id` DESC 
+			ORDER BY `p`.`post_id` DESC
 			LIMIT 0,1
 			";
 			$crstate = $tb->SelectFullCustom($crsque)->current();
-			
+
 			$cop = $tb->GetRowFullCustom($que);
 			// modify query to pageable & shortable
 			$oarr = array(
@@ -241,7 +243,7 @@ else if(op()->text_editor == 'bs-markdown'){
 			<li><a href="?mod=page"><?php echo lg('Post') ?></a></li>
 			<li><a href="?mod=page&amp;act=edit&amp;id=<?php echo $id ?>"><?php echo lg('Edit Post') ?></a></li>
 			<li class="active"><a href="?mod=post&amp;act=revision&amp;id=<?php echo $id ?>"><?php echo lg('Revision History') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -252,16 +254,16 @@ else if(op()->text_editor == 'bs-markdown'){
 			<p><?php echo $copost-1 . ' '. lg('revision') ?><p>
 		</div> <!-- / .page-header -->
 		<!-- Content here -->
-		
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<form class="" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 			<div class="row">
 				<div class="col-sm-12">
-				<?php 
+				<?php
 
-				
+
 				$no = 1;
-				
+
 
 				// post sekarang
 				echo '<div class="form-horizontal depth-md">';
@@ -276,7 +278,7 @@ else if(op()->text_editor == 'bs-markdown'){
 				echo 		'<p>'. substr(htmlspecialchars($crstate->content),0,400).'</p>';
 				echo '	</div><!-- / .panel-body -->';
 				echo '</div>';
-			
+
 				// paggng
 				if(isset($_GET['page'])){
 					echo '<hr/>'.lg('Page').' '.@$_GET['page'];
@@ -284,10 +286,10 @@ else if(op()->text_editor == 'bs-markdown'){
 					echo '<hr/>'.lg('Page').' 1';
 				}
 				showPagging($copost-1, $id);
-			
+
 				echo '<div class="form-group-margin"></div>';
-				
-				
+
+
 				// daftar revisi
 				foreach($pr as $cpr){
 					echo '<div class="form-horizontal depth-xs">';
@@ -304,7 +306,7 @@ else if(op()->text_editor == 'bs-markdown'){
 					echo '	</div><!-- / .panel-body -->';
 					echo '</div>';
 					echo '<div class="form-group-margin"></div>';
-				} 
+				}
 				?>
 				</div><!-- / .col -->
 			</form><!-- / .form -->
@@ -316,7 +318,7 @@ else if(op()->text_editor == 'bs-markdown'){
 	case 'restore':
 		// 1.1.3
 		// restore post
-		
+
 		// jika tidak "clear=yes"
 		if(!isset($_GET['clear'])){
 			er(lg('The are some error in page you\'ve open, please contact administrator').'.<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
@@ -325,7 +327,7 @@ else if(op()->text_editor == 'bs-markdown'){
 		}else{
 			// ambil id nya
 			$rid = $v->sql($_GET['id']);
-			
+
 			// check id exist or not
 			$tbl = new ElybinTable('elybin_posts');
 			$cop = $tbl->GetRow('post_id', $rid);
@@ -333,14 +335,14 @@ else if(op()->text_editor == 'bs-markdown'){
 				header('location: ?mod=post');
 				exit;
 			}
-			
+
 			// restore post id ini ke post parent
-			
+
 			// get data
 			$cpr = $tbl->SelectWhere('post_id',$rid,'','')->current();
 			$cpp = $tbl->SelectWhere('post_id',$cpr->parent,'','')->current(); // parent
 
-			
+
 			// 1.1.3
 			// post revision logic
 			// ada perubahan?
@@ -356,7 +358,7 @@ else if(op()->text_editor == 'bs-markdown'){
 					'category_id' => $cpp->category_id,
 					'seotitle' => $cpp->seotitle,
 					'tag' => $cpp->tag,
-					'status' => 'inherit',					
+					'status' => 'inherit',
 					'visibility' => $cpp->visibility,
 					'parent' => $cpp->post_id,
 					'post_meta' => $cpp->post_meta,
@@ -373,8 +375,8 @@ else if(op()->text_editor == 'bs-markdown'){
 				'author' => _u()->user_id,
 				'category_id' => $cpr->category_id,
 				'seotitle' => $cpr->seotitle,
-				'tag' => $cpr->tag,			
-				'status' => 'inherit',		
+				'tag' => $cpr->tag,
+				'status' => 'inherit',
 				'visibility' => $cpr->visibility,
 				'parent' => $cpr->parent,
 				'post_meta' => $cpr->post_meta,
@@ -382,16 +384,16 @@ else if(op()->text_editor == 'bs-markdown'){
 				'comment' => $cpr->comment
 			);
 			$tbl->Insert($db); // buat copy lagi yang sama dg parent
-			
+
 			// update parent ke data baru (backup nya = `cpr`)
-			$db = array(/* 
+			$db = array(/*
 				'title' => $cpr->title,
 				'content' => $cpr->content,
 				'date' => date("Y-m-d H:i:s"),
 				'author' => $cpr->author,
 				'category_id' => $cpr->category_id,
 				'seotitle' => $cpr->seotitle,
-				'tag' => $cpr->tag,				
+				'tag' => $cpr->tag,
 				'visibility' => $cpr->visibility,
 				'post_meta' => $cpr->post_meta,
 				'image' => $cpr->image,
@@ -402,12 +404,12 @@ else if(op()->text_editor == 'bs-markdown'){
 				'image' => $cpr->image
 			);
 			$tbl->Update($db, 'post_id', $cpr->parent);
-			
+
 			// redirect ke edit post parent
 			header('location: ?mod=post&act=edit&id='.$cpr->parent.'&msg=restored');
 			exit;
 			// restore done!
-		}		
+		}
 		break;
 
 	case 'edit';
@@ -420,12 +422,12 @@ else if(op()->text_editor == 'bs-markdown'){
 		theme_foot();
 		exit;
 	}
-	
+
 	// 1.1.3
 	// only active & deactive that allowed to edit
 	$costatus = $tb->GetRowFullCustom("
 	SELECT *
-	FROM 
+	FROM
 	`elybin_posts` as `p`
 	WHERE
 	(`p`.`status` = 'active' || `p`.`status` = 'deactive') &&
@@ -437,7 +439,7 @@ else if(op()->text_editor == 'bs-markdown'){
 		theme_foot();
 		exit;
 	}
-	
+
 	// get data
 	$cp	= $tb->SelectWhere('post_id',$id)->current();
 
@@ -459,10 +461,10 @@ else if(op()->text_editor == 'bs-markdown'){
 		$tag_t2[$i] = $tbtag->SelectWhere('tag_id', $tag_t[$i])->current()->name;
 	}
 	$cp->tag_detail = trim(implode(", ", $tag_t2));
-	
+
 	// cek revisi
 	$corev = $tb->GetRowAnd('status', 'inherit', 'parent', $cp->post_id)-1;
-	
+
 	if($cp->status == 'inherit'){
 		er('<strong>'. lg('Ouch!') .'</strong> '. lg('Page Not Found 404.') .' <a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'. lg('Back') .'</a>');
 		theme_foot();
@@ -477,7 +479,7 @@ else if(op()->text_editor == 'bs-markdown'){
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li><a href="?mod=page"><?php echo lg('Page') ?></a></li>
 			<li class="active"><a href="?mod=page&amp;act=edit&amp;hash=<?php echo epm_encode($id) ?>"><?php echo lg('Edit Page') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -493,7 +495,7 @@ else if(op()->text_editor == 'bs-markdown'){
 			// msg
 			if(@$_GET['msg'] == 'published'){
 				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Page published successfully.') . '
-				 <a href="./../page-'.$cp->post_id.'-'.$cp->seotitle.'.html" target="_blank"><i><u>'.lg('View').'</u></i></a>
+				 <a href="'.get_url('page', $cp->post_id).'" target="_blank"><i><u>'.lg('View').'</u></i></a>
 				 </div>
 				';
 			}
@@ -504,7 +506,7 @@ else if(op()->text_editor == 'bs-markdown'){
 				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Page saved.') . '</div>';
 			}
 		?>
-				
+
 		<style><?php include("assets/stylesheets/select2.min.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery-ui.css"); ?></style>
 		<style><?php include("assets/stylesheets/jquery.tagsinput.min.css"); ?></style>
@@ -515,8 +517,22 @@ else if(op()->text_editor == 'bs-markdown'){
 						<div class="panel-body">
 							<div class="form-group">
 							  <div class="col-sm-12">
-								<input type="text" name="title" value="<?php echo $cp->title ?>" class="form-control input-lg" placeholder="<?php echo lg('Page Title') ?>"/>
+									<input type="text" name="title" value="<?php echo $cp->title ?>" class="form-control input-lg" placeholder="<?php echo lg('Page Title') ?>"/>
 							  </div>
+							</div> <!-- / .form-group -->
+							<div class="form-group">
+								<div class="col-md-4 text-right">
+									<i><?php echo get_option('site_url'); ?></i>
+								</div>
+								<div class="col-md-7">
+									<input type="hidden" id="check_seo_pid" value="<?php echo $cp->post_id ?>">
+									<b id="check_seo_fix"><?php echo $cp->seotitle ?></b>
+									<a href="#" id="check_seo_edit"><u><?php _e('Edit') ?></u></a>
+									<input type="text" name="seotitle" id="check_seo_input" class="hide-light form-control input-xs" placeholder="<?php echo lg('your-page-url') ?>" value="<?php echo $cp->seotitle ?>"/>
+								</div>
+								<div class="col-md-1">
+									<a class="btn btn-primary btn-xs hide-light" id="check_seo_btn"><?php _e('Ok') ?> <i class="fa fa-check"></i></a>
+								</div>
 							</div> <!-- / .form-group -->
 							<div class="form-group">
 							  <div class="col-sm-12">
@@ -527,8 +543,8 @@ else if(op()->text_editor == 'bs-markdown'){
 								}
 								else if(op()->text_editor == 'bs-markdown'){
 									echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
-								} 
-								?>								
+								}
+								?>
 								<div id="summernote-progress" style="display: none">
 									<p><?php echo lg('Uploading Images...') ?> - <span>1%</span></p>
 									<div class="progress progress-striped">
@@ -542,12 +558,12 @@ else if(op()->text_editor == 'bs-markdown'){
 						  </div><!-- / .panel-body -->
 					</div>
 				</div><!-- / .col -->
-				
+
 				<div class="col-sm-3">
 					<div class="panel-body" style="box-shadow: 2px 1px 5px rgba(0,0,0,0.1); margin-bottom: 2px;">
 						 <button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save') ?></button>
-						 
-						<br/>						
+
+						<br/>
 						<!-- auto save -->
 						<div id="autosave" class="text-sm text-light-gray hide-light">
 							<i>  <?php echo lg('Saving...') ?></i>
@@ -599,8 +615,8 @@ else if(op()->text_editor == 'bs-markdown'){
 							  <div class="col-sm-12">
 							  <?php
 								if(!empty($cp->image)){
-									echo '<img class="img-thumbnail" src="../elybin-file/page/medium-'. $cp->image .'" width="100%"/>';
-								} 
+									echo '<img class="img-thumbnail" src="../elybin-file/page/md-'. $cp->image .'" width="100%"/>';
+								}
 							  ?>
 								<input type="file" name="file" id="file-style" class="form-control"/>
 								<p class="help-block"><?php echo lg('Left empty if you are not changing the images. Maximum size of images is 1MB with allowed extensions (.jpg, .jpeg).') ?></p>
@@ -608,7 +624,7 @@ else if(op()->text_editor == 'bs-markdown'){
 							</div> <!-- / .form-group -->
 					</div>
 				</div><!-- / .col -->
-				
+
 				<input type="hidden" name="pid" value="<?php echo epm_encode($cp->post_id); ?>" />
 				<input type="hidden" name="act" value="edit" />
 				<input type="hidden" name="mod" value="page" />
@@ -659,12 +675,12 @@ else if(op()->text_editor == 'bs-markdown'){
 							</div>
 <?php
 		break;
-		
+
 	// 1.1.3
 	// restore deleted post
 	case 'restore_del':
 		$post_id = $v->sql(@$_GET['id']);
-		
+
 		// check id exist or not
 		$tb 	= new ElybinTable('elybin_posts');
 		$copost = $tb->GetRowAnd('post_id', $post_id,'status','deleted');
@@ -674,19 +690,19 @@ else if(op()->text_editor == 'bs-markdown'){
 		}
 		// just change parent post status to 'deleted'
 		$par = array(
-			'status' => 'draft'			
+			'status' => 'draft'
 		);
 
 		//Done
 		$tb->Update($par, 'post_id', $post_id);
 		_red('admin.php?mod=post&act=edit&id='.$post_id.'&msg=delrestored');
 		break;
-	
+
 	default:
 	$tb 	= new ElybinTable('elybin_posts');
 
-	$search = $v->sql(@$_GET['search']);	
-		
+	$search = $v->sql(@$_GET['search']);
+
 	// search
 	if(isset($_GET['search'])){
 		$multiquery = @explode(":", @$search);
@@ -698,7 +714,7 @@ else if(op()->text_editor == 'bs-markdown'){
 	}else{
 		$s_q = "";
 	}
-	
+
 	// 1.1.3
 	// with filter
 	if(!isset($_GET['filter'])){
@@ -716,7 +732,7 @@ else if(op()->text_editor == 'bs-markdown'){
 		WHERE
 		(`p`.`status` = 'active' || `p`.`status` = 'deactive') &&
 		`p`.`type` = 'page' &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -737,7 +753,7 @@ else if(op()->text_editor == 'bs-markdown'){
 		WHERE
 		`p`.`status` = 'active' &&
 		`p`.`type` = 'page' &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
@@ -758,14 +774,14 @@ else if(op()->text_editor == 'bs-markdown'){
 		WHERE
 		`p`.`status` = 'deactive' &&
 		`p`.`type` = 'page' &&
-		`u`.`user_id` = `p`.`author` 
+		`u`.`user_id` = `p`.`author`
 		$s_q
 		GROUP BY
 		`p`.`post_id`
 		";
 	}
 
-	
+
 	$cop = $tb->GetRowFullCustom($que);
 	// modify query to pageable & shortable
 	$oarr = array(
@@ -777,7 +793,7 @@ else if(op()->text_editor == 'bs-markdown'){
 	$lpost	= $tb->SelectFullCustom($que);
 
 	//echo '<pre>'.$que.'</pre>';
-?>		
+?>
 		<!-- help -->
 		<div class="page-header" id="help-panel" style="display: none">
 			<p><?php echo lg('...') ?></p>
@@ -787,7 +803,7 @@ else if(op()->text_editor == 'bs-markdown'){
 			<div class="breadcrumb-label text-light-gray"><?php echo lg('You are here:') ?></div>
 			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
 			<li class="active"><a href="?mod=page"><?php echo lg('Page') ?></a></li>
-			
+
 			<div class="pull-right">
 				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
 			</div>
@@ -803,7 +819,7 @@ else if(op()->text_editor == 'bs-markdown'){
 				<div class="col-xs-12 col-sm-6 col-md-6">
 					<div class="row">
 						<hr class="visible-xs no-grid-gutter-h">
-						<div class="pull-right col-xs-12 col-sm-6 col-md-4">	
+						<div class="pull-right col-xs-12 col-sm-6 col-md-4">
 							<a href="?mod=page&amp;act=add" class="pull-right btn btn-success btn-labeled" style="width: 100%">
 							<span class="btn-label icon fa fa-plus"></span>&nbsp;&nbsp;<?php echo lg('New Page')?></a>
 						</div>
@@ -823,11 +839,11 @@ else if(op()->text_editor == 'bs-markdown'){
 
 		<!-- Content here -->
 		<div class="row">
-			<div class="col-sm-12">	
+			<div class="col-sm-12">
 				<!-- Tabs -->
 				<ul class="nav nav-tabs nav-tabs-xs">
 					<li<?php if(!isset($_GET['filter'])){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totallpage = $tb->GetRowFullCustom("
 							SELECT
@@ -844,7 +860,7 @@ else if(op()->text_editor == 'bs-markdown'){
 						<a href="?mod=page"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallpage ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='active'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all page
 						$totpbpage = $tb->GetRowFullCustom("
 							SELECT
@@ -861,7 +877,7 @@ else if(op()->text_editor == 'bs-markdown'){
 						<a href="?mod=page&amp;filter=active"><?php echo lg('Activate') ?> <span class="badge badge-success"><?php echo $totpbpage ?></span></a>
 					</li>
 					<li<?php if(@$_GET['filter']=='deactive'){echo' class="active"'; }?>>
-						<?php 
+						<?php
 						// count all post
 						$totdrpage = $tb->GetRowFullCustom("
 							SELECT
@@ -870,7 +886,7 @@ else if(op()->text_editor == 'bs-markdown'){
 							`elybin_posts` as `p`
 							WHERE
 							`p`.`status` = 'deactive' &&
-							`p`.`type` = 'page' 
+							`p`.`type` = 'page'
 							GROUP BY
 							`p`.`post_id`
 						");
@@ -883,7 +899,7 @@ else if(op()->text_editor == 'bs-markdown'){
 					<!-- ./Panel Heading -->
 					<div class="panel-body">
 					  <div class="table-primary table-responsive">
-						
+
 						<?php
 						$orb = array(
 							'title' => lg('Title'),
@@ -896,7 +912,7 @@ else if(op()->text_editor == 'bs-markdown'){
 						<form action="<?php echo $action?>" method="post">
 						<input type="hidden" name="act" value="multidel" />
 						<input type="hidden" name="mod" value="page" />
-						
+
 						<table class="table table-bordered table-striped" id="results">
 						 <thead>
 						   <tr>
@@ -923,12 +939,12 @@ else if(op()->text_editor == 'bs-markdown'){
 							<?php
 							// jika publish tammpil link
 							if($cp->post_status == 'active'){
-								echo ' - <a href="./../page-'.$cp->post_id.'-'.$cp->seotitle.'.html" target="_blank">'.lg('View').'</a>';
+								echo ' - <a href="'.get_url('page', $cp->post_id).'" target="_blank">'.lg('View').'</a>';
 							}?>
 							</td>
 							<td><?php echo $cp->fullname?></td>
 							<td><?php echo friendly_date($cp->date)?></td>
-							<td><?php 
+							<td><?php
 							// status
 							if($cp->post_status == 'active'){
 								echo lg('Activate');
@@ -939,28 +955,28 @@ else if(op()->text_editor == 'bs-markdown'){
 							?></td>
 							<td>
 								<div id="tooltip">
-									
-						    		<?php 
+
+						    		<?php
 										echo '<a href="?mod=page&amp;act=edit&amp;hash='.epm_encode($cp->post_id).'" class="btn btn-success btn-outline btn-sm" data-placement="bottom" data-toggle="tooltip" data-original-title="'.lg('Edit').'"><i class="fa fa-pencil-square-o"></i></a>&nbsp;';
 										echo '<a href="?mod=page&amp;act=del&amp;hash='.epm_encode($cp->post_id).'&amp;clear=yes" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete"  data-placement="bottom" data-original-title="'.lg('Delete Permanently').'"><i class="fa fa-trash-o"></i><i class="fa fa-times"></i></a>';
 									?>
-									
+
 								</div>
 							</td>
 						   </tr>
 						<?php
 							$no++;
 						}
-						
-						
+
+
 						if($no < 1){
 							echo '<tr><td colspan="6"><div class="text-center text-light-gray panel-padding"><i class="fa fa-5x fa-desktop"></i><br/>'. lg('Nothing can be shown.').'</div></td></tr>';
 						}
 						?>
 						 </tbody>
 						</table>
-						
-						
+
+
 						<!-- Multi Delete Modal -->
 						<div id="deleteall" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
 							<div class="modal-dialog modal-sm">
@@ -970,7 +986,7 @@ else if(op()->text_editor == 'bs-markdown'){
 									<?php echo '<h4 class="modal-title text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;'.lg('Delete Permanently').'</h4>'; ?>
 									</div>
 									<div class="modal-body">
-										<?php 
+										<?php
 										echo lg('Are you sure you want delete permanently this item?');
 										?>
 										<div id="deltext"></div>
@@ -986,11 +1002,11 @@ else if(op()->text_editor == 'bs-markdown'){
 							<button class="btn btn-danger btn-sm" id="delall" data-toggle="modal" data-target="#deleteall" style="display:none"><i class="fa fa-times"></i>&nbsp;&nbsp;<?php echo lg('Delete Selected')?></button>
 						</div>
 						</form>
-						
-						
-						
+
+
+
 						<?php showPagging($cop) ?>
-						
+
 					  </div> <!-- /.table-responsive -->
 
 

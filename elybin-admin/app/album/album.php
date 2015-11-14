@@ -3,9 +3,9 @@
  * [ Module: Album - Manage album of Photos
  *
  * Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @copyright	Copyright (C) 2014 - 2015 Elybin .Inc, All rights reserved.
+ * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim Assidiqi <hamas182@gmail.com>
+ * @author		Khakim A. <kim@elybin.com>
  */
 if(!isset($_SESSION['login'])){
 	// new redirect
@@ -68,7 +68,7 @@ if($usergroup == 0){
 		</ul>
 		<!-- Content here -->
 		<div class="page-header">
-			<a href="?mod=media" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Album List') ?></a>
+			<a href="?mod=album" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Album List') ?></a>
 			<h1><?php echo lg('Add New Album') ?></h1>
 		</div> <!-- / .page-header -->
 
@@ -125,6 +125,7 @@ if($usergroup == 0){
 										@$metadata->COMPUTED->Height = 1;
 										@$metadata->COMPUTED->Width = 1;
 									}
+
 
 									$ratio = $metadata->COMPUTED->Height/$metadata->COMPUTED->Width;
 									$width = $metadata->COMPUTED->Width/$metadata->COMPUTED->Height*200;
@@ -215,11 +216,18 @@ if($usergroup == 0){
 							  </div>
 							  <div class="visible-xs clearfix form-group-margin"></div>
 							  <div class="col-sm-12 col-md-2">
-								<button type="submit" value="Submit" class="btn btn-success btn-lg" width="100%"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Chenges')?></button>
-							  </div>
+								<button type="submit" value="Submit" class="btn btn-success btn-lg" width="100%"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save Changes')?></button>
+								</div>
 
+								<div class="col-sm-10">
+									<p class="help-block"><?php echo lg('Tips: Best to use title of album that not too short or too long and not using much of numerical and symbol character.')?></p>
+								</div>
+								<div class="col-sm-2">
+									<a href="?mod=album&amp;act=edit_more&amp;hash=<?php echo epm_encode($ca->post_id) ?>" class="btn btn-lg btn-primary"><i class="fa fa-gear"></i> <?php _e('More Option') ?></a>
+								</div>
 							  <div class="col-sm-12">
-								<p class="help-block"><?php echo lg('Tips: Best to use title of album that not too short or too long and not using much of numerical and symbol character.')?></p>
+
+
 								<hr/>
 								<style><?php include('assets/stylesheets/photogrid.css') ?></style>
 								<div class="photos">
@@ -297,6 +305,137 @@ if($usergroup == 0){
 <?php
 			break;
 
+		case 'edit_more':
+		$hash 	= sqli_(epm_decode(@$_GET['hash']));
+
+		// check id exist or not
+		$tbp 	= new ElybinTable('elybin_posts');
+		$coalbum = $tbp->GetRowAnd('post_id', $hash,'type','album');
+		if($coalbum < 1){
+			er('<strong>'.lg('Ouch!').'</strong> '.lg('Page Not Found 404.').'<a class="btn btn-default btn-xs pull-right" onClick="history.back();"><i class="fa fa-share"></i>&nbsp;'.lg('Back').'</a>');
+			theme_foot();
+			exit;
+		}
+
+		// get data
+		$ca	= $tbp->SelectWhereAnd('post_id', $hash,'type','album')->current();
+		// custom status
+		if($ca->status == 'active'){
+				$ca->status_detail = lg('Activate');
+		}else{
+				$ca->status_detail = lg('Deactivate');
+		}
+?>
+		<!-- help -->
+		<div class="page-header hide-light" id="help-panel">
+			<p><?php echo lg('...') ?></p>
+		</div>
+		<!-- breadcrumb -->
+		<ul class="breadcrumb breadcrumb-page">
+			<li><a href="?mod=home"><?php echo lg('Home') ?></a></li>
+			<li><a href="?mod=album"><?php echo lg('Album') ?></a></li>
+			<li class="active"><a href="?mod=album&amp;act=edit"><?php echo lg('Edit Album') ?></a></li>
+
+			<div class="pull-right">
+				<a class="btn btn-xs" id="help-button"><i class="fa fa-question-circle"></i> <?php echo lg('Help') ?></a>
+			</div>
+		</ul>
+		<!-- Content here -->
+
+
+		<div class="page-header">
+			<a href="?mod=album" class="btn btn-default pull-right"><i class="fa fa-long-arrow-left"></i>&nbsp;&nbsp;<?php echo lg('Back to Album List') ?></a>
+			<h1><?php echo lg('Edit Album') ?></h1>
+		</div> <!-- / .page-header -->
+
+		<?php
+			// 1.1.3
+			// msg
+			if(@$_GET['msg'] == 'updated'){
+				echo '<div class="note note-success depth-xs"><i class="fa fa-check"></i> ' . lg('Changes Saved.') . '</div>';
+			}
+		?>
+
+
+		<form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
+			<div class="row">
+				<div class="col-sm-9">
+					<div class="form-horizontal panel-wide" style="box-shadow: 1px 1px 5px rgba(0,0,0,0.05); ">
+						<div class="panel-body">
+							<div class="form-group">
+							  <div class="col-sm-12">
+								<input type="text" name="title" class="form-control input-lg" placeholder="<?php echo lg('Page Title') ?>" value="<?php echo $ca->title ?>"/>
+							  </div>
+							</div> <!-- / .form-group -->
+							<div class="form-group">
+								<div class="col-md-4 text-right">
+									<i><?php echo get_option('site_url'); ?>gallery/</i>
+								</div>
+								<div class="col-md-7">
+									<input type="hidden" id="check_seo_pid" value="<?php echo $ca->post_id ?>">
+									<b id="check_seo_fix"><?php echo $ca->seotitle ?></b>
+									<a href="#" id="check_seo_edit"><u><?php _e('Edit') ?></u></a>
+									<input type="text" name="seotitle" id="check_seo_input" class="hide-light form-control input-xs" placeholder="<?php echo lg('your-page-url') ?>" value="<?php echo $ca->seotitle ?>"/>
+								</div>
+								<div class="col-md-1">
+									<a class="btn btn-primary btn-xs hide-light" id="check_seo_btn"><?php _e('Ok') ?> <i class="fa fa-check"></i></a>
+								</div>
+							</div> <!-- / .form-group -->
+							<div class="form-group">
+							  <div class="col-sm-12">
+								<?php
+								// getting text_editor
+								if(get_option('text_editor') == 'summernote'){
+									echo '<style>'; include("assets/stylesheets/summernote.css"); echo '</style>';
+								}
+								else if(get_option('text_editor') == 'bs-markdown'){
+									echo '<style>';include("assets/stylesheets/markdown.css"); echo '</style>';
+								}
+								?>
+								<div id="summernote-progress" style="display: none">
+									<div class="progress progress-striped">
+										<div class="progress-bar progress-bar-success" style="width: 1%"></div>
+									</div>
+								 </div>
+								<textarea name="content" cols="50" rows="15" class="form-control" id="text-editor" placeholder="<?php lg('Page content here...')?>"><?php echo $ca->content ?></textarea>
+							  </div>
+							</div> <!-- / .form-group -->
+
+						  </div><!-- / .panel-body -->
+					</div>
+				</div><!-- / .col -->
+
+				<div class="col-sm-3">
+					<div class="panel-body" style="box-shadow: 2px 1px 5px rgba(0,0,0,0.1); margin-bottom: 2px;">
+						<button type="submit" value="Submit" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;<?php echo lg('Save') ?></button>
+						<a href="?mod=album&amp;act=edit&amp;hash=<?php echo epm_encode($ca->post_id) ?>" class="btn btn-primary"><i class="fa fa-gear"></i> <?php _e('Simple Options') ?></a>
+						<br/>
+
+						<br/>
+						<!-- 1.1.3 -->
+						<!-- status -->
+						<div id="hidden_toggle">
+							<span class="text-sm"><b><?php echo lg('Status')?>:</b>&nbsp;<a href="#"><u><?php echo $ca->status_detail?></u></a> </span>
+							<div id="aform" style="display: none">
+								<select name="status" class="form-control">
+									<option value="active"<?php if($ca->status == 'active'){ echo ' selected="selected"'; } ?>><?php echo lg('Activate')?></option>
+									<option value="deactive"<?php if($ca->status == 'deactive'){ echo ' selected="selected"'; } ?>><?php echo lg('Deactivate')?></option>
+								</select>
+								<div id="ok" class="btn btn-sm btn-default"><?php echo lg('Ok')?></div>
+								<a href="#" class="text-xs" id="c">&nbsp;<u><?php echo lg('Cancel')?></u></a>
+							</div>
+						</div>
+					</div>
+				</div><!-- / .col -->
+
+				<input type="hidden" name="aid" value="<?php echo epm_encode($ca->post_id) ?>" />
+				<input type="hidden" name="act" value="edit_more" />
+				<input type="hidden" name="mod" value="album" />
+			</form><!-- / .form -->
+		</div><!-- / .row -->
+<?php
+			break;
+
 		case 'del':
 		$tba = new ElybinTable('elybin_posts');
 		$aid = $v->sql(epm_decode($_GET['hash']));
@@ -340,7 +479,7 @@ if($usergroup == 0){
 			`elybin_posts` as `p`
 			WHERE
 			`p`.`type` = 'album' &&
-			`status` = 'published'
+			`p`.`status` = 'active'
 		";
 
 
@@ -408,7 +547,8 @@ if($usergroup == 0){
 							FROM
 							`elybin_posts` as `p`
 							WHERE
-							`p`.`type` = 'album'
+							`p`.`type` = 'album' &&
+							`p`.`status` = 'active'
 						");
 						?>
 						<a href="?mod=tag"><?php echo lg('All') ?> <span class="badge badge-default"><?php echo $totallt ?></span></a>

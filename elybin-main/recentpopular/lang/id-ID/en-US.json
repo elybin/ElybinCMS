@@ -1,0 +1,50 @@
+{
+"info": [
+  {
+  	"language":"id-ID",
+  	"language_detail":"Bahasa Indonesia",
+    "description": "Language pack for Recent Popular widget.",
+  	"version":"0.1",
+  	"translator":"Khakim A <kim@elybin.com>"
+  }
+],
+"dictionary": [
+{
+	"f":"Newest",
+	"t":"Terbaru",
+	"i":""
+},
+{
+	"f":"Popular",
+	"t":"Populer",
+	"i":""
+},
+{
+	"f":"Writed by",
+	"t":"Ditulis Oleh",
+	"i":""
+},
+{
+	"f":"No post found",
+	"t":"Tidak ada Tulisan ditemukan",
+	"i":""
+},
+{
+	"f":"Seen",
+	"t":"Dilihat",
+	"i":""
+},
+{
+	"f":"Times",
+	"t":"Kali",
+	"i":""
+},
+
+
+{
+  "f":" ",
+  "t":" ",
+  "i":"post.php #0"
+}
+]
+}
