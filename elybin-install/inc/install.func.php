@@ -600,17 +600,22 @@ function connect_with_config(){
 	 * error code 		: 0 => configfile not found
 	 * @since 1.1.3
 	 */
-	if(!include(many_trans().'elybin-core/elybin-config.php')){
+	// check existance
+	if(!file_exists(many_trans().'elybin-core/elybin-config.php')){
 		return false;
 	}else{
+		if(!include(many_trans().'elybin-core/elybin-config.php')){
+			return false;
+		}else{
 
-		$con = mysql_connect(DB_HOST,DB_USER,DB_PASSWD) or die(mysql_error());
+			$con = mysql_connect(DB_HOST,DB_USER,DB_PASSWD) or die(mysql_error());
 
-		if($con){
-			if(mysql_select_db(DB_NAME,$con)){
-				return true;
-			}else{
-				return false;
+			if($con){
+				if(mysql_select_db(DB_NAME,$con)){
+					return true;
+				}else{
+					return false;
+				}
 			}
 		}
 	}
