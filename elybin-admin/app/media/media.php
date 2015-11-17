@@ -62,7 +62,7 @@ if($usergroup == 0){
 								<input type="file" name="file" class="form-control" id="file-style" required/>
 							  </div>
 							  <div class="col-sm-12">
-								<p class="help-block"><?php echo lg('Allowed file type:')?> (jpg, jpeg, png, svg, xls, xlsx, ppt, pptx, txt, doc, docx, pdf, rar, zip, mp3)</p>
+								<p class="help-block"><?php _e('Allowed file type:')?> (jpg, jpeg, png, svg, xls, xlsx, ppt, pptx, txt, doc, docx, pdf, rar, zip, mp3)</p>
 							  </div>
 							</div> <!-- / .form-group -->
 						</div>

@@ -24,8 +24,15 @@ if($com < 1){
 // get data
 $cm	= $tb->SelectWhereAnd('hash', $hash, 'share', 'yes')->current();
 
+// no preview file type
+$nopreview = array("xls","xlsx","ppt","pptx","doc","docx","pdf","rar","zip","mp3");
+
+// ext
+$spl = explode(".", $cm->filename);
+$file_ext = strtolower(@$spl[count($spl)-1]);
+
 // file
-if(@$_GET['mode'] == 'd'){
+if(@$_GET['mode'] == 'd' || in_array($file_ext, $nopreview) ){
 	// set header
 	header('Content-Disposition: attachment;filename="'.$cm->title.'"');
 }

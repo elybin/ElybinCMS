@@ -213,21 +213,6 @@ CREATE TABLE IF NOT EXISTS `elybin_tag` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
--- Table structure for table `elybin_themes`
---
-
-CREATE TABLE IF NOT EXISTS `elybin_themes` (
-  `theme_id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `description` text NOT NULL,
-  `author` varchar(100) NOT NULL,
-  `url` varchar(100) NOT NULL,
-  `folder` varchar(100) NOT NULL,
-  `status` varchar(10) NOT NULL DEFAULT 'deactive',
-  PRIMARY KEY (`theme_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
---
 -- Table structure for table `elybin_usergroup`
 --
 
@@ -415,7 +400,8 @@ INSERT INTO `elybin_options` (`option_id`, `name`, `value`, `active`) VALUES
 (47, 'album_per_page', '6', 'yes'),
 (48, 'photo_per_album', '9', 'yes'),
 (49, 'global_option_replace', 'active', 'yes'),
-(50, 'database_version', '1.1.4', 'yes');
+(50, 'database_version', '1.1.5', 'yes'),
+(51, 'allow_upload_unknown', 1, 'yes');
 
 -- --------------------------------------------------------
 

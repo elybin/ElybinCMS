@@ -3,10 +3,9 @@ Elybin CMS (www.elybin.com) - Open Source Content Management System
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
 @author    => Khakim A <kim@elybin.com>
 
-DONATE
+DONATE & HELP
 =======================
-![Image of Donate with Bitcoin](http://www.decentralizeddanceparty.com/wp-content/uploads/2013/04/bitcoin-donation-tab.png)
-Bitcoin: 1MgkUWoj5w5X9MJSx2qZoXXf5of16AMxnZ
+We really need your help and donation, please contact us at hi@elybin.com
 
 ELYBIN CMS - http://docs.elybin.com/about.html
 =========================================

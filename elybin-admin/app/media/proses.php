@@ -22,7 +22,7 @@ if(empty($_SESSION['login'])){
 
 	//ADD
 	if (($mod=='media' && $act=='add') || isset($_GET['addmulti'])){
-		if(!empty($_FILES['file']['tmp_name'])){
+		if(isset($_FILES['file'])){
 			//allowed file type
 			$extensionList = array("jpg", "jpeg","png","svg","xls","xlsx","ppt","pptx","txt","doc","docx","pdf","rar","zip","mp3");
 			$fileName = $_FILES['file']['name'];

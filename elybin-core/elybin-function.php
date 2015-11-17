@@ -1810,72 +1810,80 @@ function human_filesize($bytes, $decimals = 2) {
 function categorize_mime_types($mime){
     // Classify mime types into desired categories, key-val pairings
     $mimes = array(
-		"application/pdf"=>"office",
-		"application/vnd.openxmlformats-officedocument.word"=>"office",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"=>"office",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.template"=>"office",
-        "application/vnd.openxmlformats-officedocument.presentationml.template"=>"office",
-        "application/vnd.openxmlformats-officedocument.presentationml.slideshow"=>"office",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation"=>"office",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"=>"office",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.template"=>"office",
-        "application/vnd.ms-excel"=>"office",
-        "application/vnd.ms-powerpoint"=>"office",
-        "application/vnd.ms-xpsdocument"=>"office",
-        "application/vnd.oasis.opendocument.text"=>"office",
-        "application/vnd.oasis.opendocument.spreadsheet"=>"office",
-        "application/vnd.oasis.opendocument.presentation"=>"office",
-        "application/vnd.oasis.opendocument.graphics"=>"office",
-        "text/plain"=>"text",
-        "text/rtf"=>"text",
-        "text/javascript"=>"text",
-        "text/html"=>"text",
-        "image/png"=>"image",
-        "image/jpg"=>"image",
-        "image/jpeg"=>"image",
-        "image/gif"=>"image",
-        "image/pjpeg"=>"image",
-        "image/bmp"=>"image",
-        "image/svg+xml"=>"image",
-        "image/tiff"=>"image",
-        "audio/mp3"=>"audio",
-        "audio/basic"=>"audio",
-        "audio/L24"=>"audio",
-        "audio/mp4"=>"audio",
-        "audio/mpeg"=>"audio",
-        "audio/ogg"=>"audio",
-        "audio/flac"=>"audio",
-        "audio/opus"=>"audio",
-        "audio/vorbis"=>"audio",
-        "audio/vnd.rn-realaudio"=>"audio",
-        "audio/vnd.wave"=>"audio",
-        "audio/webm"=>"audio",
-        "video/avi"=>"video",
-        "video/mpeg"=>"video",
-        "video/mp4"=>"video",
-        "video/ogg"=>"video",
-        "video/quicktime"=>"video",
-        "video/webm"=>"video",
-        "video/x-matroska"=>"video",
-        "video/x-ms-wmv"=>"video",
-        "video/x-flv"=>"video",
-        "application/x-7z-compressed"=>"archive",
-        "application/zip"=>"archive",
-        "application/x-rar-compressed"=>"archive",
-        "application/gzip"=>"archive",
-        "application/octet-stream"=>"archive"
+      "application/pdf"=>"office",
+      "application/msword"=>"office",
+      "application/vnd.openxmlformats-officedocument.word"=>"office",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"=>"office",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.template"=>"office",
+      "application/vnd.openxmlformats-officedocument.presentationml.template"=>"office",
+      "application/vnd.openxmlformats-officedocument.presentationml.slideshow"=>"office",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"=>"office",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"=>"office",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.template"=>"office",
+      "application/vnd.ms-excel"=>"office",
+      "application/vnd.ms-powerpoint"=>"office",
+      "application/vnd.ms-xpsdocument"=>"office",
+      "application/vnd.oasis.opendocument.text"=>"office",
+      "application/vnd.oasis.opendocument.spreadsheet"=>"office",
+      "application/vnd.oasis.opendocument.presentation"=>"office",
+      "application/vnd.oasis.opendocument.graphics"=>"office",
+      "text/plain"=>"text",
+      "text/rtf"=>"text",
+      "text/javascript"=>"text",
+      "text/html"=>"text",
+      "image/png"=>"image",
+      "image/jpg"=>"image",
+      "image/jpeg"=>"image",
+      "image/gif"=>"image",
+      "image/pjpeg"=>"image",
+      "image/bmp"=>"image",
+      "image/svg+xml"=>"image",
+      "image/tiff"=>"image",
+      "audio/mp3"=>"audio",
+      "audio/basic"=>"audio",
+      "audio/L24"=>"audio",
+      "audio/mp4"=>"audio",
+      "audio/mpeg"=>"audio",
+      "audio/ogg"=>"audio",
+      "audio/flac"=>"audio",
+      "audio/opus"=>"audio",
+      "audio/vorbis"=>"audio",
+      "audio/vnd.rn-realaudio"=>"audio",
+      "audio/vnd.wave"=>"audio",
+      "audio/webm"=>"audio",
+      "video/avi"=>"video",
+      "video/mpeg"=>"video",
+      "video/mp4"=>"video",
+      "video/ogg"=>"video",
+      "video/quicktime"=>"video",
+      "video/webm"=>"video",
+      "video/x-matroska"=>"video",
+      "video/x-ms-wmv"=>"video",
+      "video/x-flv"=>"video",
+      "application/x-7z-compressed"=>"archive",
+      "application/zip"=>"archive",
+      "application/x-rar-compressed"=>"archive",
+      "application/gzip"=>"archive",
+      "application/octet-stream"=>"archive"
 	);
 
 	// if data empty
-	if(@$mimes[$mime] == ''){
-		//file extension deny
-		$a = array(
-			'status' => 'error',
-			'title' => lg('Error'),
-			'isi' => lg('MIME Type not recognized')
-		);
-		echo json_encode($a);
-		exit;
+	if(  empty(  @$mimes[$mime]  ) ){
+		//file extension deny activated
+    if( get_option('allow_upload_unknown') == false){
+      // deny
+      $a = array(
+  			'status' => 'error',
+  			'title' => lg('Error'),
+  			'isi' => lg('MIME Type not recognized')
+  		);
+  		echo json_encode($a);
+  		exit;
+    }else{
+      // send as unknown
+      return 'unknown';
+    }
+
 	}else{
 		// return
 		return $mimes[$mime];

@@ -101,13 +101,16 @@ switch (@$_GET['act']) {
 										<b><?php echo lg('Developer / Translator') ?></b>
 										<p>.... (<?php echo lg('Commit your name here...') ?>)</p>
 										<br/>
-										<b><?php _e('Bug Hunter') ?> <i class="fa fa-bug"></i></b>
+										<b><?php _e('Elybin CMS Bug Hunter') ?> <i class="fa fa-bug"></i></b>
 										<p>
-										Atho Miftahudin, Ade Pangestu, Fadoli FH, Andro Crash, Lehan Alfananhel<br/>
+										Atho Miftahudin (2 Bugs), Ade Pangestu (6 Bugs), Fadholi FH (27 Bugs), Andro Crash (1 Bug), Lehan Alfananhel (1 Bug), Afdhal Mahdi (1 Bug)<br/>
 											.... (<?php echo lg('Commit your name here...') ?>)</p>
 										<br/>
 										<b><?php echo lg('Tester / Elybin Maniac ') ?></b>
-										<p>.... (<?php echo lg('Commit your name here...') ?>)</p>
+										<p>
+											Didot
+											<br/>
+											.... (<?php echo lg('Commit your name here...') ?>)</p>
 										<span class="text-sm text-light-gray"><?php echo lg('*send us a lot of bug report to hi@elybin.com, and attach your name. Thanks for your participation.') ?></span>
 									</td>
 								</tr>

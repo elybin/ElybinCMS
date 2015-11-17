@@ -1043,7 +1043,55 @@ if($usergroup == 0){
 ?>
 		<!-- help -->
 		<div class="page-header" id="help-panel" style="display: none">
-			<p><?php echo lg('...') ?></p>
+			<p>
+				<b><?php _e('Post') ?></b>
+				<?php _e('this screen provide post management.') ?>
+				<?php _e('You can doing modification, adding, or delete your post from this menu.') ?>
+			</p>
+			<div class="well">
+				<p>
+					<b><?php _e('Petunjuk Umum') ?></b><br/>
+					<?php _e('Anda bisa menyesuaikan tampilan halaman ini agar sesuai dengan anda, beberapa yang bisa anda lakukan:') ?>
+				</p>
+				<p>
+					<ul>
+						<li><?php _e('Anda bisa menambahkan tulisan baru atau mulai menulis artikel dengan menekan tombol Tulisan Baru.') ?></li>
+						<li><?php _e('Anda bisa mengurutkan tulisan berdasarkan kategori tertentu menggunakan dropdown yang berada di tepi kiri atas. Dropdown pertama adalah jenis kategori dan dropdown kedua adalah metode pengurutan.') ?></li>
+						<li><?php _e('Anda bisa mencari tulisan tertentu menggunakan kotak pencarian yang ada di tepi kanan atas. Dengan memasukan kata kunci pencarian dan menekan tombol Cari.') ?></li>
+						<li><?php _e('Deret tombol navigasi tepi kanan bawah berfungsi untuk menjuju ke halaman tertentu dari baris daftar tulisan.') ?></li>
+					</ul>
+				</p>
+			</div>
+			<div class="well">
+				<b><?php _e('Petunjuk Teknis') ?></b><br/>
+				<p>
+					<?php _e('Secara umum, tulisan anda akan dibagi menjadi 4 tab:') ?>
+				</p>
+				<p>
+					<ul>
+						<li><b><?php _e('All') ?></b> <?php _e('memuat semua tulisan anda, tidak mengenal status.') ?></li>
+						<li><b><?php _e('Published') ?></b> <?php _e('memuat tuisan yang sudah ter-publikasi.') ?></li>
+						<li><b><?php _e('Draft') ?></b> <?php _e('memuat tulisan yang berupa draf atau belum ter-publikasi.') ?></li>
+						<li><b><?php _e('Recycle Bin') ?></b> <?php _e('memuat tulisan sudah terhapus, anda bisa memulihkan tulisan anda yang tidak sengaja terhapus.') ?></li>
+					</ul>
+				</p>
+				<br/>
+				<p>
+					<?php _e('Setiap baris dari daftar Tulisan anda, akan muncul beberapa tombol penting:') ?>
+				</p>
+				<p>
+					<ul>
+						<li><b><?php _e('Sunting') ?></b> <?php _e('(biasanya berwarna hijau dengan ikon pensil) tekan tombol ini untuk menyunting tulisan.') ?></li>
+						<li><b><?php _e('Hapus') ?></b> <?php _e('(biasanya berwarna merah dengan ikon tempat sampah) tekan tombol ini untuk memindah tulisan ke tempat sampah.') ?></li>
+						<li><b><?php _e('Pulihkan Tulisan') ?></b> <?php _e('(biasanya berwarna abu-abu dengan ikon panah melingkar) tekan tombol ini untuk mengembalikan tulisan yang sudah terhapus.') ?></li>
+						<li><b><?php _e('Hapus Permanen') ?></b> <?php _e('(biasanya berwarna merah dengan ikon tempat sampah dan silang) tekan tombol ini untuk menghapus secara permanen tulisan anda.') ?></li>
+					</ul>
+				</p>
+				<br/>
+				<p>
+					<?php _e('Anda juga bisa menghapus beberapa tulisan sekaligus dengan mencentang kotak di sebelah kiri judul tulisan.') ?>
+				</p>
+			</div>
 		</div>
 		<!-- breadcrumb -->
 		<ul class="breadcrumb breadcrumb-page">

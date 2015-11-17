@@ -8,6 +8,16 @@
  */
 
 /**
+ * Elybin 1.1.5 (Beta)
+ */
+$version[] = array(
+    'version' => '1.1.5',
+    'signature' => 'Beta',
+    'release' => '2015-11-17',
+    'upgrade_support' => true
+  );
+
+/**
  * Elybin 1.1.4 (Beta)
  */
 $version[] = array(
