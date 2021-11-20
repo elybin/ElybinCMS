@@ -1,0 +1,15 @@
+{
+	"info": [
+		{
+			"language":"id-ID",
+			"language_detail":"English - United States",
+			"version":"0.0.1",
+			"translator":"Khakim <elybin.inc@gmail.com>",
+			"info":"Language Dictionary for Quick Installer Elybin CMS"
+		}
+	],
+	"dictionary": [	
+		
+		{"f":" ", "t":" ", "i":"post.php #0"}
+	]
+}

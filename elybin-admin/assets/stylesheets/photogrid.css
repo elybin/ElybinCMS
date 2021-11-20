@@ -1,0 +1,63 @@
+.photos {
+}
+/* clearfix */
+.photos:before,
+.photos:after {
+    content: "";
+    display: table;
+}
+.photos:after {
+    clear: both;
+}
+
+.box {
+  float: left;
+  margin-bottom: 10px; 
+  margin-right: 10px; 
+  postition: relative;
+  background-color: #eee;
+  
+  background-image: url('assets/images/plugins/bootstrap-editable/loading.gif');
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.box label img {
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: bottom;
+}
+.first-item {
+  clear: both;
+}
+/* remove margin bottom on last row */
+.last-row, .last-row ~ .box {
+  margin-bottom: 0;
+}
+.box input[type=checkbox]{
+										display: none;
+									}
+									.box label i{
+										position: absolute;
+										color: #fff;
+										margin: 15px 25px;
+										font-size: 0px;
+										transition:0.08s
+									}
+									.box label{
+										margin: 0px;
+									}
+									.box input[type=checkbox] + label{
+padding: 0px;
+transition:0.05s
+}
+									.box input[type=checkbox]:checked + label{
+padding: 0px;
+transition:0.03s
+									}
+									.box input[type=checkbox]:checked + label i{
+display: block;
+padding:10px;
+background-color:#3498DB;
+border-radius: 100px;
+font-size: 21px;
+transition:0.06s

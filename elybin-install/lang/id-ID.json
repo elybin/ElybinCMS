@@ -1,0 +1,505 @@
+{
+	"info": [
+		{
+			"language":"id-ID",
+			"language_detail":"Bahasa Indonesia",
+			"version":"0.0.1",
+			"translator":"Khakim <elybin.inc@gmail.com>",
+			"info":"Language Dictionary for Quick Installer Elybin CMS"
+		}
+	],
+	"dictionary": [
+{
+	"f":"Set your directory to writeable, and try again.",
+	"t":"Atur direktori anda menjadi bisa ditulis, dan coba lagi.",
+	"i":"index.php"
+},
+{
+	"f":"or execute this command line",
+	"t":"atau eksekusi baris perintah",
+	"i":"index.php"
+},
+{
+	"f":"Quick Install",
+	"t":"Pasang Singkat",
+	"i":"index.php"
+},
+{
+	"f":"Welcome!",
+	"t":"Selamat Datang!",
+	"i":"index.php"
+},
+{
+	"f":"This is magic! your site will up in a second.",
+	"t":"Ini Ajaib! situs anda akan jadi dalam sekejap.",
+	"i":"index.php"
+},
+{
+	"f":"Are you ready?",
+	"t":"Apakah ada siap?",
+	"i":"index.php"
+},
+{
+	"f":"Yes, Start Installation!",
+	"t":"Ya, Mulai Pemasangan!",
+	"i":"index.php"
+},
+{
+	"f":"Language:",
+	"t":"Bahasa:",
+	"i":"index.php"
+},
+{
+	"f":"English",
+	"t":"English",
+	"i":"index.php"
+},
+{
+	"f":"Bahasa Indonesia",
+	"t":"Bahasa Indonesia",
+	"i":"index.php"
+},
+{
+	"f":"Error",
+	"t":"Bermasalah",
+	"i":"index.php"
+},
+{
+	"f":"Failed writing &#34;.htaccess&#34;. Copy the script below, and create file manually.",
+	"t":"Gagal menulis &#34;.htaccess&#34;. Salin kode dibawah, dan buat file tersebut secara manual.",
+	"i":"index.php"
+},
+{
+	"f":"Failed writing &#34;elybin-config.php&#34;. Copy the script below, and create file manually.",
+	"t":"Gagal menulis &#34;elybin-config.php&#34;. Salin kode dibawah, dan buat file tersebut secara manual.",
+	"i":"index.php"
+},
+{
+	"f":"Some query failed to execute, This is our mistake. Please contact us.",
+	"t":"Beberapa kueri gagal di jalankan, Ini adalah kesalahan kami, Tolong hubungi kami.",
+	"i":"index.php"
+},
+{
+	"f":"Database configuration success!",
+	"t":"Pengaturan basis data berhasil!",
+	"i":"index.php"
+},
+{
+	"f":"Enter Database Host.",
+	"t":"Masukan Host Basisdata",
+	"i":"index.php"
+},
+{
+	"f":"Enter Database Username.",
+	"t":"Masukan Nama Pengguna Basisdata",
+	"i":"index.php"
+},
+{
+	"f":"Enter Database Name.",
+	"t":"Masukan Nama Basisdata",
+	"i":"index.php"
+},
+{
+	"f":"Connection to database error. Database not found.",
+	"t":"Sambungan ke basis data bermasalah. Basis data tidak ditemukan.",
+	"i":"index.php"
+},
+{
+	"f":"Connection error. Check Database Username or Database Password.",
+	"t":"Sambungan bermasalah. Periksa Nama Pengguna Basisdata atau Kata Sandi Basisdata",
+	"i":"index.php"
+},
+{
+	"f":"Unknown error. Please contact us.",
+	"t":"Kesalah tak diketahui. Mohon hubungi kami.",
+	"i":"index.php"
+},
+{
+	"f":"I can't, I need your hand.",
+	"t":"Saya tak bisa, Saya butuh bantuanmu.",
+	"i":"index.php"
+},
+{
+	"f":"Check your directory permissions, or you can create this file manually. After that refresh this page.",
+	"t":"Periksa perizinan direktori anda, atau anda bisa membuat berkas secara manual. Setelah itu muat ulang halaman.",
+	"i":"index.php"
+},
+{
+	"f":"Opps, I can't do again.",
+	"t":"Aduh, Saya tidak bisa melakukan lagi.",
+	"i":"index.php"
+},
+{
+	"f":"Set your Database!",
+	"t":"Atur Basisdata anda!",
+	"i":"index.php"
+},
+{
+	"f":"Database Host, I guess localhost",
+	"t":"Host Basisdata, Saya menebak localhost",
+	"i":"index.php"
+},
+{
+	"f":"Commonly it set localhost",
+	"t":"Biasanya diatur localhost",
+	"i":"index.php"
+},
+{
+	"f":"Database Username, for example: user_db_elybin",
+	"t":"Nama Pengguna Basisdata, sebagai contoh: user_db_elybin",
+	"i":"index.php"
+},
+{
+	"f":"Enter username of your Database connection. Ask your hosting provider, if you don't know that.",
+	"t":"Masukan nama pengguna dari sambungan Basisdata anda. Atau tanyakan pada penyedia hosting, jika anda tidak mengetahuinya.",
+	"i":"index.php"
+},
+{
+	"f":"Database Password, usually are random string.",
+	"t":"Kata Sandi Basisdata, biasanya adalah kata acak.",
+	"i":"index.php"
+},
+{
+	"f":"Enter password to your Database. Ask your hosting provider, if you don't know that.",
+	"t":"Masukan kata sadi dari Basisdata anda. Atau tanyakan pada penyedia hosting, jika anda tidak mengetahuinya.",
+	"i":"index.php"
+},
+{
+	"f":"Database Name, for example: db_elybin",
+	"t":"Nama Basisdata, sebagai contoh: db_elybin",
+	"i":"index.php"
+},
+{
+	"f":"Enter name of your Database. Ask your hosting provider, if you don't know that.",
+	"t":"Masukan nama dari Basisdata anda. Atau tanyakan pada penyedia hosting, jika anda tidak mengetahuinya.",
+	"i":"index.php"
+},
+{
+	"f":"Next",
+	"t":"Selanjutnya",
+	"i":"index.php"
+},
+{
+	"f":"Everything inside one Bin, Elybin CMS.",
+	"t":"Semua dalam satu Tempat, Elybin CMS.",
+	"i":"index.php"
+},
+{
+	"f":"You don't have a name?",
+	"t":"Anda tak punya nama?",
+	"i":"index.php"
+},
+{
+	"f":"Please fill Nickname first.",
+	"t":"Isikan Nama Panggilan dulu.",
+	"i":"index.php"
+},
+{
+	"f":"Please fill E-mail.",
+	"t":"Isikan E-mail.",
+	"i":"index.php"
+},
+{
+	"f":"Please fill Password.",
+	"t":"Isikan Katasandi dulu.",
+	"i":"index.php"
+},
+{
+	"f":"Don't forget to fill Password in both field.",
+	"t":"Jangan lupa untuk mengisi Katasandi di kedua kolom.",
+	"i":"index.php"
+},
+{
+	"f":"E-mail format not recognized. Example format is xxx@xxx.xxx.",
+	"t":"Format e-mail tidak diketahui. Contoh format xxx@xxx.xxx",
+	"i":"index.php"
+},
+{
+	"f":"Nickname format not recognized. Allowed character is letter(a-z), number(0-9) and underscore (_)",
+	"t":"Format nama panggilan tidak diketahui. Karakter yang diperbolehkan adalah huruf(a-z), angka(0-9) dan garisbawah(_)",
+	"i":"index.php"
+},
+{
+	"f":"Maximum nickname character is 12 letter.",
+	"t":"Maksimal karakter nama panggilan adalah 12 huruf.",
+	"i":"index.php"
+},
+{
+	"f":"Minimum nickname character is 3 letter.",
+	"t":"Minimal karakter nama panggilan adalah 3 huruf.",
+	"i":"index.php"
+},
+{
+	"f":"Both password didn't match each other, Please check.",
+	"t":"Kedua katasandi tidak cocok satu sama lain, Periksa lagi.",
+	"i":"index.php"
+},
+{
+	"f":"Your password is too weak, try to use more combination.",
+	"t":"Katasandi anda terlalu lemah, coba lebih banyak kombinasi.",
+	"i":"index.php"
+},
+{
+	"f":"Connection error. Check Database Username or Database Password.",
+	"t":"Sambungan bermasalah. Periksa nama pengguna Basisdata atau Katasandi Basisdata.",
+	"i":"index.php"
+},
+{
+	"f":"Connection error. Check Database Username or Database Password.",
+	"t":"Sambungan bermasalah. Periksa nama pengguna Basisdata atau Katasandi Basisdata.",
+	"i":"index.php"
+},
+{
+	"f":"Failed to register new user.",
+	"t":"Gagal mendaftarkan pengguna baru.",
+	"i":"index.php"
+},
+{
+	"f":"Hi bro! Introduce your self",
+	"t":"Halo Sob! Kenalkan dirimu",
+	"i":"index.php"
+},
+{
+	"f":"My Name is...",
+	"t":"Namaku adalah...",
+	"i":"index.php"
+},
+{
+	"f":"You can call me...",
+	"t":"Anda bisa panggil saya...",
+	"i":"index.php"
+},
+{
+	"f":"Your short name, without space but allowed using underscore and lower case only (letter and number).",
+	"t":"Nama panggilan anda, tanpa spasi tapi boleh pakai garis bawah dan hanya huruf kecil (huruf dan angka).",
+	"i":"index.php"
+},
+{
+	"f":"Your full name here.",
+	"t":"Nama lengkap anda.",
+	"i":"index.php"
+},
+{
+	"f":"Maybe sometimes you need to E-mail me...",
+	"t":"Mungkin suatu saat anda butuh e-mail saya...",
+	"i":"index.php"
+},
+{
+	"f":"Enter your active e-mail, it needed when your site in bad situation.",
+	"t":"Masukan e-mail anda yang aktif, itu diperlukan saat situs anda dalam keadaan buruk.",
+	"i":"index.php"
+},
+{
+	"f":"My secret words... (Password)'",
+	"t":"Kata rahasia ku... (Katasandi)",
+	"i":"index.php"
+},
+{
+	"f":"Secret word once again... (Password Again)",
+	"t":"Kata rahasia sekali lagi.. (Katasandi Lagi)",
+	"i":"index.php"
+},
+{
+	"f":"Some combination of letter, number and symbol. Pick one that easy to remember.",
+	"t":"Beberapa kombinasi dari huruf, angka dan simbol. Pilih salah satu yang mudah di ingat.",
+	"i":"index.php"
+},
+{
+	"f":"Type again your password. And remember it.",
+	"t":"Ketik lagi katasandi anda. Dan ingat itu.",
+	"i":"index.php"
+},
+{
+	"f":"Enter your site title.",
+	"t":"Masukan judul situs anda.",
+	"i":"index.php"
+},
+{
+	"f":"Select site category.",
+	"t":"Pilih kategori situs.",
+	"i":"index.php"
+},
+{
+	"f":"Select your favorite color.",
+	"t":"Pilih warna kesukaan anda.",
+	"i":"index.php"
+},
+{
+	"f":"Site title too long maybe.",
+	"t":"Judul situs terlalu panjang mungkin.",
+	"i":"index.php"
+},
+{
+	"f":"How your website will look like?",
+	"t":"Bagaimanakah situs anda akan tampak?",
+	"i":"index.php"
+},
+{
+	"f":"Enter site title. for example:",
+	"t":"Masukan judul situs. sebagai contoh:",
+	"i":"index.php"
+},
+{
+	"f":"Enter site title. for example: Richoo's Amazing Story",
+	"t":"Masukan judul situs. sebagai contoh: Richoo's Amazing Story",
+	"i":"index.php"
+},
+{
+	"f":"Enter your site main title, I suggest name that simple but can describe yours.",
+	"t":"Masukan judul utama situs anda, Saya menyarankan nama yang sederhana tapi mendeskripsikan anda.",
+	"i":"index.php"
+},
+{
+	"f":"It will be...",
+	"t":"Itu akan menjadi...",
+	"i":"index.php"
+},
+{
+	"f":"Personal Website",
+	"t":"Website Peribadi",
+	"i":"index.php"
+},
+{
+	"f":"Community or Organization",
+	"t":"Komunitas atau Organisasi",
+	"i":"index.php"
+},
+{
+	"f":"Company or Business Profile",
+	"t":"Profil Perusahaan atau Bisnis",
+	"i":"index.php"
+},
+{
+	"f":"Online Catalogue/Sell and Buy Website",
+	"t":"Katalog Online/Website Jual Beli",
+	"i":"index.php"
+},
+{
+	"f":"Photo Gallery/About Art",
+	"t":"Galeri foto/Tentang Seni",
+	"i":"index.php"
+},
+{
+	"f":"Event Website/RSVP",
+	"t":"Website acara/Konfirmasi Hadir",
+	"i":"index.php"
+},
+{
+	"f":"Application/Internal System/Cashier",
+	"t":"Aplikasi/Sistem Internal/Kasir",
+	"i":"index.php"
+},
+{
+	"f":"Other...",
+	"t":"Lainnya...",
+	"i":"index.php"
+},
+{
+	"f":"My favorite color...",
+	"t":"Warna kesukaan saya...",
+	"i":"index.php"
+},
+{
+	"f":"Red",
+	"t":"Merah",
+	"i":"index.php"
+},
+{
+	"f":"Pink",
+	"t":"Merah Muda",
+	"i":"index.php"
+},
+{
+	"f":"Orange",
+	"t":"Jingga",
+	"i":"index.php"
+},
+{
+	"f":"Yellow",
+	"t":"Kuning",
+	"i":"index.php"
+},
+{
+	"f":"Green",
+	"t":"Hijau",
+	"i":"index.php"
+},
+{
+	"f":"Brown",
+	"t":"Coklat",
+	"i":"index.php"
+},
+{
+	"f":"Light Blue",
+	"t":"Biru Muda",
+	"i":"index.php"
+},
+{
+	"f":"Purple",
+	"t":"Ungu",
+	"i":"index.php"
+},
+{
+	"f":"Black",
+	"t":"Hitam",
+	"i":"index.php"
+},
+{
+	"f":"Don't forget to delete &#34;elybin-install&#34; directory.",
+	"t":"Jangan lupa untuk menghapus direktori &#34;elybin-install&#34;.",
+	"i":"index.php"
+},
+{
+	"f":"Hurray! your website already up!",
+	"t":"Hore! website anda sudah jadi!",
+	"i":"index.php"
+},
+{
+	"f":"Login with this account",
+	"t":"Masuk dengan akun ini",
+	"i":"index.php"
+},
+{
+	"f":"Username or E-mail:",
+	"t":"Nama Pengguna atau E-mail:",
+	"i":"index.php"
+},
+{
+	"f":"Password:",
+	"t":"Katasandi:",
+	"i":"index.php"
+},
+{
+	"f":"Let's celebrate, don't forget to decorate it.",
+	"t":"Mari rayakan, dan jangan lupa untuk menghiasnya.",
+	"i":"index.php"
+},
+{
+	"f":"Visit your new home",
+	"t":"Kunjungi rumah baru anda",
+	"i":"index.php"
+},
+{
+	"f":"Login as Owner",
+	"t":"Masuk sebagai Pemilik",
+	"i":"index.php"
+},
+{
+	"f":"Refresh Page",
+	"t":"Muat Ulang Halaman",
+	"i":"index.php"
+},
+{
+	"f":"Installation Locked Temporary",
+	"t":"Instalasi Dikunci Sementara",
+	"i":"index.php"
+},
+{
+	"f":"We're preventing someone steal your website while installing. So, your installation process automatically locked after 2 hours, to continue installation delete <code>install_date.txt</code> inside <code>elybin-install</code> and refresh this page.",
+	"t":"Kami mencegah seseorang mencuri situs anda selama instalasi. Jadi, proses instalasi anda secara otomatis terkunci setelah 2 jam, untuk melanjutkan instalasi hapus <code>install_date.txt</code> di dalam <code>elybin-install</code> dan muat ulang halaman ini.",
+	"i":"index.php"
+},
+
+		{"f":" ", "t":" ", "i":"post.php #0"}
+	]
+}
