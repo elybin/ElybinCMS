@@ -2,10 +2,10 @@
 /* Short description for file
  * [ Main theme of admin panel
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 ?>
 <?php function theme_head(){
@@ -587,7 +587,7 @@ function theme_foot(){
 			<i><?php echo lg('Everything inside one bin, Elybin CMS.') ?></i>
 		</div>
 		<div class="pull-right text-light-gray">
-			<?php echo round(((microtime()-START_EXEC)/60),5).' '.lg('sec') ?> - <a href="http://www.elybin.com/" title="Elybin CMS - Open Source Content Management">www.elybin.com</a>
+			<?php echo round(((microtime()-START_EXEC)/60),5).' '.lg('sec') ?> - <a href="http://www.elybin.github.io/" title="Elybin CMS - Open Source Content Management">www.elybin.github.io</a>
 		</div>
 	</div> <!-- / #content-wrapper -->
 	<div id="main-menu-bg"></div>

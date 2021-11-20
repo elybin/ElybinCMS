@@ -2,10 +2,10 @@
 /* Short description for file
  * [ Module: Setting - Menu manager
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 if(empty($_SESSION['login'])){
 	header('location: index.php');
@@ -90,7 +90,7 @@ if($usergroup == 0){
 									<?php _e('You can also using <b>URL Address Dynamic Expression</b> (<i>Address that changed automatically every updating content</i>). Follow this step:') ?>
 									<ol>
 										<li><b><?php _e('Section Name') ?></b>: <?php _e('Determine the section, available section names: <i>post, page, category, tag, archive, gallery, album.</i>') ?></li>
-										<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>http://elybin.com/?page_id=<b>this_is_content_id</b></code>') ?></li>
+										<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>https://elybin.github.io/?page_id=<b>this_is_content_id</b></code>') ?></li>
 										<li><b><?php _e('Put it together') ?></b>: <?php _e('Basicly URL Dynnamic Expression using this formula. <b>{&quot;section_name&quot;:&quot;content_id&quot;}</b> for example: <code>{&quot;post&quot;:&quot;1&quot;}</code>') ?></li>
 									</ol>
 								</div>
@@ -250,7 +250,7 @@ if($usergroup == 0){
 								<?php _e('You can also using <b>URL Address Dynamic Expression</b> (<i>Address that changed automatically every updating content</i>). Follow this step:') ?>
 								<ol>
 									<li><b><?php _e('Section Name') ?></b>: <?php _e('Determine the section, available section names: <i>post, page, category, tag, archive, gallery, album.</i>') ?></li>
-									<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>http://elybin.com/?page_id=<b>this_is_content_id</b></code>') ?></li>
+									<li><b><?php _e('Content ID') ?></b>: <?php _e('Also put your content id. <i>(You can check it while using Dynamic URL).</i> For example: <code>https://elybin.github.io/?page_id=<b>this_is_content_id</b></code>') ?></li>
 									<li><b><?php _e('Put it together') ?></b>: <?php _e('Basicly URL Dynnamic Expression using this formula. <b>{&quot;section_name&quot;:&quot;content_id&quot;}</b> for example: <code>{&quot;post&quot;:&quot;1&quot;}</code>') ?></li>
 								</ol>
 							</div>

@@ -2,10 +2,10 @@
 /* Short description for file
  * [ Module: Setting - Plugin
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -59,7 +59,7 @@ if($usergroup == 0){
 						<a class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#help" data-placement="bottom" data-original-title="<?php echo lg('Help')?>"><i class="fa fa-question-circle"></i></a>
 					</div>
 					<div class="panel-body">
-					  <div class="note note-info"><?php echo lg('Get more plugin.')?>&nbsp;<a href="http://store.elybin.com/plugin" target="_blank">http://store.elybin.com/plugin</a></div>
+					  <div class="note note-info"><?php echo lg('Get more plugin.')?>&nbsp;<a href="https://elybin.github.io/store/plugin" target="_blank">https://elybin.github.io/store/plugin</a></div>
 					<?php
 						if($file_found){
 							$fst = true;

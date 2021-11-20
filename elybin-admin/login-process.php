@@ -2,10 +2,10 @@
 /* Short description for file
  * Login Procees
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  * ---------------------------------------------
  * 1.1.3
  * - Update Interface
@@ -519,7 +519,7 @@ if(isset($_SESSION['login'])){
 				Thanks!<br/>
 				$op->site_owner (Site Owner)<br/><br/>
 				------------------------------------------------------------<br/>
-				$op->site_url powered by <a href='http://www.elybin.com'>Elybin CMS - Free Open Source CMS</a>
+				$op->site_url powered by <a href='http://www.elybin.github.io'>Elybin CMS - Free Open Source CMS</a>
 				";
 
 				// check what method used to send email

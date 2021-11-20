@@ -3,10 +3,10 @@
  * Install : Step 2 Process
  * Checking user installation directory, write site information to `elybin_options`
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 include_once('../install.func.php');
 

@@ -2,9 +2,9 @@
 /**
  * Main function of option module.
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @subpackage Elybin Apps: Settings
- * @author		Khakim A <kim@elybin.com>
+ * @author		Khakim <elybin.inc@gmail.com>
  * @since 		Elybin 1.1.4
  */
 

@@ -2,10 +2,10 @@
 /* Short description for file
  * Module: User
  *	
- * Elybin CMS (www.elybin.com) - Open Source Content Management System 
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System 
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  ---------------
  1.1.3
 	- Redesign List
@@ -385,7 +385,7 @@ if($usergroup == 0){
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><?php echo lg('Website/Blog')?></label>
 								<div class="col-sm-10">
-									<input type="text" name="website" class="form-control" placeholder="<?php echo lg('Example:')?> www.elybin.com"  value="<?php echo $cu->website ?>"/>
+									<input type="text" name="website" class="form-control" placeholder="<?php echo lg('Example:')?> www.elybin.github.io"  value="<?php echo $cu->website ?>"/>
 								</div>
 							</div> <!-- / .form-group -->
 					    	<!-- hidden -->

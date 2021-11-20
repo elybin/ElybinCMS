@@ -2,10 +2,10 @@
 /* Short description for file
  * Install : Step 2 Process
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 require_once('../install.func.php');
 require_once('../upgrade.func.php');
@@ -42,7 +42,7 @@ if(check_upgrade_possible()){
 				result(array(
 					'status' => 'error',
 					'title' => lg('Error'),
-					'msg' => lg('Failed to execute query, this is out mistake. Please contact us at hi@elybin.com.'),
+					'msg' => lg('Failed to execute query, this is out mistake. Please contact us at elybin.inc@gmail.com.'),
 					'msg_ses' => 'failed_execute_query',
 					'red' => get_url('upgrade.step2')
 				), @$_GET['r']);
@@ -52,7 +52,7 @@ if(check_upgrade_possible()){
 			result(array(
 				'status' => 'error',
 				'title' => lg('Error'),
-				'msg' => lg('Upgrade query not found, this is out mistake. Please contact us at hi@elybin.com'),
+				'msg' => lg('Upgrade query not found, this is out mistake. Please contact us at elybin.inc@gmail.com'),
 				'msg_ses' => 'upgrade_query_not_found',
 				'red' => get_url('upgrade.step2')
 			), @$_GET['r']);

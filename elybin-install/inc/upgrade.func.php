@@ -2,8 +2,8 @@
 /**
  * Upgrade main function, contain many important function.
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author		Khakim A <kim@elybin.com>
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author		Khakim <elybin.inc@gmail.com>
  * @since 		Elybin 1.1.3
  */
 @session_start();

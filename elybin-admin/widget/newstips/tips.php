@@ -33,7 +33,7 @@
 			"panel_icon":"fa-inbox", 
 			"title":"Telah Hadir!", 
 			"subtitle":"Cara termudah memiliki Website profesional!", 
-			"content":"Tak perlu lagi membayar mahal untuk membangun website profesional pribadi, komunitas ataupun perusahaan. Kini anda bisa membuatnya sendiri dengan <b>Elybin CMS</b>, <b>Gratis!</b><br/><br/><a href=\"http://docs.elybin.com/about.php\" class=\"btn btn-success rounded\" target=\"_blank\">Klik disini</a>"
+			"content":"Tak perlu lagi membayar mahal untuk membangun website profesional pribadi, komunitas ataupun perusahaan. Kini anda bisa membuatnya sendiri dengan <b>Elybin CMS</b>, <b>Gratis!</b><br/><br/><a href=\"http://elybin.github.io/docs/about.php\" class=\"btn btn-success rounded\" target=\"_blank\">Klik disini</a>"
 		},
 		{ 	
 			"id":"4",
@@ -45,7 +45,7 @@
 			"panel_icon":"fa-code", 
 			"title":"Anda Seorang Pengembang?", 
 			"subtitle":"Mari bergabung bersama kami!", 
-			"content":"Anda bisa membuat dan menjual plugin atau tema anda sendiri dengan bergabung bersama kami di <b>Elybin CMS.</b><br/><br/><a href=\"http://docs.elybin.com\" class=\"btn btn-warning rounded\" target=\"_blank\">Klik disini untuk Bergabung</a>"
+			"content":"Anda bisa membuat dan menjual plugin atau tema anda sendiri dengan bergabung bersama kami di <b>Elybin CMS.</b><br/><br/><a href=\"http://elybin.github.io/docs\" class=\"btn btn-warning rounded\" target=\"_blank\">Klik disini untuk Bergabung</a>"
 		},
 		{ 	
 			"id":"5",

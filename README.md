@@ -1,19 +1,19 @@
-Elybin CMS (www.elybin.com) - Open Source Content Management System
+Elybin CMS (www.elybin.github.io) - Open Source Content Management System
 @copyright => Copyright (C) 2015 Elybin Team, All rights reserved.
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
-@author    => Khakim A <kim@elybin.com>
+@author    => Khakim <elybin.inc@gmail.com>
 
 DONATE & HELP
 =======================
-We really need your help and donation, please contact us at hi@elybin.com
+We really need your help and donation, please contact us at elybin.inc@gmail.com
 
-ELYBIN CMS - http://docs.elybin.com/about.html
+ELYBIN CMS - http://elybin.github.io/docs/about.html
 =========================================
 Elybin CMS adalah sebuah sistem menejemen konten (Content Management System) multi fungsi gratis yang bisa diinstall berbagai plugin dan tema tambahan. Sehingga bisa disesuaikan sesuai dengan kebutuhan anda.
 
 CMS ini didesain agar bisa diubah menjadi bermacam macam aplikasi, mulai dari website hingga aplikasi internal tanpa harus melakukan pengkodean (coding). Serta aplikasi ini di desain untuk memudahkan dalam penggunaan. Sehingga aplikasi ini cocok untuk membuat website personal, bisnis ataupun komunitas.
 
-PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
+PANDUAN INSTALASI SINGKAT - http://elybin.github.io/docs/installation.html
 =========================================
 1. Pastikan anda sudah mendownload Elybin CMS yang memiliki ekstensi akhir (.zip). Ekstrak file tersebut ke hosting atau local server anda.
 
@@ -32,11 +32,11 @@ Setelah membuka alamat, anda akan diarahkan ke tampilan installasi.
 
 **Jangan lupa untuk menghapus folder installasi setelah berhasil.**
 **Untuk panduan instalasi lengkap beserta video bisa dilihat pada situs kami.**
-http://docs.elybin.com/installation.html
+http://elybin.github.io/docs/installation.html
 
 
 
-CHANGE LOG (PERUBAHAAN) - http://docs.elybin.com/changelog.html
+CHANGE LOG (PERUBAHAAN) - http://elybin.github.io/docs/changelog.html
 =========================================
 Version 1.1.4 (Beta) - 15 November 2015
 ----------------------

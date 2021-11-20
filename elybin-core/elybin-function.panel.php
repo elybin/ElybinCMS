@@ -2,8 +2,8 @@
 /**
  * Panel extended function
  *
- * @package Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author  Khakim A <kim@elybin.com>
+ * @package Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author Khakim <elybin.inc@gmail.com>
  * @since 1.1.4
  */
 

@@ -4,8 +4,8 @@
  * Some function are inspired and named like WordPress own, so WP developer can easy to create
  * awesome themes with many documentation, just google it.
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author		Khakim A <kim@elybin.com>
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author		Khakim <elybin.inc@gmail.com>
  */
 function whats_opened($section = ''){
   /**
@@ -2553,7 +2553,7 @@ function appreciation_link(){
    * Display appreciation link.
    * @since 1.1.4
    */
-   echo lg('Powered by').' <a href="http://www.elybin.com/" alt="Elybin - '.lg('Modern, Powerful &amp; Beautiful for all you need').'" class="text-dash" style="background-color: transparent">Elybin CMS</a>';
+   echo lg('Powered by').' <a href="http://www.elybin.github.io/" alt="Elybin - '.lg('Modern, Powerful &amp; Beautiful for all you need').'" class="text-dash" style="background-color: transparent">Elybin CMS</a>';
    $_SESSION['$ThanksELybin'] = md5(rand(1,99999));
 }
 

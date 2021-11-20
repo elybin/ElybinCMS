@@ -3,8 +3,8 @@
  * Core Library of Elybin CMS.
  * PHP < 5.3.7
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author		Khakim A <kim@elybin.com>
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author		Khakim <elybin.inc@gmail.com>
  */
 
 @session_start();
@@ -2658,7 +2658,7 @@ function get_feed(){
   $feed->updatePeriod = 'hourly';
   $feed->updateFrequency = '1';
   $feed->language = get_option('content_language');
-  $feed->generator = 'http://www.elybin.com/?v=1.1.4';
+  $feed->generator = 'http://www.elybin.github.io/?v=1.1.4';
 
   // atom
   $feed->atom = 'start from here';
@@ -2669,7 +2669,7 @@ function get_feed(){
   $feed->link_alternate = (is_single() ? str_replace('&','&#038;', get_url('post', @$cps->post_id).'#comments') : get_url('home')) ;
   $feed->atom_id = (is_single() ? str_replace('&','&#038;', get_url('post-atom', @$cps->post_id)) : get_url('atom'));
   $feed->atom_self = $feed->atom_id;
-  $feed->generator_uri = 'http://www.elybin.com/';
+  $feed->generator_uri = 'http://www.elybin.github.io/';
   $feed->generator_version = '1.1.4';
   $feed->generator_name = 'Elybin CMS';
 
@@ -2720,7 +2720,7 @@ function get_feed(){
         $feed->comments[$a]->title = sprintf(_('By: %s'), $p->comment_author);
         $feed->comments[$a]->link = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
         $feed->comments[$a]->author = $p->comment_author;
-        $feed->comments[$a]->author_uri = 'http://www.elybin.com/';
+        $feed->comments[$a]->author_uri = 'http://www.elybin.github.io/';
         $feed->comments[$a]->atom_id = get_url('post', $p->post_id).'#comment-'.$p->comment_id;
         $feed->comments[$a]->updated = date("Y-m-d\TH:i:s\Z", strtotime($p->comment_date));
         $feed->comments[$a]->published = date("Y-m-d\TH:i:s\Z", strtotime($p->comment_date));
@@ -2801,7 +2801,7 @@ function appreciate_our_code(){
 	 whats_opened('rss') ||
 	 whats_opened('atom') ||
 	 whats_opened('media') ||
-   isset($_GET['clear']))): echo '<br/>'.lg('Powered by').' <a href="http://www.elybin.com/" alt="Elybin - '.lg('Modern, Powerful &amp; Beautiful for all you need').'" class="text-dash" style="background-color: transparent">Elybin CMS</a> '; endif;
-	 e((!whats_opened('media') ? '<!-- Thanks for using Elybin CMS - www.elybin.com -->':''));
+   isset($_GET['clear']))): echo '<br/>'.lg('Powered by').' <a href="http://www.elybin.github.io/" alt="Elybin - '.lg('Modern, Powerful &amp; Beautiful for all you need').'" class="text-dash" style="background-color: transparent">Elybin CMS</a> '; endif;
+	 e((!whats_opened('media') ? '<!-- Thanks for using Elybin CMS - www.elybin.github.io -->':''));
 }
 ?>

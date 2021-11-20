@@ -1,11 +1,11 @@
-Elybin CMS (www.elybin.com) - Open Source Content Management System
+Elybin CMS (www.elybin.github.io) - Open Source Content Management System
 @copyright => Copyright (C) 2015 Elybin Teamybin, Inc, All rights reserved.
 @license   => GNU General Public License version 2 or later; see LICENSE.txt
-@author    => Khakim A <kim@elybin.com>
+@author    => Khakim <elybin.inc@gmail.com>
 
 
 
-SYARAT DAN KETENTUAN - http://docs.elybin.com/syarat-dan-ketentuan.html
+SYARAT DAN KETENTUAN - http://elybin.github.io/docs/syarat-dan-ketentuan.html
 =========================================
 Ada beberapa syarat dan ketentuan yang anda harus ketahui selama anda menggunakan
 aplikasi ini. Antara lain:
@@ -39,7 +39,7 @@ Tim Elybin
 
 
 
-PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
+PANDUAN INSTALASI SINGKAT - http://elybin.github.io/docs/installation.html
 =========================================
 1. Pastikan anda sudah mendownload Elybin CMS yang memiliki ekstensi akhir (.zip).
    Ekstrak file tersebut ke hosting atau local server anda.
@@ -60,11 +60,11 @@ PANDUAN INSTALASI SINGKAT - http://docs.elybin.com/installation.html
 
 *Jangan lupa untuk menghapus folder installasi setelah berhasil.
 **Untuk panduan instalasi lengkap beserta video bisa dilihat pada situs kami.
-http://docs.elybin.com/installation.html
+http://elybin.github.io/docs/installation.html
 
 
 
-CHANGE LOG (PERUBAHAAN) - http://docs.elybin.com/changelog.html
+CHANGE LOG (PERUBAHAAN) - http://elybin.github.io/docs/changelog.html
 =========================================
 Version 1.1.4 (Beta) - 15 November 2015
 ----------------------
