@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `elybin_users` (
   `bio` text NOT NULL,
   `facebook_id` varchar(255) NOT NULL DEFAULT 'elybincms',
   `twitter_id` varchar(255) NOT NULL DEFAULT '@elybincms',
-  `website` varchar(255) NOT NULL DEFAULT 'www.elybin.com',
+  `website` varchar(255) NOT NULL DEFAULT 'www.elybin.github.io',
   `avatar` varchar(100) NOT NULL DEFAULT 'default/no-ava.png',
   `registered` datetime NOT NULL,
   `lastlogin` datetime NOT NULL,

@@ -3,8 +3,8 @@
  * Htaccess template.
  * content begin after character /* * *  ("slash with three stars") and without closing
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author		Khakim A <kim@elybin.com>
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author		Khakim <elybin.inc@gmail.com>
  * @since     Elybin 1.1.4
  */
 
@@ -14,8 +14,8 @@
 # Directory: your_root_website/.htaccess
 # After that, refresh this page
 #
-# @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
-# @author		Khakim A <kim@elybin.com>
+# @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+# @author		Khakim <elybin.inc@gmail.com>
 
 <IfModule mod_rewrite.c>
 RewriteEngine on

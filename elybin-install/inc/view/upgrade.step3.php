@@ -2,8 +2,8 @@
 /**
  * Upgrader .
  *
- * @package   Elybin CMS (www.elybin.com) - Open Source Content Management System
- * @author		Khakim A <kim@elybin.com>
+ * @package   Elybin CMS (www.elybin.github.io) - Open Source Content Management System
+ * @author		Khakim <elybin.inc@gmail.com>
  * @since 		Elybin 1.1.4
  */
 ?>
@@ -46,7 +46,7 @@
 		</div>
 		<div class="xs">
 			<i><?php _e('Everything inside one Bin, Elybin CMS.') ?></i>
-			<a href="http://www.elybin.com/" class="p-rig" target="_blank">www.elybin.com</a>
+			<a href="http://www.elybin.github.io/" class="p-rig" target="_blank">www.elybin.github.io</a>
 		</div>
 	</div>
 </body>

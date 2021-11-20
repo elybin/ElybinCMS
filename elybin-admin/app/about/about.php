@@ -2,10 +2,10 @@
 /* Short description for file
  * [ Module: About contain version, developer, and system information
  *
- * Elybin CMS (www.elybin.com) - Open Source Content Management System
+ * Elybin CMS (www.elybin.github.io) - Open Source Content Management System
  * @copyright	Copyright (C) 2015 Elybin .Inc, All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @author		Khakim A. <kim@elybin.com>
+ * @author		Khakim. <elybin.inc@gmail.com>
  */
 if(!isset($_SESSION['login'])){
 	header('location: index.php');
@@ -55,7 +55,7 @@ switch (@$_GET['act']) {
 							<?php if($usergroup > 0){  // if not have setting priv ?>
 							<p class="text-muted">v.<?php echo $ELYBIN_VERSION?>.<?php echo $ELYBIN_BUILD?> (<?php echo $ELYBIN_SIGNATURE?>) - <?php echo $ELYBIN_RELEASE?></p>
 							<?php }else{ ?>
-							<a href="http://elybin.com" target="_blank">www.elybin.com</a>
+							<a href="https://elybin.github.io" target="_blank">www.elybin.github.io</a>
 							<?php } ?>
 							<br/>
 							<a href="https://www.twitter.com/elybincms" target="_blank"> <i class="fa fa-twitter"></i> @elybincms</a>&nbsp;&nbsp;
@@ -68,10 +68,10 @@ switch (@$_GET['act']) {
 							<tbody>
 								<tr>
 									<td width="20%"><?php echo lg('First Author') ?></td>
-									<td>Khakim A. <i>&#60;kim@elybin.com&#62;</i>  &nbsp;&nbsp;
+									<td>Khakim. <i>&#60;elybin.inc@gmail.com&#62;</i>  &nbsp;&nbsp;
 										<a href="https://www.twitter.com/11jt" target="_blank"> <i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
 										<a href="https://www.instagram.com/khakimassidiqi" target="_blank"> <i class="fa fa-instagram"></i></a>&nbsp;&nbsp;
-										<a href="http://kim.elybin.com" target="_blank"> <i class="fa fa-globe"></i></a>
+										<a href="https://khakim.melonkotak.com" target="_blank"> <i class="fa fa-globe"></i></a>
 									</td>
 								</tr>
 								<tr>
@@ -111,7 +111,7 @@ switch (@$_GET['act']) {
 											Didot
 											<br/>
 											.... (<?php echo lg('Commit your name here...') ?>)</p>
-										<span class="text-sm text-light-gray"><?php echo lg('*send us a lot of bug report to hi@elybin.com, and attach your name. Thanks for your participation.') ?></span>
+										<span class="text-sm text-light-gray"><?php echo lg('*send us a lot of bug report to elybin.inc@gmail.com, and attach your name. Thanks for your participation.') ?></span>
 									</td>
 								</tr>
 								<tr>
@@ -151,36 +151,36 @@ switch (@$_GET['act']) {
 												}
 
 												</style>
-												<!-- I got these buttons from elybin.com -->
+												<!-- I got these buttons from elybin.github.io -->
 												<div id="share-buttons">
 
 												    <!-- Buffer -->
-												    <a href="https://bufferapp.com/add?url=http://www.elybin.com&amp;text=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
+												    <a href="https://bufferapp.com/add?url=http://www.elybin.github.io&amp;text=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/buffer.png" alt="Buffer" />
 												    </a>
 
 												    <!-- Digg -->
-												    <a href="http://www.digg.com/submit?url=http://www.elybin.com" target="_blank">
+												    <a href="http://www.digg.com/submit?url=http://www.elybin.github.io" target="_blank">
 												        <img src="assets/images/diggit.png" alt="Digg" />
 												    </a>
 
 												    <!-- Email -->
-												    <a href="mailto:?Subject=Elybin CMS - Buat website jadi mudah dan cepat&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20 https://elybin.com">
+												    <a href="mailto:?Subject=Elybin CMS - Buat website jadi mudah dan cepat&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20 https://elybin.github.io">
 												        <img src="assets/images/email.png" alt="Email" />
 												    </a>
 
 												    <!-- Facebook -->
-												    <a href="http://www.facebook.com/sharer.php?u=http://www.elybin.com" target="_blank">
+												    <a href="http://www.facebook.com/sharer.php?u=http://www.elybin.github.io" target="_blank">
 												        <img src="assets/images/facebook.png" alt="Facebook" />
 												    </a>
 
 												    <!-- Google+ -->
-												    <a href="https://plus.google.com/share?url=http://www.elybin.com" target="_blank">
+												    <a href="https://plus.google.com/share?url=http://www.elybin.github.io" target="_blank">
 												        <img src="assets/images/google.png" alt="Google" />
 												    </a>
 
 												    <!-- LinkedIn -->
-												    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://www.elybin.com" target="_blank">
+												    <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://www.elybin.github.io" target="_blank">
 												        <img src="assets/images/linkedin.png" alt="LinkedIn" />
 												    </a>
 
@@ -195,36 +195,36 @@ switch (@$_GET['act']) {
 												    </a>
 
 												    <!-- Reddit -->
-												    <a href="http://reddit.com/submit?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
+												    <a href="http://reddit.com/submit?url=http://www.elybin.github.io&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/reddit.png" alt="Reddit" />
 												    </a>
 
 												    <!-- StumbleUpon-->
-												    <a href="http://www.stumbleupon.com/submit?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
+												    <a href="http://www.stumbleupon.com/submit?url=http://www.elybin.github.io&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/stumbleupon.png" alt="StumbleUpon" />
 												    </a>
 
 												    <!-- Tumblr-->
-												    <a href="http://www.tumblr.com/share/link?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
+												    <a href="http://www.tumblr.com/share/link?url=http://www.elybin.github.io&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/tumblr.png" alt="Tumblr" />
 												    </a>
 
 												    <!-- Twitter -->
-												    <a href="https://twitter.com/share?url=http://www.elybin.com&amp;name=Elybin CMS - Buat website jadi mudah dan cepat&amp;hashtags=elybin" target="_blank">
+												    <a href="https://twitter.com/share?url=http://www.elybin.github.io&amp;name=Elybin CMS - Buat website jadi mudah dan cepat&amp;hashtags=elybin" target="_blank">
 												        <img src="assets/images/twitter.png" alt="Twitter" />
 												    </a>
 
 												    <!-- VK -->
-												    <a href="http://vkontakte.ru/share.php?url=http://www.elybin.com" target="_blank">
+												    <a href="http://vkontakte.ru/share.php?url=http://www.elybin.github.io" target="_blank">
 												        <img src="assets/images/vk.png" alt="VK" />
 												    </a>
 
 												    <!-- Yummly -->
-												    <a href="http://www.yummly.com/urb/verify?url=http://www.elybin.com&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
+												    <a href="http://www.yummly.com/urb/verify?url=http://www.elybin.github.io&amp;title=Elybin CMS - Buat website jadi mudah dan cepat" target="_blank">
 												        <img src="assets/images/yummly.png" alt="Yummly" />
 												    </a>
 
-													<h4><?php echo lg('Share to help us keep this code running! say hi! ') ?> <a href="mailto:hi@elybin.com" class="text-danger" style="border-bottom: 1px dashed red">hi@elybin.com</a></h4>
+													<h4><?php echo lg('Share to help us keep this code running! say hi! ') ?> <a href="mailto:elybin.inc@gmail.com" class="text-danger" style="border-bottom: 1px dashed red">elybin.inc@gmail.com</a></h4>
 													<i><?php echo lg('Proudly, Made in Indonesia') ?></i>
 
 													</div>

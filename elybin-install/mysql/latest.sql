@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `elybin_users` (
   `bio` text NOT NULL,
   `facebook_id` varchar(255) NOT NULL DEFAULT 'elybincms',
   `twitter_id` varchar(255) NOT NULL DEFAULT '@elybincms',
-  `website` varchar(255) NOT NULL DEFAULT 'www.elybin.com',
+  `website` varchar(255) NOT NULL DEFAULT 'www.elybin.github.io',
   `avatar` varchar(100) NOT NULL DEFAULT 'default/no-ava.png',
   `registered` datetime NOT NULL,
   `lastlogin` datetime NOT NULL,
@@ -315,7 +315,7 @@ INSERT INTO `elybin_category` (`category_id`, `name`, `seotitle`, `status`) VALU
 --
 
 INSERT INTO `elybin_comments` (`author`, `email`, `visitor_id`, `date`, `content`, `status`, `post_id`, `user_id`, `parent`, `reply`) VALUES
-('ELYBIN CMS', 'hi@elybin.com', 1, NOW(), 'Bantu kami mengembangkan produk buatan Indonesia! Ayo pakai Elybin CMS www.elybin.com Gratis!', 'active', 1, 0, 0, 'no');
+('ELYBIN CMS', 'elybin.inc@gmail.com', 1, NOW(), 'Bantu kami mengembangkan produk buatan Indonesia! Ayo pakai Elybin CMS www.elybin.github.io Gratis!', 'active', 1, 0, 0, 'no');
 
 
 -- --------------------------------------------------------
@@ -326,7 +326,7 @@ INSERT INTO `elybin_comments` (`author`, `email`, `visitor_id`, `date`, `content
 INSERT INTO `elybin_menu` (`menu_id`, `parent_id`, `menu_title`, `menu_url`, `menu_class`, `menu_position`) VALUES
 (1, 0, 'Home', '{"home"}', '', 1),
 (2, 0, 'About', '{"page":"2"}', '', 2),
-(3, 0, 'Download', 'http://www.elybin.com', '', 5),
+(3, 0, 'Download', 'http://www.elybin.github.io', '', 5),
 (4, 0, 'Maps', '{"page":"3"}', '', 3),
 (5, 0, 'Gallery', '{"gallery"}', '', 4);
 -- --------------------------------------------------------
@@ -344,7 +344,7 @@ INSERT INTO `elybin_media` (`media_id`, `title`, `seotitle`, `description`, `met
 --
 
 INSERT INTO `elybin_message` (`mid`, `subject`, `msg_body`, `msg_date`, `msg_type`, `msg_priority`, `msg_status`, `msg_status_recp`, `to_uid`, `from_uid`, `from_email`, `from_name`) VALUES
-(1, 'Selamat Datang', 'Selamat Datang, Terimakasih telah berkontribusi mengembangkan karya anak bangsa. Cinta produk Indonesia!  :)', NOW(), 'message', 'normal', 'sent', 'received', 1, 0, 'hi@elybin.com', 'Elybin CMS');
+(1, 'Selamat Datang', 'Selamat Datang, Terimakasih telah berkontribusi mengembangkan karya anak bangsa. Cinta produk Indonesia!  :)', NOW(), 'message', 'normal', 'sent', 'received', 1, 0, 'elybin.inc@gmail.com', 'Elybin CMS');
 
 -- --------------------------------------------------------
 
@@ -358,7 +358,7 @@ INSERT INTO `elybin_options` (`option_id`, `name`, `value`, `active`) VALUES
 (5, 'site_phone', '-', 'yes'),
 (6, 'site_office_address', 'Banjarnegara, Jawa Tengah 53499 - Indonesia.', 'yes'),
 (7, 'site_owner', 'Administrator', 'yes'),
-(8, 'site_email', 'hi@elybin.com', 'yes'),
+(8, 'site_email', 'elybin.inc@gmail.com', 'yes'),
 (9, 'site_coordinate', '-7.39843, 109.6710', 'yes'),
 (10, 'site_logo', 'default_logo.png', 'yes'),
 (11, 'site_favicon', 'default_favicon.png', 'yes'),
@@ -409,7 +409,7 @@ INSERT INTO `elybin_options` (`option_id`, `name`, `value`, `active`) VALUES
 -- Dumping data for table `elybin_posts`
 --
 INSERT INTO `elybin_posts` (`title`, `content`, `date`, `author`, `seotitle`, `tag`, `image`, `status`, `parent`, `visibility`, `hits`, `comment`, `post_password`, `post_meta`, `category_id`, `type`) VALUES
-('Buat website cepat dan mudah, pakai Elybin CMS', '<p><span style="font-weight: bold;">Teknolog i</span> - Informasi kini sudah menjadi hal yang mudah dan milik banyak orang. Banyak sekali media yang bisa digunakan untuk mendapatkan berbagai informasi, salah satunya adalah internet. Media yang satu ini, sering dianggap sebagai pangsa pasar terbaik dari media lain. </p>\n<p>Ya, benar adanya memang, mengingat 4 miliar orang, kini sudah terhubung ke internet. Memberikan 1/3 dari seluruh penduduk dunia untuk mengetahui bisnus anda. Atau anda juga punya kesempatan 100 juta pengguna yang mencari website anda setiap detik melalui mesin pencari. </p>\n<p>Internet sejatinya adalah sebuah jaringan (<span style="font-style: italic;">network)</span> yang menghubungkan miliaran perangkat - perangkat yang ada di dunia, dan untuk membuatnya mampu menampilkan beragam informasi yang bermanfaat, maka dibuatlah sebuah tatap muka (<span style="font-style: italic;">interface)</span> atau biasa disebut <span style="font-style: italic; font-weight: bold;">Website/Blog. </span></p>\n<p><span style="line-height: 18.5714282989502px;">Sayangnya... </span><span style="line-height: 1.42857143;">Untuk membuat sebuah website/blog banyak orang rela membayar ratusan ribu bahkan jutaan rupiah, hanya untuk sebuah website sederhana. Belum lagi menejemen dan perawatan yang terus menghantui website anda.  Taukah anda? Dengan menggunakan Elybin CMS, anda bisa membuat website atau profil perusahaan anda hanya dengan beberapa klik! Bahkan ada bisa membuatnya sendiri. Buktikanlah! </span></p>\n<p><span style="font-weight: bold;">Elybin CMS</span> adalah satu dari beberapa CMS (Content Management System) yang ada di dunia. Sistem ini menawarkan kemudahan dan kecepatan dalam membuat dan memenejemen website anda. Jadi anda tidak lagi kerepotan untuk mengelola website anda sendiri. Selain itu, Elybin CMS didukung tema dan plugin tambahan yang mampu menyulap website anda menjadi <span style="font-style: italic;">Toko Online, Jurnal Aktifitas, Aplikasi Prakerin, Aplikasi Kasir </span>bahkan sampai <span style="font-style: italic;">Pendaftaran Lomba Foto </span>bisa dibuat sendiri dengan Elybin CMS<span style="font-style: italic;">.</span></p>\n<p><span style="font-style: italic;"></span>Yang paling penting, sistem ini adalah gratis untuk semua orang, untuk kalangan apa saja. Untuk website apa saja, sehingga, cocok untuk membuat website tanpa biaya. (Baca: Daftar Hosing Website Gratis)<br></p>\n<p>Tunggu apa lagi, buat website kamu dengan Elybin CMS! Gratis!  </p>\n\n<p style="text-align: center; "><a href="http://www.elybin.com/" target="_blank" class="btn btn-lg btn-info">Download Elybin CMS - Buat Website Gratis</a></p>', NOW() - INTERVAL 4 DAY, 1, 'buat-website-cepat-dan-mudah-pakai-elybin-cms', '["1","2"]', '', 'publish', 0, 'public', 633, 'allow', '', '{"post_meta":"false"}', 1, 'post'),
+('Buat website cepat dan mudah, pakai Elybin CMS', '<p><span style="font-weight: bold;">Teknolog i</span> - Informasi kini sudah menjadi hal yang mudah dan milik banyak orang. Banyak sekali media yang bisa digunakan untuk mendapatkan berbagai informasi, salah satunya adalah internet. Media yang satu ini, sering dianggap sebagai pangsa pasar terbaik dari media lain. </p>\n<p>Ya, benar adanya memang, mengingat 4 miliar orang, kini sudah terhubung ke internet. Memberikan 1/3 dari seluruh penduduk dunia untuk mengetahui bisnus anda. Atau anda juga punya kesempatan 100 juta pengguna yang mencari website anda setiap detik melalui mesin pencari. </p>\n<p>Internet sejatinya adalah sebuah jaringan (<span style="font-style: italic;">network)</span> yang menghubungkan miliaran perangkat - perangkat yang ada di dunia, dan untuk membuatnya mampu menampilkan beragam informasi yang bermanfaat, maka dibuatlah sebuah tatap muka (<span style="font-style: italic;">interface)</span> atau biasa disebut <span style="font-style: italic; font-weight: bold;">Website/Blog. </span></p>\n<p><span style="line-height: 18.5714282989502px;">Sayangnya... </span><span style="line-height: 1.42857143;">Untuk membuat sebuah website/blog banyak orang rela membayar ratusan ribu bahkan jutaan rupiah, hanya untuk sebuah website sederhana. Belum lagi menejemen dan perawatan yang terus menghantui website anda.  Taukah anda? Dengan menggunakan Elybin CMS, anda bisa membuat website atau profil perusahaan anda hanya dengan beberapa klik! Bahkan ada bisa membuatnya sendiri. Buktikanlah! </span></p>\n<p><span style="font-weight: bold;">Elybin CMS</span> adalah satu dari beberapa CMS (Content Management System) yang ada di dunia. Sistem ini menawarkan kemudahan dan kecepatan dalam membuat dan memenejemen website anda. Jadi anda tidak lagi kerepotan untuk mengelola website anda sendiri. Selain itu, Elybin CMS didukung tema dan plugin tambahan yang mampu menyulap website anda menjadi <span style="font-style: italic;">Toko Online, Jurnal Aktifitas, Aplikasi Prakerin, Aplikasi Kasir </span>bahkan sampai <span style="font-style: italic;">Pendaftaran Lomba Foto </span>bisa dibuat sendiri dengan Elybin CMS<span style="font-style: italic;">.</span></p>\n<p><span style="font-style: italic;"></span>Yang paling penting, sistem ini adalah gratis untuk semua orang, untuk kalangan apa saja. Untuk website apa saja, sehingga, cocok untuk membuat website tanpa biaya. (Baca: Daftar Hosing Website Gratis)<br></p>\n<p>Tunggu apa lagi, buat website kamu dengan Elybin CMS! Gratis!  </p>\n\n<p style="text-align: center; "><a href="http://www.elybin.github.io/" target="_blank" class="btn btn-lg btn-info">Download Elybin CMS - Buat Website Gratis</a></p>', NOW() - INTERVAL 4 DAY, 1, 'buat-website-cepat-dan-mudah-pakai-elybin-cms', '["1","2"]', '', 'publish', 0, 'public', 633, 'allow', '', '{"post_meta":"false"}', 1, 'post'),
 ('Tentang Elybin CMS', '<h3 style="text-align: center;" class="section-subheading text-muted">Modern, Powerful & Beautiful.</h3><hr><p><span style="font-weight: bold;">ElybinCMS</span> hadir memberikan solusi untuk anda yang ingin membuat website professional untuk pribadi, perusahaan ataupun komunitas dengan mudah dan cepat. Dengan beberapa fitur unggulan yang mudah digunakan membuat berbagi informasi menjadi lebih cepat dan efisien.</p><p>Desain minimalis dipilih untuk lebih memudahkan pengguna dalam menggunakan sistem ini. <span style="font-style: italic;">ElybinCMS</span> juga menggunakan <span style="font-style: italic;">Bootstrap</span> sehingga mampu diakses dari semua perangkat termasuk <span style="font-style: italic;">Gadget</span> kesayangan anda.</p><img src="{{site_url}}elybin-file/media/candiplaosanklaten-6539.jpg" style="width: 100%;"><p><br></p>', NOW() - INTERVAL 5 DAY, 1, 'tentang-elybin-cms--website-professional-tanpa-repot', '', '', 'active', 0, '', 0, 'allow', '', '', 0, 'page'),
 ('Lokasi', '<div class="text-center"><i class="fa fa-2x fa-map-marker"></i><p>{{site_office_address}}<br><a href="https://www.google.co.id/maps/place/{{site_coordinate}}" target="_blank">{{site_coordinate}}</a></p><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=800x400&markers={{site_coordinate}}" class="img-responsive img-rounded" style="width: 100%"></div>', NOW() - INTERVAL 5 DAY, 1, 'temukan-kami', '', '', 'active', 0, '', 0, 'allow', '', '', 0, 'page'),
 ('My Album', 'This is my photo collection', NOW(), 1, 'my-album', '', '', 'active', 0, '', 0, '', '', '', 0, 'album');
@@ -437,7 +437,7 @@ INSERT INTO `elybin_notification` (`notif_code`, `module`, `title`, `value`, `da
 --
 
 INSERT INTO `elybin_themes` (`theme_id`, `name`, `description`, `author`, `url`, `folder`, `status`) VALUES
-(1, 'Young Free', 'Simple flat, modern and cozy themes. Express your expressions. Suitable for Personal, Portfolio or Organization.', 'Elybin CMS', 'http://store.elybin.com/', 'young-free', 'active');
+(1, 'Young Free', 'Simple flat, modern and cozy themes. Express your expressions. Suitable for Personal, Portfolio or Organization.', 'Elybin CMS', 'https://elybin.github.io/store/', 'young-free', 'active');
 
 -- --------------------------------------------------------
 
